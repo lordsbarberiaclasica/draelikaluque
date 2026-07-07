@@ -1,0 +1,30 @@
+---
+import { SITE } from '../config';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  sub?: string;
+  ctaText?: string;
+  ctaHref?: string;
+}
+const { eyebrow, title, sub, ctaText = 'Agendar valoración', ctaHref = SITE.calendly } = Astro.props;
+---
+
+<section class="bg-azul-950 text-marfil relative overflow-hidden">
+  <div
+    class="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top_right,rgba(246,210,154,0.18),transparent_55%)]"
+    aria-hidden="true"
+  >
+  </div>
+  <div class="wrap relative pt-32 pb-14 md:pt-40 md:pb-20">
+    <div class="max-w-2xl border-l-2 border-dorado/80 pl-6 md:pl-9">
+      <p class="eyebrow text-dorado">{eyebrow}</p>
+      <h1 class="mt-4 text-3xl md:text-5xl">{title}</h1>
+      {sub && <p class="mt-5 text-marfil/80 leading-relaxed max-w-xl">{sub}</p>}
+      {ctaText && (
+        <a href={ctaHref} class="btn btn-gold mt-8">{ctaText}</a>
+      )}
+    </div>
+  </div>
+</section>

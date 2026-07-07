@@ -1,0 +1,25 @@
+---
+import { SITE, waLink } from '../../config';
+---
+
+<section class="bg-azul-950 text-marfil relative overflow-hidden">
+  <div
+    class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(246,210,154,0.14),transparent_60%)]"
+    aria-hidden="true"
+  >
+  </div>
+  <div class="wrap py-20 md:py-28 relative text-center">
+    <p class="eyebrow text-dorado justify-center reveal">El primer paso</p>
+    <h2 class="mt-5 text-3xl md:text-5xl max-w-2xl mx-auto reveal">
+      Empieza con una valoración, no con una decisión
+    </h2>
+    <p class="mt-5 text-marfil/75 max-w-xl mx-auto leading-relaxed reveal">
+      En la valoración revisamos tu caso, resolvemos tus preguntas y trazamos
+      una ruta clara. Sin presión y sin compromisos.
+    </p>
+    <div class="mt-9 flex flex-col sm:flex-row justify-center gap-3.5 reveal">
+      <a href={SITE.calendly} class="btn btn-gold">Agendar valoración</a>
+      <a href={waLink()} target="_blank" rel="noopener" class="btn btn-ghost-light">Hablar por WhatsApp</a>
+    </div>
+  </div>
+</section>

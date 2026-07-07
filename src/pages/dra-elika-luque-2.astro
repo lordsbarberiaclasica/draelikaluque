@@ -1,0 +1,101 @@
+---
+/**
+ * /dra-elika-luque-2/ — URL conservada tal cual de WordPress (SEO).
+ * Reutiliza las secciones Cirujana y Credenciales del home (DRY).
+ * TODO: foto real de Clínica Portoazul (scripts/fetch-remote-assets.sh la descarga
+ * como public/images/clinica-portoazul.png; mientras tanto se usa quirofano.jpg).
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Cirujana from '../components/sections/Cirujana.astro';
+import Credenciales from '../components/sections/Credenciales.astro';
+import CtaFinal from '../components/sections/CtaFinal.astro';
+import { SITE } from '../config';
+
+const lugares = [
+  { nombre: 'Torre Médica del Mar', detalle: 'Consultas · Consultorio 311', img: '/images/torre-medica.png' },
+  { nombre: 'Clínica Portoazul', detalle: 'Sede quirúrgica', img: '/images/quirofano.jpg' },
+];
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Physician',
+  name: 'Dra. Elika Luque',
+  url: `${SITE.url}/dra-elika-luque-2/`,
+  image: `${SITE.url}/images/cirujana-retrato.jpg`,
+  medicalSpecialty: 'Bariatric surgery',
+  telephone: SITE.phone,
+  email: SITE.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Cl. 85 #50–37, Torre Médica del Mar, Consultorio 311',
+    addressLocality: 'Barranquilla',
+    addressRegion: 'Atlántico',
+    addressCountry: 'CO',
+  },
+  sameAs: [SITE.instagram, SITE.facebook],
+});
+---
+
+<Base
+  title="Dra. Elika Luque · Cirujana bariátrica y laparoscópica en Barranquilla"
+  description="Conoce a la Dra. Elika Luque: médica de la Universidad El Bosque, especialista en cirugía laparoscópica avanzada (IRCAD, Estrasburgo) y cirugía bariátrica (Universidad Saint-Pierre, Bruselas). Más de 10 años de experiencia."
+  ogImage="/images/cirujana-perfil.jpg"
+>
+  <script is:inline type="application/ld+json" set:html={jsonLd} />
+
+  <PageHero
+    eyebrow="Conoce a tu cirujana"
+    title="Dra. Elika Luque"
+    sub="Médica y cirujana con más de 10 años de experiencia en cirugía general y procedimientos bariátricos por laparoscopia, formada en Colombia, Francia y Bélgica."
+  />
+
+  <Cirujana />
+
+  <!-- Lugares de consulta y cirugía -->
+  <section class="bg-white">
+    <div class="wrap py-16 md:py-24">
+      <div class="max-w-xl reveal">
+        <p class="eyebrow text-dorado-600">Lugares de consulta y cirugía</p>
+        <h2 class="mt-4 text-3xl md:text-4xl">Instituciones de alto nivel en Barranquilla</h2>
+      </div>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2">
+        {lugares.map((l) => (
+          <figure class="reveal relative rounded-2xl overflow-hidden group">
+            <img
+              src={l.img}
+              alt={l.nombre}
+              class="h-80 w-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+              loading="lazy"
+            />
+            <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-azul-950/90 to-transparent p-6 pt-14">
+              <p class="font-display font-bold text-xl text-marfil">{l.nombre}</p>
+              <p class="text-sm text-dorado">{l.detalle}</p>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Banda con foto brandada + CTA (espejo del sitio actual) -->
+  <section class="relative overflow-hidden bg-azul-950">
+    <img
+      src="/images/cirujana-perfil.jpg"
+      alt="La Dra. Elika Luque en quirófano, con su gorro quirúrgico personalizado"
+      class="absolute inset-0 h-full w-full object-cover opacity-60"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-gradient-to-r from-azul-950/85 via-azul-950/50 to-transparent" aria-hidden="true"></div>
+    <div class="wrap relative py-24 md:py-36">
+      <div class="max-w-md reveal">
+        <p class="eyebrow text-dorado">El siguiente paso</p>
+        <h2 class="mt-4 text-3xl md:text-4xl text-marfil">Conversemos sobre tu caso</h2>
+        <a href={SITE.calendly} class="btn btn-gold mt-7">Agendar valoración</a>
+      </div>
+    </div>
+  </section>
+
+  <Credenciales />
+  <CtaFinal />
+</Base>

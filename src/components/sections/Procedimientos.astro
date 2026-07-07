@@ -1,0 +1,84 @@
+---
+/**
+ * Panorama de procedimientos (sitio institucional: SIN precios).
+ * Los precios viven solo en las landings (/balon-gastrico/, /incluye-y-pagos/).
+ */
+const procedimientos = [
+  {
+    nombre: 'Balón gástrico',
+    img: '/images/proc-balon.png',
+    desc: 'Una alternativa sin cirugía mayor para casos seleccionados. Dispositivo temporal que acompaña un plan por fases.',
+    href: '/procedimientos-bariaticos/#balon-gastrico', // TODO fase landings: /balon-gastrico/
+    cta: 'Conocer el balón',
+  },
+  {
+    nombre: 'Manga gástrica',
+    img: '/images/proc-manga.png',
+    desc: 'El procedimiento bariátrico más realizado. Cirugía laparoscópica mínimamente invasiva con protocolo de recuperación guiada.',
+    href: '/procedimientos-bariaticos/#manga-gastrica',
+    cta: 'Conocer la manga',
+  },
+  {
+    nombre: 'Bypass gástrico',
+    img: '/images/proc-bypass.png',
+    desc: 'Indicado en casos específicos como reflujo severo o diabetes de larga evolución. Se define junto a la Dra. en valoración.',
+    href: '/procedimientos-bariaticos/#bypass-gastrico', // TODO fase landings: /reflujo/
+    cta: 'Conocer el bypass',
+  },
+];
+---
+
+<section id="procedimientos" class="bg-azul-950 text-marfil relative overflow-hidden">
+  <div class="wrap py-20 md:py-28">
+    <div class="max-w-xl reveal">
+      <p class="eyebrow text-dorado">Procedimientos</p>
+      <h2 class="mt-4 text-3xl md:text-4xl">Cada caso tiene una ruta distinta</h2>
+      <p class="mt-4 text-marfil/75 leading-relaxed">
+        No existe un procedimiento «mejor»: existe el indicado para tu caso.
+        La recomendación se define en valoración médica, con criterios clínicos claros.
+      </p>
+    </div>
+
+    <div class="mt-14 grid gap-6 md:grid-cols-3">
+      {procedimientos.map((p, i) => (
+        <article
+          class="reveal group rounded-2xl border border-marfil/10 bg-azul-900/60 overflow-hidden flex flex-col"
+          style={`transition-delay:${i * 90}ms`}
+        >
+          <div class="relative h-56 flex items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(246,210,154,0.14),transparent_65%)]">
+            <img
+              src={p.img}
+              alt={`Ilustración: ${p.nombre}`}
+              class="h-44 w-auto object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.45)] group-hover:scale-[1.04] transition-transform duration-500"
+              loading="lazy"
+            />
+          </div>
+          <div class="p-6 pt-2 flex flex-col flex-1">
+            <h3 class="text-xl text-dorado">{p.nombre}</h3>
+            <p class="mt-2.5 text-sm leading-relaxed text-marfil/75 flex-1">{p.desc}</p>
+            <a href={p.href} class="mt-5 inline-flex items-center gap-2 text-sm font-display font-semibold text-marfil hover:text-dorado transition-colors">
+              {p.cta}
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-12 reveal rounded-2xl border border-dorado/25 bg-dorado/[0.06] p-6 md:p-7 md:flex items-center justify-between gap-6">
+      <div>
+        <h3 class="text-lg text-marfil font-display">Manejo médico y nutricional</h3>
+        <p class="mt-1.5 text-sm text-marfil/75 max-w-2xl leading-relaxed">
+          Si la cirugía no es tu ruta hoy, el acompañamiento médico y nutricional
+          también es una forma seria de empezar. Todo inicia con una valoración.
+        </p>
+      </div>
+      <a href="/agendamiento-y-contacto/" class="btn btn-ghost-light mt-5 md:mt-0 shrink-0">Consultar esta opción</a>
+    </div>
+
+    <p class="mt-8 text-xs text-marfil/45 max-w-2xl reveal">
+      La candidatura a cada procedimiento se confirma únicamente en valoración
+      médica. Esta información es orientativa y no constituye un diagnóstico.
+    </p>
+  </div>
+</section>

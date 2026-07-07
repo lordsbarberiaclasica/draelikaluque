@@ -1,0 +1,92 @@
+---
+import { SITE, waLink } from '../config';
+
+// Espejo del menú del sitio actual (URLs conservadas para SEO)
+const nav = [
+  { label: 'Procedimientos', href: '/procedimientos-bariaticos/' },
+  { label: '¿Soy candidato?', href: '/soy-candidato/' },
+  { label: 'Agendamiento y contacto', href: '/agendamiento-y-contacto/' },
+  { label: 'Dra. Elika Luque', href: '/dra-elika-luque-2/' },
+];
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-50 transition-shadow duration-300 bg-azul-950/85 backdrop-blur-md"
+>
+  <div class="wrap flex items-center justify-between gap-4 py-3">
+    <a href="/" class="flex items-center gap-3" aria-label="Dra. Elika Luque — inicio">
+      <img src="/images/logo-el.png" alt="" width="40" height="40" class="h-10 w-10 object-contain" />
+      <span class="hidden sm:block font-display font-semibold text-marfil leading-tight">
+        Dra. Elika Luque
+        <span class="block text-[0.62rem] font-normal tracking-[0.24em] uppercase text-dorado/90">
+          Cirugía bariátrica
+        </span>
+      </span>
+    </a>
+
+    <nav class="hidden lg:flex items-center gap-7" aria-label="Navegación principal">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          class="text-sm text-marfil/85 hover:text-dorado transition-colors font-body"
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a href={SITE.calendly} class="btn btn-gold !py-2.5 !px-5 text-sm hidden sm:inline-flex">
+        Agendar valoración
+      </a>
+      <button
+        id="menu-toggle"
+        class="lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-full border border-marfil/30 text-marfil"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Abrir menú"
+      >
+        <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true">
+          <path d="M1 1h16M1 7h16M1 13h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden lg:hidden border-t border-marfil/10 bg-azul-950/95 backdrop-blur-md">
+    <nav class="wrap py-4 flex flex-col gap-1" aria-label="Menú móvil">
+      {nav.map((item) => (
+        <a href={item.href} class="menu-link py-2.5 text-marfil/90 hover:text-dorado font-body">
+          {item.label}
+        </a>
+      ))}
+      <a href={waLink()} class="menu-link py-2.5 text-dorado font-body font-semibold">
+        Escríbenos por WhatsApp →
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script is:inline>
+  (function () {
+    var btn = document.getElementById('menu-toggle');
+    var menu = document.getElementById('mobile-menu');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', function () {
+      var open = menu.classList.toggle('hidden') === false;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    });
+    menu.querySelectorAll('.menu-link').forEach(function (a) {
+      a.addEventListener('click', function () {
+        menu.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    });
+    var header = document.getElementById('site-header');
+    window.addEventListener('scroll', function () {
+      header.classList.toggle('shadow-lg', window.scrollY > 8);
+    }, { passive: true });
+  })();
+</script>

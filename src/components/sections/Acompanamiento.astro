@@ -1,0 +1,51 @@
+---
+const pilares = [
+  {
+    titulo: 'Controles médicos programados',
+    desc: 'Revisiones postoperatorias con la Dra. para verificar tu evolución y resolver dudas a tiempo.',
+  },
+  {
+    titulo: 'Acompañamiento nutricional',
+    desc: 'Plan de alimentación por fases, ajustado a cada etapa del proceso.',
+  },
+  {
+    titulo: 'Un canal directo',
+    desc: 'Comunicación con el equipo por WhatsApp para inquietudes entre controles.',
+  },
+];
+---
+
+<section id="acompanamiento" class="bg-azul text-marfil relative overflow-hidden">
+  <div
+    class="absolute inset-0 opacity-[0.35] bg-[radial-gradient(ellipse_at_top_right,rgba(246,210,154,0.16),transparent_55%)]"
+    aria-hidden="true"
+  >
+  </div>
+  <div class="wrap py-20 md:py-28 relative grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] items-center">
+    <div class="reveal">
+      <p class="eyebrow text-dorado">La cirugía es un momento. El proceso dura un año.</p>
+      <div class="mt-6 flex items-end gap-4">
+        <span class="font-display font-bold text-[7rem] md:text-[9rem] leading-[0.85] text-dorado">7</span>
+        <p class="pb-3 md:pb-5 font-display font-semibold text-xl md:text-2xl leading-snug">
+          controles durante<br />el primer año
+        </p>
+      </div>
+      <p class="mt-6 text-marfil/75 leading-relaxed max-w-md">
+        El seguimiento no es un extra: hace parte del tratamiento. Por eso el
+        programa incluye un año completo de acompañamiento después del procedimiento.
+      </p>
+    </div>
+
+    <ul class="space-y-4 reveal" role="list">
+      {pilares.map((p, i) => (
+        <li class="rounded-2xl border border-marfil/12 bg-azul-900/50 p-6 flex gap-5">
+          <span class="font-display font-bold text-dorado/80 text-lg" aria-hidden="true">0{i + 1}</span>
+          <div>
+            <h3 class="font-display font-semibold text-lg text-marfil">{p.titulo}</h3>
+            <p class="mt-1.5 text-sm text-marfil/70 leading-relaxed">{p.desc}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

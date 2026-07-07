@@ -1,0 +1,83 @@
+---
+/**
+ * /agendamiento-y-contacto/ — URL conservada tal cual de WordPress (SEO).
+ * ⚠️ El sitio actual publica DOS números: WhatsApp (+57) 321 8211819 y
+ * Teléfono (+57) 310 7005772. Se muestran ambos (fieles al sitio) hasta
+ * confirmar cuál es la línea oficial de leads/asesoras.
+ * Reutiliza la sección Ubicaciones del home (sedes + horario + canales).
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Ubicaciones from '../components/sections/Ubicaciones.astro';
+import CtaFinal from '../components/sections/CtaFinal.astro';
+import { SITE } from '../config';
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'MedicalBusiness',
+  name: 'Dra. Elika Luque · Cirugía Bariátrica',
+  url: `${SITE.url}/agendamiento-y-contacto/`,
+  image: `${SITE.url}/images/hero-poster.jpg`,
+  telephone: SITE.phone,
+  email: SITE.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Cl. 85 #50–37, Torre Médica del Mar, Consultorio 311',
+    addressLocality: 'Barranquilla',
+    addressRegion: 'Atlántico',
+    addressCountry: 'CO',
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Thursday', 'Friday'],
+      opens: '15:00',
+      closes: '19:00',
+    },
+  ],
+});
+---
+
+<Base
+  title="Agendamiento y contacto · Dra. Elika Luque, Barranquilla"
+  description="Agenda tu valoración con la Dra. Elika Luque en Barranquilla: Torre Médica del Mar (consultorio 311) y Clínica Portoazul. WhatsApp, teléfono, correo y agenda en línea. Lun, mar, jue y vie de 3 a 7 p. m."
+>
+  <script is:inline type="application/ld+json" set:html={jsonLd} />
+
+  <PageHero
+    eyebrow="Agendamiento y contacto"
+    title="Resolvamos tus dudas y agendemos tu valoración"
+    sub="Cirugía bariátrica y laparoscopia avanzada en Barranquilla. Escríbenos sobre tratamientos para la obesidad, cirugías laparoscópicas o cualquier otra consulta: haremos todo lo posible por responderte a la brevedad."
+  />
+
+  <!-- Canales directos (fiel al sitio actual: ambos números) -->
+  <section class="bg-marfil border-b border-azul/10">
+    <div class="wrap py-12 md:py-16">
+      <div class="grid gap-4 sm:grid-cols-3 reveal">
+        <a
+          href={`https://wa.me/${SITE.whatsappAlt}?text=${encodeURIComponent(SITE.whatsappMsg)}`}
+          target="_blank"
+          rel="noopener"
+          class="card p-6 hover:border-dorado-600/60 transition-colors"
+        >
+          <p class="eyebrow !text-[0.6rem] text-dorado-600">WhatsApp</p>
+          <p class="mt-2 font-display font-bold text-lg text-azul">{SITE.phoneAlt}</p>
+          <p class="mt-1 text-xs text-azul/55">Escríbenos a cualquier hora: fuera de horario respondemos con el enlace de agenda.</p>
+        </a>
+        <a href={`tel:${SITE.phone.replace(/\s/g, '')}`} class="card p-6 hover:border-dorado-600/60 transition-colors">
+          <p class="eyebrow !text-[0.6rem] text-dorado-600">Teléfono</p>
+          <p class="mt-2 font-display font-bold text-lg text-azul">{SITE.phone}</p>
+          <p class="mt-1 text-xs text-azul/55">{SITE.horario}</p>
+        </a>
+        <a href={`mailto:${SITE.email}`} class="card p-6 hover:border-dorado-600/60 transition-colors">
+          <p class="eyebrow !text-[0.6rem] text-dorado-600">Correo</p>
+          <p class="mt-2 font-display font-bold text-lg text-azul break-all">{SITE.email}</p>
+          <p class="mt-1 text-xs text-azul/55">Para historias clínicas, exámenes y documentos.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <Ubicaciones />
+  <CtaFinal />
+</Base>

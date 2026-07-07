@@ -1,0 +1,48 @@
+---
+const hitos = [
+  { titulo: 'Médica y cirujana general', detalle: 'Universidad El Bosque, Bogotá' },
+  { titulo: 'Cirugía laparoscópica avanzada', detalle: 'Instituto Europeo de Telecirugía IRCAD, Estrasburgo' },
+  { titulo: 'Cirugía bariátrica', detalle: 'Colegio Europeo de Cirugía Laparoscópica · Universidad Saint-Pierre, Bruselas' },
+  { titulo: 'Membresías activas', detalle: 'Asociación Colombiana de Cirugía · FELAC · American College of Surgeons · Sociedad Americana de Gastroenterología' },
+];
+---
+
+<section id="cirujana" class="bg-marfil relative">
+  <div class="wrap py-20 md:py-28 grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+    <div class="relative reveal order-2 lg:order-1">
+      <div class="absolute -top-5 -left-5 h-full w-full rounded-2xl border border-dorado/50" aria-hidden="true"></div>
+      <img
+        src="/images/cirujana-retrato.jpg"
+        alt="La Dra. Elika Luque durante un procedimiento quirúrgico"
+        class="relative rounded-2xl w-full max-h-[560px] object-cover object-top shadow-2xl shadow-azul/20"
+        loading="lazy"
+      />
+      <figcaption class="absolute bottom-4 left-4 rounded-full bg-azul-950/80 backdrop-blur px-4 py-2 text-xs text-marfil/90">
+        Dra. Elika Luque · Cirugía bariátrica y laparoscópica
+      </figcaption>
+    </div>
+
+    <div class="order-1 lg:order-2 reveal">
+      <p class="eyebrow text-dorado-600">Conoce a tu cirujana</p>
+      <h2 class="mt-4 text-3xl md:text-4xl">Formación europea, práctica en Colombia</h2>
+      <p class="mt-5 leading-relaxed text-azul/80">
+        La Dra. Elika Luque cuenta con más de 10 años de experiencia en cirugía
+        general y procedimientos bariátricos por laparoscopia. Su formación une
+        la escuela quirúrgica colombiana con dos de los centros de referencia
+        europeos en cirugía mínimamente invasiva.
+      </p>
+
+      <ul class="mt-8 space-y-5" role="list">
+        {hitos.map((h) => (
+          <li class="flex gap-4">
+            <span class="mt-1.5 h-2 w-2 shrink-0 rotate-45 bg-dorado-600" aria-hidden="true"></span>
+            <div>
+              <p class="font-display font-semibold text-azul">{h.titulo}</p>
+              <p class="text-sm text-azul/65 leading-relaxed">{h.detalle}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>

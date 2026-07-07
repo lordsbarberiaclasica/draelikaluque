@@ -1,0 +1,10 @@
+---
+import { SITE } from '../config';
+---
+
+<!-- CTA principal siempre visible en móvil (regla del proyecto) -->
+<div
+  class="fixed inset-x-0 bottom-0 z-40 sm:hidden bg-azul-950/90 backdrop-blur-md border-t border-marfil/10 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+>
+  <a href={SITE.calendly} class="btn btn-gold w-full">Agendar valoración</a>
+</div>

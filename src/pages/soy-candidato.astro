@@ -1,0 +1,232 @@
+---
+/**
+ * /soy-candidato/ — URL conservada tal cual de WordPress (SEO).
+ * Reemplaza el embed de YAZIO por una calculadora IMC nativa:
+ *   - 100% en el navegador: los datos NO se envían ni se guardan (dato de salud).
+ *   - Mismas 6 categorías del sitio actual.
+ *   - CTAs espejo del comportamiento actual: obesidad → agendar · sobrepeso → contacto.
+ * Esta página es EDUCATIVA. El enrutamiento clínico completo (balón/manga/bypass
+ * con descartes) vive en el quiz L2 /quiz/ — no duplicarlo aquí.
+ * ⚠️ Sección Antes/Después: permitida en sitio orgánico, pendiente de assets
+ * con consentimiento — estructura comentada al final.
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaFinal from '../components/sections/CtaFinal.astro';
+import { SITE, waLink } from '../config';
+
+const categorias = [
+  { rango: 'Menos de 18,5', label: 'Bajo de lo normal', color: '#7fb2e5' },
+  { rango: '18,5 – 24,9', label: 'Saludable', color: '#5cb85c' },
+  { rango: '25 – 29,9', label: 'Sobrepeso', color: '#e0c341' },
+  { rango: '30 – 34,9', label: 'Obesidad tipo I', color: '#e8a13c' },
+  { rango: '35 – 39,9', label: 'Obesidad tipo II', color: '#dd7530' },
+  { rango: '40 o más', label: 'Obesidad tipo III', color: '#c9483a' },
+];
+---
+
+<Base
+  title="¿Soy candidato a cirugía bariátrica? Calcula tu IMC · Dra. Elika Luque"
+  description="Calcula tu índice de masa corporal (IMC) y descubre si la cirugía bariátrica podría ser una opción para ti. Calculadora gratuita, privada y sin registro. Dra. Elika Luque, Barranquilla."
+>
+  <PageHero
+    eyebrow="¿Soy candidato?"
+    title="Renace a tu nueva vida, tu nueva oportunidad"
+    sub="Calcular tu índice de masa corporal (IMC) puede ser el primer paso. El IMC estima la cantidad de grasa corporal y ayuda a saber si tu peso está en el rango normal, en sobrepeso o en obesidad."
+    ctaText="Agendar valoración"
+  />
+
+  <!-- Calculadora IMC -->
+  <section class="bg-marfil">
+    <div class="wrap py-16 md:py-24">
+      <div class="max-w-xl reveal">
+        <p class="eyebrow text-dorado-600">Calculadora</p>
+        <h2 class="mt-4 text-3xl md:text-4xl">Calcula tu IMC en segundos</h2>
+        <p class="mt-4 text-azul/70 leading-relaxed">
+          Ingresa tu peso en kilos —idealmente medido en la mañana, en ayunas—
+          y tu estatura en centímetros. El cálculo ocurre en tu dispositivo:
+          <strong class="text-azul">no guardamos ni enviamos tus datos</strong>.
+        </p>
+      </div>
+
+      <div class="mt-10 reveal card p-7 md:p-10 max-w-3xl">
+        <div class="grid gap-6 sm:grid-cols-2">
+          <div>
+            <label for="imc-peso" class="block font-display font-semibold text-sm text-azul">
+              ¿Cuánto pesas? <span class="text-azul/50 font-normal">(kg)</span>
+            </label>
+            <input
+              id="imc-peso"
+              type="number"
+              inputmode="decimal"
+              min="30"
+              max="350"
+              step="0.1"
+              placeholder="Ej: 92"
+              class="mt-2 w-full rounded-xl border border-azul/20 bg-white px-4 py-3.5 text-lg font-display font-semibold text-azul placeholder:text-azul/30 placeholder:font-normal focus:border-dorado-600"
+            />
+          </div>
+          <div>
+            <label for="imc-altura" class="block font-display font-semibold text-sm text-azul">
+              ¿Cuánto mides? <span class="text-azul/50 font-normal">(cm)</span>
+            </label>
+            <input
+              id="imc-altura"
+              type="number"
+              inputmode="decimal"
+              min="120"
+              max="230"
+              step="0.5"
+              placeholder="Ej: 165"
+              class="mt-2 w-full rounded-xl border border-azul/20 bg-white px-4 py-3.5 text-lg font-display font-semibold text-azul placeholder:text-azul/30 placeholder:font-normal focus:border-dorado-600"
+            />
+          </div>
+        </div>
+
+        <button id="imc-btn" type="button" class="btn btn-gold mt-7 w-full sm:w-auto">
+          Calcular mi IMC
+        </button>
+
+        <p id="imc-error" class="hidden mt-4 text-sm text-[#c9483a]" role="alert">
+          Revisa los datos: el peso debe estar entre 30 y 350 kg, y la estatura entre 120 y 230 cm.
+        </p>
+
+        <!-- Resultado -->
+        <div id="imc-resultado" class="hidden mt-8 rounded-2xl bg-azul-950 text-marfil p-6 md:p-8" aria-live="polite">
+          <p class="text-sm text-marfil/60 font-display">Tu índice de masa corporal</p>
+          <div class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <span id="imc-valor" class="font-display font-bold text-5xl md:text-6xl text-dorado">—</span>
+            <span id="imc-categoria" class="font-display font-semibold text-xl">—</span>
+          </div>
+          <p id="imc-mensaje" class="mt-4 text-marfil/80 leading-relaxed max-w-xl"></p>
+          <div id="imc-ctas" class="mt-6 flex flex-col sm:flex-row gap-3.5"></div>
+          <p class="mt-6 text-xs text-marfil/45">
+            El IMC es una orientación inicial, no un diagnóstico. La candidatura a
+            cualquier procedimiento se confirma únicamente en valoración médica.
+          </p>
+        </div>
+      </div>
+
+      <!-- Categorías de referencia -->
+      <div class="mt-12 reveal">
+        <h3 class="font-display font-semibold text-azul">Rangos de referencia del IMC</h3>
+        <ul class="mt-5 grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-6" role="list">
+          {categorias.map((c) => (
+            <li class="rounded-xl bg-white border border-azul/10 p-4 text-center">
+              <span class="mx-auto block h-2.5 w-2.5 rounded-full" style={`background:${c.color}`} aria-hidden="true"></span>
+              <p class="mt-2 font-display font-bold text-azul text-sm">{c.rango}</p>
+              <p class="text-xs text-azul/60 mt-0.5">{c.label}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Puente según resultado (espejo del sitio actual) -->
+  <section class="bg-white">
+    <div class="wrap py-16 md:py-20 grid gap-6 md:grid-cols-2">
+      <div class="reveal card !border-dorado/40 p-7">
+        <h3 class="font-display font-semibold text-xl text-azul">¿Tu resultado fue obesidad?</h3>
+        <p class="mt-2 text-sm text-azul/70 leading-relaxed">
+          Estamos listas para ayudarte a evaluar tu caso desde hoy. La valoración
+          revisa tu historia completa y define la ruta indicada para ti.
+        </p>
+        <a href={SITE.calendly} class="btn btn-gold mt-5">Agendar valoración</a>
+      </div>
+      <div class="reveal card p-7">
+        <h3 class="font-display font-semibold text-xl text-azul">¿Tu resultado fue sobrepeso?</h3>
+        <p class="mt-2 text-sm text-azul/70 leading-relaxed">
+          También podemos acompañarte: el manejo médico y nutricional es una forma
+          seria de empezar antes de que la cifra avance.
+        </p>
+        <a href={waLink('Hola, mi resultado de IMC fue sobrepeso y quiero información sobre manejo médico y nutricional.')} target="_blank" rel="noopener" class="btn btn-ghost-dark mt-5">
+          Contáctanos
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    ⚠️ SECCIÓN ANTES/DESPUÉS — permitida SOLO en sitio orgánico (nunca en landings de pauta).
+    Activar cuando estén los assets curados con consentimiento firmado.
+    <section class="bg-azul-950 text-marfil"> ... galería de mejores fotos + videos ... </section>
+  -->
+
+  <CtaFinal />
+</Base>
+
+<script is:inline>
+  (function () {
+    var btn = document.getElementById('imc-btn');
+    if (!btn) return;
+    var $ = function (id) { return document.getElementById(id); };
+
+    function categoria(imc) {
+      if (imc < 18.5) return { label: 'Bajo de lo normal', color: '#7fb2e5', tipo: 'bajo' };
+      if (imc < 25) return { label: 'Saludable', color: '#5cb85c', tipo: 'saludable' };
+      if (imc < 30) return { label: 'Sobrepeso', color: '#e0c341', tipo: 'sobrepeso' };
+      if (imc < 35) return { label: 'Obesidad tipo I', color: '#e8a13c', tipo: 'obesidad' };
+      if (imc < 40) return { label: 'Obesidad tipo II', color: '#dd7530', tipo: 'obesidad' };
+      return { label: 'Obesidad tipo III', color: '#c9483a', tipo: 'obesidad' };
+    }
+
+    var MENSAJES = {
+      bajo: 'Tu IMC está por debajo del rango normal. Una valoración médica y nutricional puede ayudarte a entender qué está pasando y cómo cuidarte.',
+      saludable: 'Tu IMC está en el rango saludable. Mantener buenos hábitos de alimentación y actividad física es la mejor forma de conservarlo.',
+      sobrepeso: 'Tu IMC indica sobrepeso. Es un buen momento para actuar: el acompañamiento médico y nutricional puede ayudarte antes de que la cifra avance.',
+      obesidad: 'Tu IMC indica obesidad. Existen opciones médicas y quirúrgicas para tu caso; el siguiente paso es una valoración donde se revisa tu historia completa y se define la ruta indicada.',
+    };
+
+    btn.addEventListener('click', function () {
+      var peso = parseFloat($('imc-peso').value.replace(',', '.'));
+      var alturaCm = parseFloat($('imc-altura').value.replace(',', '.'));
+      var error = $('imc-error');
+      var box = $('imc-resultado');
+
+      if (!peso || !alturaCm || peso < 30 || peso > 350 || alturaCm < 120 || alturaCm > 230) {
+        error.classList.remove('hidden');
+        box.classList.add('hidden');
+        return;
+      }
+      error.classList.add('hidden');
+
+      var m = alturaCm / 100;
+      var imc = peso / (m * m);
+      var cat = categoria(imc);
+
+      $('imc-valor').textContent = imc.toFixed(1).replace('.', ',');
+      var catEl = $('imc-categoria');
+      catEl.textContent = cat.label;
+      catEl.style.color = cat.color;
+      $('imc-mensaje').textContent = MENSAJES[cat.tipo];
+
+      var ctas = $('imc-ctas');
+      ctas.innerHTML = '';
+      function addCta(href, text, gold, blank) {
+        var a = document.createElement('a');
+        a.href = href;
+        a.className = 'btn ' + (gold ? 'btn-gold' : 'btn-ghost-light');
+        a.textContent = text;
+        if (blank) { a.target = '_blank'; a.rel = 'noopener'; }
+        ctas.appendChild(a);
+      }
+
+      var CALENDLY = document.querySelector('a[href*="calendly.com"]');
+      var calendlyHref = CALENDLY ? CALENDLY.href : '#';
+      var waBase = 'https://wa.me/' + '573107005772' + '?text=';
+
+      if (cat.tipo === 'obesidad') {
+        addCta(calendlyHref, 'Agendar valoración', true, false);
+        addCta(waBase + encodeURIComponent('Hola, calculé mi IMC y quiero información sobre cirugía bariátrica.'), 'Hablar por WhatsApp', false, true);
+      } else if (cat.tipo === 'sobrepeso') {
+        addCta(waBase + encodeURIComponent('Hola, mi IMC indica sobrepeso y quiero información sobre manejo médico y nutricional.'), 'Contáctanos por WhatsApp', true, true);
+      } else {
+        addCta(waBase + encodeURIComponent('Hola, quiero información sobre acompañamiento nutricional.'), 'Consultar por WhatsApp', false, true);
+      }
+
+      box.classList.remove('hidden');
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  })();
+</script>

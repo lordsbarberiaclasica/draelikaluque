@@ -1,0 +1,175 @@
+---
+import '@fontsource/montserrat/latin-600.css';
+import '@fontsource/montserrat/latin-700.css';
+import '@fontsource/open-sans/latin-400.css';
+import '@fontsource/open-sans/latin-600.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import StickyCtaMobile from '../components/StickyCtaMobile.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import { SITE } from '../config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Imagen para compartir en redes (ruta absoluta desde /public) */
+  ogImage?: string;
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  ogImage = '/images/hero-poster.jpg',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+---
+
+<!doctype html>
+<html lang="es-CO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImage, SITE.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Tag Manager (contenedor ya activo del sitio actual — lo administra Walter) -->
+    <script is:inline define:vars={{ gtmId: SITE.gtmId }}>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', gtmId);
+    </script>
+
+    <!--
+      [CRÍTICO] Captura y propagación de UTMs.
+      1. Al entrar, guarda utm_* + gclid/fbclid en localStorage (30 días).
+      2. Decora todos los enlaces a Calendly con esos parámetros.
+      3. Anota el mensaje prellenado de WhatsApp con [ref:fuente|campaña].
+      Sin esto no se sabe qué anuncio trae a cada paciente.
+    -->
+    <script is:inline>
+      (function () {
+        var KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+        var PREFIX = 'el_';
+        var TTL = 30 * 24 * 60 * 60 * 1000; // 30 días
+
+        try {
+          var ts = parseInt(localStorage.getItem(PREFIX + 'ts') || '0', 10);
+          if (ts && Date.now() - ts > TTL) {
+            KEYS.forEach(function (k) { localStorage.removeItem(PREFIX + k); });
+            localStorage.removeItem(PREFIX + 'ts');
+          }
+          var q = new URLSearchParams(location.search);
+          var found = false;
+          KEYS.forEach(function (k) {
+            var v = q.get(k);
+            if (v) { localStorage.setItem(PREFIX + k, v); found = true; }
+          });
+          if (found) localStorage.setItem(PREFIX + 'ts', String(Date.now()));
+        } catch (e) { /* almacenamiento no disponible */ }
+
+        function get(k) {
+          try { return localStorage.getItem(PREFIX + k) || ''; } catch (e) { return ''; }
+        }
+
+        function decorate() {
+          // Calendly: los utm_* se propagan como parámetros nativos
+          document.querySelectorAll('a[href*="calendly.com"]').forEach(function (a) {
+            try {
+              var u = new URL(a.href);
+              KEYS.forEach(function (k) {
+                var v = get(k);
+                if (v && !u.searchParams.has(k)) u.searchParams.set(k, v);
+              });
+              a.href = u.toString();
+            } catch (e) {}
+          });
+          // WhatsApp: referencia legible para las asesoras
+          document.querySelectorAll('a[href*="wa.me"], a[href*="api.whatsapp.com"]').forEach(function (a) {
+            try {
+              var u = new URL(a.href);
+              var src = get('utm_source');
+              var cmp = get('utm_campaign');
+              if (src || cmp) {
+                var text = u.searchParams.get('text') || '';
+                var ref = ' [ref:' + (src || '-') + '|' + (cmp || '-') + ']';
+                if (text.indexOf('[ref:') === -1) u.searchParams.set('text', text + ref);
+                a.href = u.toString();
+              }
+            } catch (e) {}
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', decorate);
+        } else {
+          decorate();
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="min-h-screen flex flex-col">
+    <!-- GTM noscript -->
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${SITE.gtmId}`}
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"></iframe>
+    </noscript>
+
+    <Header />
+
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+    <StickyCtaMobile />
+    <WhatsAppFloat />
+
+    <!-- Revelado suave en scroll -->
+    <script is:inline>
+      (function () {
+        var els = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window) || !els.length) {
+          els.forEach(function (el) { el.classList.add('is-visible'); });
+          return;
+        }
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (en) {
+              if (en.isIntersecting) {
+                en.target.classList.add('is-visible');
+                io.unobserve(en.target);
+              }
+            });
+          },
+          { threshold: 0.12 }
+        );
+        els.forEach(function (el) { io.observe(el); });
+      })();
+    </script>
+  </body>
+</html>

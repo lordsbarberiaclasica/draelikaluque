@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/sections/Hero.astro';
+import Credenciales from '../components/sections/Credenciales.astro';
+import Procedimientos from '../components/sections/Procedimientos.astro';
+import Cirujana from '../components/sections/Cirujana.astro';
+import Acompanamiento from '../components/sections/Acompanamiento.astro';
+import QuizTeaser from '../components/sections/QuizTeaser.astro';
+import Internacionales from '../components/sections/Internacionales.astro';
+import Ubicaciones from '../components/sections/Ubicaciones.astro';
+import CtaFinal from '../components/sections/CtaFinal.astro';
+---
+
+<Base>
+  <Hero />
+  <Credenciales />
+  <Procedimientos />
+  <Cirujana />
+  <Acompanamiento />
+  <QuizTeaser />
+  <Internacionales />
+  <!--
+    <Testimonios />
+    ⚠️ Activar cuando existan los assets reales (fotos con permiso + videos).
+    Import: import Testimonios from '../components/sections/Testimonios.astro';
+  -->
+  <Ubicaciones />
+  <CtaFinal />
+</Base>

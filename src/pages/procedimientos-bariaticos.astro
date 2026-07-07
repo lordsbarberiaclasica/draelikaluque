@@ -1,0 +1,187 @@
+---
+/**
+ * /procedimientos-bariaticos/ — URL conservada tal cual de WordPress (SEO).
+ * Contenido base: docs/copy-wordpress/procedimientos.md (revisado compliance).
+ * ⚠️ Reescrituras de compliance sobre el copy original:
+ *   - "se consigue resolver comorbilidades" → "puede contribuir al control de
+ *     comorbilidades" (evita promesa de resultado).
+ *   - "permite la pérdida acelerada de peso" → descripción del mecanismo,
+ *     sin prometer velocidad de resultados.
+ * Los procedimientos NO bariátricos van como sección secundaria (decisión
+ * del proyecto: no diluir el posicionamiento bariátrico).
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaFinal from '../components/sections/CtaFinal.astro';
+import { SITE, waLink } from '../config';
+
+const bariatricos = [
+  {
+    id: 'balon-gastrico',
+    nombre: 'Balón gástrico',
+    img: '/images/proc-balon.png',
+    resumen:
+      'Consiste en la inserción de una esfera de silicona flexible y blanda que se introduce en el estómago mediante endoscopia, reduciendo la capacidad gástrica para acompañar el proceso de pérdida de peso.',
+    detalles: [
+      'No requiere cirugía mayor: se coloca por endoscopia, sin incisiones.',
+      'Es un dispositivo temporal que funciona dentro de un plan por fases con acompañamiento médico y nutricional.',
+      'Indicado en casos seleccionados; la candidatura se confirma en valoración.',
+    ],
+  },
+  {
+    id: 'manga-gastrica',
+    nombre: 'Manga gástrica (sleeve)',
+    img: '/images/proc-manga.png',
+    resumen:
+      'También conocida como sleeve gástrico, consiste en la extirpación de aproximadamente un 80% del estómago, convirtiéndolo en un tubo de menor capacidad que reduce la cantidad de alimento que se puede ingerir.',
+    detalles: [
+      'Es el procedimiento bariátrico más realizado en el mundo.',
+      'Se practica por laparoscopia: incisiones pequeñas, menor dolor postoperatorio y recuperación guiada.',
+      'Incluye el programa de acompañamiento de un año con 7 controles.',
+    ],
+  },
+  {
+    id: 'bypass-gastrico',
+    nombre: 'Bypass gástrico',
+    img: '/images/proc-bypass.png',
+    resumen:
+      'Técnica en la cual se crea un estómago pequeño de aproximadamente 15 a 20 ml que se conecta directamente al intestino delgado, logrando que el alimento «salte» un gran segmento y disminuyendo la absorción calórica y de nutrientes.',
+    detalles: [
+      'Suele indicarse en casos específicos, como reflujo severo o diabetes de larga evolución.',
+      'La elección entre manga y bypass se define con la Dra. en valoración, según criterios clínicos.',
+      'También se realiza por laparoscopia, con protocolo riguroso que minimiza riesgos.',
+    ],
+  },
+];
+
+const otros = [
+  {
+    nombre: 'Colecistectomía laparoscópica',
+    desc: 'Extracción de la vesícula patológica a través de incisiones pequeñas, con cámara de video y material especializado que reduce el dolor postoperatorio.',
+  },
+  {
+    nombre: 'Corrección de hernias',
+    desc: 'Con la misma técnica mínimamente invasiva se corrigen defectos herniarios: umbilical, inguinal, de pared abdominal, diástasis de rectos e incluso hernia diafragmática (hiatal).',
+  },
+  {
+    nombre: 'Cirugía antirreflujo',
+    desc: 'Tratamiento quirúrgico para la enfermedad por reflujo gastroesofágico (ERGE), en la que el alimento o el ácido gástrico se devuelve del estómago hacia el esófago.',
+  },
+  {
+    nombre: 'Cirugía de colon',
+    desc: 'La colectomía es la resección de una parte enferma del intestino grueso. Se indica en patologías como diverticulitis, obstrucción intestinal o colitis que no responde a tratamiento médico.',
+  },
+];
+---
+
+<Base
+  title="Procedimientos bariátricos en Barranquilla · Dra. Elika Luque"
+  description="Balón gástrico, manga (sleeve) y bypass gástrico por laparoscopia en Barranquilla. Cirugía mínimamente invasiva con protocolo riguroso y acompañamiento de un año. Dra. Elika Luque."
+>
+  <PageHero
+    eyebrow="Cirugía para la obesidad"
+    title="Procedimientos bariátricos"
+    sub="La cirugía bariátrica es el conjunto de procedimientos mínimamente invasivos para tratar la obesidad cuando métodos más conservadores —dieta, ejercicio y medicamentos— no han sido suficientes. Según cada caso, puede contribuir al control de comorbilidades asociadas y a la calidad de vida."
+  />
+
+  <!-- Procedimientos bariátricos: bloques alternados -->
+  <section class="bg-marfil">
+    <div class="wrap py-16 md:py-24 space-y-20 md:space-y-28">
+      {bariatricos.map((p, i) => (
+        <article
+          id={p.id}
+          class={`reveal grid gap-10 lg:gap-16 items-center lg:grid-cols-2 scroll-mt-28 ${i % 2 === 1 ? 'lg:[&>div:first-child]:order-2' : ''}`}
+        >
+          <div class="relative flex items-center justify-center rounded-3xl bg-azul-950 py-12 px-8 overflow-hidden">
+            <div
+              class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(246,210,154,0.16),transparent_65%)]"
+              aria-hidden="true"
+            >
+            </div>
+            <img
+              src={p.img}
+              alt={`Ilustración médica: ${p.nombre}`}
+              class="relative h-64 md:h-72 w-auto object-contain drop-shadow-[0_22px_35px_rgba(0,0,0,0.5)]"
+              loading="lazy"
+            />
+          </div>
+          <div>
+            <p class="eyebrow text-dorado-600">Procedimiento bariátrico</p>
+            <h2 class="mt-3 text-3xl md:text-4xl">{p.nombre}</h2>
+            <p class="mt-5 text-azul/80 leading-relaxed">{p.resumen}</p>
+            <ul class="mt-6 space-y-3" role="list">
+              {p.detalles.map((d) => (
+                <li class="flex gap-3 text-sm text-azul/70 leading-relaxed">
+                  <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-dorado-600" aria-hidden="true"></span>
+                  {d}
+                </li>
+              ))}
+            </ul>
+            <div class="mt-7 flex flex-wrap gap-3.5">
+              <a href={SITE.calendly} class="btn btn-gold">Agendar valoración</a>
+              <a href="/soy-candidato/" class="btn btn-ghost-dark">¿Soy candidato?</a>
+            </div>
+          </div>
+        </article>
+      ))}
+
+      <p class="text-xs text-azul/50 max-w-2xl reveal">
+        La indicación de cada procedimiento depende de criterios clínicos que se
+        evalúan en valoración médica. Esta información es orientativa y no
+        constituye un diagnóstico ni una promesa de resultados.
+      </p>
+    </div>
+  </section>
+
+  <!-- Laparoscopia avanzada -->
+  <section class="bg-azul text-marfil relative overflow-hidden">
+    <img
+      src="/images/quirofano.jpg"
+      alt=""
+      class="absolute inset-0 h-full w-full object-cover opacity-25"
+      loading="lazy"
+      aria-hidden="true"
+    />
+    <div class="absolute inset-0 bg-gradient-to-r from-azul via-azul/90 to-azul/60" aria-hidden="true"></div>
+    <div class="wrap relative py-16 md:py-24">
+      <div class="max-w-xl reveal">
+        <p class="eyebrow text-dorado">Cirugía laparoscópica avanzada</p>
+        <h2 class="mt-4 text-3xl md:text-4xl">Tecnología que cuida el tejido</h2>
+        <p class="mt-5 text-marfil/80 leading-relaxed">
+          Desarrollamos los procedimientos con técnicas mínimamente invasivas y
+          tecnología que permite reducir el daño de tejidos frente a la cirugía
+          convencional: incisiones pequeñas, menos dolor postoperatorio y una
+          recuperación acompañada paso a paso.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Otros procedimientos (sección secundaria, sin restar foco bariátrico) -->
+  <section class="bg-marfil">
+    <div class="wrap py-16 md:py-24">
+      <div class="max-w-xl reveal">
+        <p class="eyebrow text-dorado-600">Otros procedimientos laparoscópicos</p>
+        <h2 class="mt-4 text-2xl md:text-3xl">La misma técnica, otras indicaciones</h2>
+      </div>
+      <div class="mt-10 grid gap-5 sm:grid-cols-2">
+        {otros.map((o) => (
+          <article class="reveal card p-6">
+            <h3 class="font-display font-semibold text-lg text-azul">{o.nombre}</h3>
+            <p class="mt-2 text-sm text-azul/65 leading-relaxed">{o.desc}</p>
+            <a
+              href={waLink(`Hola, quiero información sobre ${o.nombre.toLowerCase()} con la Dra. Elika Luque.`)}
+              target="_blank"
+              rel="noopener"
+              class="mt-4 inline-flex items-center gap-2 text-sm font-display font-semibold text-azul hover:text-dorado-600 transition-colors"
+            >
+              Consultar por WhatsApp <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaFinal />
+</Base>

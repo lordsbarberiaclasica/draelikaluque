@@ -1,0 +1,58 @@
+---
+import { waLink } from '../../config';
+
+const pasos = [
+  { titulo: 'Prevaloración virtual', desc: 'Videollamada con el equipo antes de viajar para revisar tu caso y resolver dudas.' },
+  { titulo: 'Coordinación de fechas', desc: 'Organizamos exámenes, valoración presencial y cirugía en un mismo viaje.' },
+  { titulo: 'Cirugía en Barranquilla', desc: 'Procedimiento en clínicas de alto nivel: Clínica Portoazul y Torre Médica del Mar.' },
+  { titulo: 'Controles al volver', desc: 'Parte del seguimiento del primer año se realiza de forma virtual desde tu país.' },
+];
+---
+
+<section id="internacionales" class="bg-white">
+  <div class="wrap py-20 md:py-28 grid gap-12 lg:grid-cols-2 items-center">
+    <div class="reveal">
+      <p class="eyebrow text-dorado-600">Pacientes internacionales</p>
+      <h2 class="mt-4 text-3xl md:text-4xl">Viaja a Barranquilla por tu procedimiento</h2>
+      <p class="mt-5 text-azul/75 leading-relaxed">
+        Pacientes de Panamá, el Caribe y Estados Unidos eligen operarse en
+        Colombia con la Dra. Luque: formación europea y una inversión
+        considerablemente menor a la de sus países, sin sacrificar seguimiento.
+      </p>
+
+      <ol class="mt-9 space-y-6" role="list">
+        {pasos.map((p, i) => (
+          <li class="flex gap-5">
+            <span
+              class="h-9 w-9 shrink-0 rounded-full border border-dorado-600 text-dorado-600 font-display font-bold grid place-items-center text-sm"
+              aria-hidden="true"
+            >
+              {i + 1}
+            </span>
+            <div>
+              <h3 class="font-display font-semibold text-azul">{p.titulo}</h3>
+              <p class="mt-1 text-sm text-azul/65 leading-relaxed">{p.desc}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <a href={waLink('Hola, soy paciente internacional y quiero información sobre cirugía bariátrica con la Dra. Elika Luque.')} target="_blank" rel="noopener" class="btn btn-gold mt-9">
+        Iniciar mi proceso desde el exterior
+      </a>
+    </div>
+
+    <div class="relative reveal">
+      <img
+        src="/images/cirujana-perfil.jpg"
+        alt="La Dra. Elika Luque en quirófano con su gorro quirúrgico personalizado"
+        class="rounded-2xl w-full object-cover aspect-[4/5] shadow-2xl shadow-azul/20"
+        loading="lazy"
+      />
+      <div class="absolute -bottom-6 -left-4 md:-left-8 card p-5 max-w-[240px]">
+        <p class="font-display font-bold text-2xl text-azul">3 países</p>
+        <p class="text-xs text-azul/60 mt-1 leading-relaxed">de formación quirúrgica: Colombia, Francia y Bélgica</p>
+      </div>
+    </div>
+  </div>
+</section>

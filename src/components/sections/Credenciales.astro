@@ -1,0 +1,35 @@
+---
+/**
+ * Barra de credenciales institucionales.
+ * ⚠️ Los SVG reales se descargan con: bash scripts/fetch-remote-assets.sh
+ * Mientras tanto se muestran como texto sobrio (sin romper el layout).
+ */
+const logos = [
+  { src: '/images/credenciales/el-bosque.svg', alt: 'Universidad El Bosque', text: 'Universidad El Bosque' },
+  { src: '/images/credenciales/ircad.svg', alt: 'IRCAD France', text: 'IRCAD · Estrasburgo' },
+  { src: '/images/credenciales/acc.svg', alt: 'Asociación Colombiana de Cirugía', text: 'Asoc. Colombiana de Cirugía' },
+  { src: '/images/credenciales/felac.svg', alt: 'FELAC', text: 'FELAC' },
+  { src: '/images/credenciales/acs.svg', alt: 'American College of Surgeons', text: 'American College of Surgeons' },
+];
+---
+
+<section class="bg-marfil border-b border-azul/10" aria-label="Afiliaciones y formación">
+  <div class="wrap py-8">
+    <p class="text-center text-[0.68rem] tracking-[0.26em] uppercase font-display font-semibold text-azul/50">
+      Formación y membresías
+    </p>
+    <ul class="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4" role="list">
+      {logos.map((l) => (
+        <li class="flex items-center">
+          <img
+            src={l.src}
+            alt={l.alt}
+            class="h-9 w-auto opacity-70 hover:opacity-100 transition-opacity"
+            loading="lazy"
+            onerror="this.outerHTML='<span class=&quot;text-sm font-display font-semibold text-azul/60&quot;>' + this.alt + '</span>'"
+          />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,29 @@
+---
+/**
+ * ⚠️ SECCIÓN EN ESPERA DE ASSETS REALES — no publicar con placeholders.
+ * Regla del proyecto:
+ *  - Sitio orgánico: mejores fotos antes/después (permisos firmados ✓) + mejores videos.
+ *  - Landings de pauta: SOLO video (políticas Google/Meta).
+ * Cuando lleguen los assets: reemplazar los items y activar la sección en index.astro.
+ */
+const testimonios = [
+  { tipo: 'video', src: '', nombre: '', resumen: '' },
+  { tipo: 'foto', src: '', nombre: '', resumen: '' },
+];
+---
+
+<section id="testimonios" class="bg-marfil">
+  <div class="wrap py-20 md:py-24">
+    <div class="max-w-xl reveal">
+      <p class="eyebrow text-dorado-600">Historias reales</p>
+      <h2 class="mt-4 text-3xl md:text-4xl">Pacientes que ya recorrieron este camino</h2>
+    </div>
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
+      {testimonios.map(() => (
+        <div class="card p-6 grid place-items-center aspect-video text-azul/40 text-sm">
+          Pendiente: testimonio con consentimiento firmado
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
