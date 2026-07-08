@@ -1,0 +1,643 @@
+---
+/**
+ * L2 /quiz/ — Calificación y perfilado (tráfico frío). URL conservada de WordPress.
+ * Fiel a mockups Landing_2_PC / RESPONSIVE + detalle de pregunta 4 (IMC).
+ *
+ * MOTOR DE ENRUTAMIENTO — sigue el criterio clínico VALIDADO por la Dra.
+ * (el prototipo HTML de referencia usaba otra lógica; se corrigió aquí):
+ *   · Balón: IMC hasta 32 · descartado si procedimiento previo o reflujo frecuente.
+ *   · Manga: IMC 29.5–37.9 (ruta base).
+ *   · Bypass: IMC ≥38, o salto si reflujo severo; diabetes >2 años también salta,
+ *     pero el quiz no pregunta duración → se muestra como alternativa con nota.
+ *   · IMC <29.5 sin balón → manejo médico/nutrición. Nunca se "bota" a nadie.
+ * El resultado son 2 OPCIONES PROBABLES + porqués (orientación, no diagnóstico).
+ *
+ * ⚠️ PENDIENTES:
+ *   · whatsappQuiz (573218960696, del prototipo) — confirmar que es la línea de asesoras.
+ *   · SITE.calendly sigue en placeholder — bloqueante para lanzar.
+ *   · Enlace real de Política de privacidad / Habeas Data en el checkbox.
+ *   · Walter: verificar que las filas llegan a la hoja (se envían los 12 campos del
+ *     prototipo + utm_* extra; si el Apps Script usa columnas fijas, ampliarlo).
+ */
+import Base from '../layouts/Base.astro';
+import { SITE, waLink } from '../config';
+
+const heroChecks = [
+  'Orientación inicial (sin adivinar)',
+  'Útil si has rebotado mil veces o estás indecisa(o)',
+  'Al final puedes agendar tu prevaloración sin costo',
+];
+
+const diferenciales = [
+  'Seguimiento hasta un año incluido (cuando aplica)',
+  'Cirugías en clínicas de alto nivel en Barranquilla',
+  'Prevaloración virtual o presencial',
+];
+
+const internacional = [
+  'Prevaloración antes de viajar',
+  'Coordinación de fechas según tu disponibilidad',
+  'Proceso típico ~1 mes (internacional: depende de fechas)',
+];
+
+const faqs = [
+  { q: '¿Esto reemplaza una consulta?', a: 'No. El quiz es una orientación inicial para que llegues mejor preparada(o). La recomendación final se confirma en valoración clínica y con tus estudios.' },
+  { q: '¿Qué pasa después del quiz?', a: 'Ves tus 2 opciones más probables con sus porqués, y puedes agendar tu prevaloración sin costo (15 minutos) de inmediato.' },
+  { q: '¿Es virtual o presencial?', a: 'Ambas. La prevaloración puede ser por videollamada o presencial en Barranquilla; lo eliges al agendar.' },
+  { q: '¿Qué pasa con mi privacidad?', a: 'Tus respuestas son confidenciales y se usan únicamente para orientarte y preparar tu valoración con el equipo de la Dra. Elika Luque.' },
+  { q: '¿Si no lleno el quiz puedo agendar cita?', a: 'Sí, claro. El quiz es opcional: puedes agendar tu prevaloración directamente desde el botón de agenda.' },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+---
+
+<Base
+  variant="landing"
+  title="Descubre tu ruta en 2 minutos · Quiz bariátrico · Dra. Elika Luque"
+  description="Responde 7 preguntas y conoce qué opciones podrían aplicar a tu caso: manga, bypass, balón u otra ruta. Orientación inicial confidencial — la decisión final se confirma en valoración. Dra. Elika Luque, Barranquilla."
+  ogImage="/images/landing/hero-quiz.webp"
+>
+  <script is:inline type="application/ld+json" set:html={faqJsonLd} />
+
+  <!-- 1 · HERO -->
+  <section class="bg-white">
+    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center">
+      <div>
+        <h1 class="text-3xl md:text-[2.6rem] leading-tight text-azul">
+          Descubre tu ruta <span class="text-dorado-600">en 2 minutos</span>
+        </h1>
+        <p class="mt-4 font-display font-semibold text-dorado-600 leading-relaxed">
+          Responde 7 preguntas y te mostramos qué opciones podrían aplicar a tu
+          caso: manga · bypass · balón · otra ruta.
+        </p>
+        <ul class="mt-6 space-y-2.5" role="list">
+          {heroChecks.map((c) => (
+            <li class="flex items-start gap-2.5 text-sm text-azul/80">
+              <img src="/images/landing/check.png" alt="" class="h-4 w-4 mt-0.5" />
+              {c}
+            </li>
+          ))}
+        </ul>
+        <a href="#quiz" class="btn btn-navy mt-7">Empezar el quiz (2 min)</a>
+        <p class="mt-4 text-xs text-azul/50 max-w-md">
+          La recomendación final se confirma tras valoración clínica y estudios, según tu caso. ⚕
+        </p>
+      </div>
+      <img
+        src="/images/landing/hero-quiz.webp"
+        alt="Médica estrechando la mano de un paciente en consulta"
+        class="w-full max-w-lg justify-self-center lg:justify-self-end"
+        width="1000"
+        height="945"
+        fetchpriority="high"
+      />
+    </div>
+  </section>
+
+  <!-- 2 · QUIZ -->
+  <section id="quiz" class="bg-marfil border-y border-azul/10 scroll-mt-16">
+    <div class="wrap py-12 md:py-16">
+      <div id="quiz-container" class="card mx-auto max-w-2xl p-7 md:p-10 text-center">
+
+        <!-- Paso 1 -->
+        <div class="quiz-step active" data-step="1" role="group" aria-labelledby="q1">
+          <p class="eyebrow text-dorado-600 justify-center">1 pregunta de 7</p>
+          <h2 id="q1" tabindex="-1" class="mt-3 text-2xl md:text-3xl">¿Qué te trajo hoy?</h2>
+          <div class="mt-8 space-y-3.5">
+            <button type="button" class="quiz-option" data-key="motivo" data-value="Reboté mil veces">Reboté mil veces</button>
+            <button type="button" class="quiz-option" data-key="motivo" data-value="Salud en riesgo">Salud en riesgo</button>
+            <button type="button" class="quiz-option" data-key="motivo" data-value="Miedo a cirugía">Miedo a cirugía</button>
+            <button type="button" class="quiz-option" data-key="motivo" data-value="Quiero bajar sin cirugía">Quiero bajar sin cirugía</button>
+            <button type="button" class="quiz-option" data-key="motivo" data-value="Reflujo / acidez frecuente">Reflujo / acidez frecuente</button>
+          </div>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="quiz-step" data-step="2" role="group" aria-labelledby="q2">
+          <p class="eyebrow text-dorado-600 justify-center">2 pregunta de 7</p>
+          <h2 id="q2" tabindex="-1" class="mt-3 text-2xl md:text-3xl">¿Qué has intentado antes?</h2>
+          <div class="mt-8 space-y-3.5">
+            <button type="button" class="quiz-option" data-key="intentos" data-value="Dietas / nutricionista">Dietas / nutricionista</button>
+            <button type="button" class="quiz-option" data-key="intentos" data-value="Gimnasio / entrenador">Gimnasio / entrenador</button>
+            <button type="button" class="quiz-option" data-key="intentos" data-value="Medicamentos para bajar">Medicamentos para bajar</button>
+            <button type="button" class="quiz-option" data-key="intentos" data-value="Nada sostenido">Nada sostenido</button>
+            <button type="button" class="quiz-option" data-key="intentos" data-value="Ya tuve procedimiento previo (balón/cirugía)">Ya tuve procedimiento previo (balón/cirugía)</button>
+          </div>
+        </div>
+
+        <!-- Paso 3 -->
+        <div class="quiz-step" data-step="3" role="group" aria-labelledby="q3">
+          <p class="eyebrow text-dorado-600 justify-center">3 pregunta de 7</p>
+          <h2 id="q3" tabindex="-1" class="mt-3 text-2xl md:text-3xl">¿Tu patrón más común?</h2>
+          <div class="mt-8 space-y-3.5">
+            <button type="button" class="quiz-option" data-key="patron" data-value="Bajo rápido y recupero rápido">Bajo rápido y recupero rápido</button>
+            <button type="button" class="quiz-option" data-key="patron" data-value="Bajo un poco y me estanco">Bajo un poco y me estanco</button>
+            <button type="button" class="quiz-option" data-key="patron" data-value="Me cuesta bajar desde el inicio">Me cuesta bajar desde el inicio</button>
+            <button type="button" class="quiz-option" data-key="patron" data-value="Ya bajé mucho antes y recuperé">Ya bajé mucho antes y recuperé</button>
+          </div>
+        </div>
+
+        <!-- Paso 4 · IMC con calculadora integrada -->
+        <div class="quiz-step" data-step="4" role="group" aria-labelledby="q4">
+          <p class="eyebrow text-dorado-600 justify-center">4 pregunta de 7</p>
+          <h2 id="q4" tabindex="-1" class="mt-3 text-2xl md:text-3xl">¿Conoces tu IMC (Índice de Masa Corporal)?</h2>
+          <p class="mt-2 text-xs text-azul/50">
+            Si no lo sabes, puedes calcularlo aquí en 20 segundos.<br />
+            Es un cálculo aproximado y solo orientativo.
+          </p>
+          <div class="mt-7 space-y-3.5">
+            <button type="button" class="quiz-option" data-imc-mode="manual">Sí, lo conozco</button>
+            <button type="button" class="quiz-option" data-imc-mode="calc">No lo sé (calcular)</button>
+            <button type="button" class="quiz-option" data-key="imc" data-value="__skip__">Prefiero no decirlo ahora</button>
+          </div>
+
+          <!-- Sub-panel: manual -->
+          <div id="imc-manual" class="hidden mt-7 pt-6 border-t border-azul/10">
+            <label for="imc-manual-input" class="font-display font-semibold text-sm text-azul">Mi IMC es:</label>
+            <div class="mt-3 flex justify-center gap-3">
+              <input id="imc-manual-input" type="number" inputmode="decimal" min="15" max="60" step="0.1" placeholder="ej: 31.5" class="quiz-input !w-32 text-center" />
+              <button type="button" id="imc-manual-next" class="btn btn-gold !py-2.5">Siguiente →</button>
+            </div>
+          </div>
+
+          <!-- Sub-panel: calculadora -->
+          <div id="imc-calc" class="hidden mt-7 pt-6 border-t border-azul/10">
+            <div class="grid gap-4 sm:grid-cols-2 max-w-sm mx-auto">
+              <div class="text-left">
+                <label for="imc-altura" class="text-sm font-display font-semibold text-azul">Altura (cm)</label>
+                <input id="imc-altura" type="number" inputmode="decimal" min="120" max="230" placeholder="165" class="quiz-input mt-1.5" />
+              </div>
+              <div class="text-left">
+                <label for="imc-peso" class="text-sm font-display font-semibold text-azul">Peso (kg)</label>
+                <input id="imc-peso" type="number" inputmode="decimal" min="30" max="350" placeholder="92" class="quiz-input mt-1.5" />
+              </div>
+            </div>
+            <button type="button" id="imc-calc-btn" class="btn btn-navy mt-5">Calcular IMC</button>
+            <p id="imc-calc-error" class="hidden mt-3 text-sm text-[#c9483a]" role="alert">Revisa los datos: altura 120–230 cm, peso 30–350 kg.</p>
+
+            <div id="imc-calc-result" class="hidden mt-6" aria-live="polite">
+              <p class="font-display font-bold text-2xl text-azul">Tu IMC aproximado es: <span id="imc-calc-value" class="text-dorado-600">—</span></p>
+              <p class="mt-1 font-display font-semibold text-azul/80">Categoría: <span id="imc-calc-cat">—</span></p>
+              <p class="mt-2 text-xs text-azul/50 italic">Es un cálculo aproximado y solo orientativo.<br />La recomendación final se confirma en la valoración clínica.</p>
+              <table class="mt-5 mx-auto text-sm text-azul/80 border border-azul/15 rounded-xl overflow-hidden">
+                <tbody>
+                  <tr class="border-b border-azul/10"><td class="px-4 py-2 border-r border-azul/10">IMC 30.0 – 34.9</td><td class="px-4 py-2">Obesidad grado I</td></tr>
+                  <tr class="border-b border-azul/10"><td class="px-4 py-2 border-r border-azul/10">IMC 35.0 – 39.9</td><td class="px-4 py-2">Obesidad grado II</td></tr>
+                  <tr class="border-b border-azul/10"><td class="px-4 py-2 border-r border-azul/10">IMC 40.0 – 49.9</td><td class="px-4 py-2">Obesidad grado III</td></tr>
+                  <tr><td class="px-4 py-2 border-r border-azul/10">IMC ≥ 50.0</td><td class="px-4 py-2">Obesidad grado III alta</td></tr>
+                </tbody>
+              </table>
+              <p class="mt-4 text-sm text-azul/70">Si tu IMC es &lt; 30, también podemos orientarte; continúa el quiz.</p>
+              <button type="button" id="imc-calc-next" class="btn btn-gold mt-5">Continuar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 5 -->
+        <div class="quiz-step" data-step="5" role="group" aria-labelledby="q5">
+          <p class="eyebrow text-dorado-600 justify-center">5 pregunta de 7</p>
+          <h2 id="q5" tabindex="-1" class="mt-3 text-2xl md:text-3xl">¿Salud?</h2>
+          <div class="mt-8 space-y-3.5">
+            <button type="button" class="quiz-option" data-key="salud" data-value="Presión alta">Presión alta</button>
+            <button type="button" class="quiz-option" data-key="salud" data-value="Prediabetes/diabetes">Prediabetes/diabetes</button>
+            <button type="button" class="quiz-option" data-key="salud" data-value="Apnea/ronquidos fuertes">Apnea/ronquidos fuertes</button>
+            <button type="button" class="quiz-option" data-key="salud" data-value="Dolor articular">Dolor articular</button>
+            <button type="button" class="quiz-option" data-key="salud" data-value="Ninguna / no sé">Ninguna / no sé</button>
+          </div>
+        </div>
+
+        <!-- Paso 6 -->
+        <div class="quiz-step" data-step="6" role="group" aria-labelledby="q6">
+          <p class="eyebrow text-dorado-600 justify-center">6 pregunta de 7</p>
+          <h2 id="q6" tabindex="-1" class="mt-3 text-2xl md:text-3xl">¿Reflujo?</h2>
+          <div class="mt-8 space-y-3.5">
+            <button type="button" class="quiz-option" data-key="reflujo" data-value="No">No</button>
+            <button type="button" class="quiz-option" data-key="reflujo" data-value="Sí ocasional">Sí ocasional</button>
+            <button type="button" class="quiz-option" data-key="reflujo" data-value="Sí frecuente (sobre todo nocturno)">Sí frecuente (sobre todo nocturno)</button>
+          </div>
+        </div>
+
+        <!-- Paso 7 -->
+        <div class="quiz-step" data-step="7" role="group" aria-labelledby="q7">
+          <p class="eyebrow text-dorado-600 justify-center">7 pregunta de 7</p>
+          <h2 id="q7" tabindex="-1" class="mt-3 text-2xl md:text-3xl">¿Qué te frena más?</h2>
+          <div class="mt-8 space-y-3.5">
+            <button type="button" class="quiz-option" data-key="freno" data-value="Quiero evitar cirugía">Quiero evitar cirugía</button>
+            <button type="button" class="quiz-option" data-key="freno" data-value="Me da miedo la cirugía">Me da miedo la cirugía</button>
+            <button type="button" class="quiz-option" data-key="freno" data-value="Quiero la opción más efectiva a largo plazo">Quiero la opción más efectiva a largo plazo</button>
+            <button type="button" class="quiz-option" data-key="freno" data-value="No sé qué me conviene">No sé qué me conviene</button>
+          </div>
+        </div>
+
+        <!-- Paso 8 · Captura -->
+        <div class="quiz-step" data-step="8" role="group" aria-labelledby="q8">
+          <h2 id="q8" tabindex="-1" class="text-2xl md:text-3xl">Te mostramos tu resultado</h2>
+          <p class="mt-2 text-sm text-azul/60">Te enviamos tu orientación y el siguiente paso. Datos confidenciales.</p>
+          <div class="mt-7 max-w-md mx-auto space-y-4 text-left">
+            <div>
+              <label for="lead-nombre" class="text-sm font-display font-semibold text-azul">Nombre</label>
+              <input id="lead-nombre" type="text" autocomplete="name" class="quiz-input mt-1.5" required />
+            </div>
+            <div>
+              <label for="lead-whatsapp" class="text-sm font-display font-semibold text-azul">WhatsApp</label>
+              <div class="mt-1.5 flex gap-2.5">
+                <select id="lead-indicativo" class="quiz-input !w-32" aria-label="Indicativo de país">
+                  <option value="57">+57 (CO)</option>
+                  <option value="507">+507 (PA)</option>
+                  <option value="502">+502 (GT)</option>
+                  <option value="1">+1 (US)</option>
+                  <option value="52">+52 (MX)</option>
+                  <option value="593">+593 (EC)</option>
+                </select>
+                <input id="lead-whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Número" class="quiz-input flex-1" required />
+              </div>
+            </div>
+            <div>
+              <label for="lead-pais" class="text-sm font-display font-semibold text-azul">País</label>
+              <input id="lead-pais" type="text" autocomplete="country-name" class="quiz-input mt-1.5" required />
+            </div>
+            <div>
+              <label for="lead-correo" class="text-sm font-display font-semibold text-azul">Correo</label>
+              <input id="lead-correo" type="email" autocomplete="email" class="quiz-input mt-1.5" required />
+            </div>
+            <label class="flex items-start gap-2.5 text-xs text-azul/60 cursor-pointer">
+              <input id="lead-consent" type="checkbox" class="mt-0.5 h-4 w-4 accent-[#e2b877]" required />
+              <span>
+                Autorizo el tratamiento de mis datos personales, incluidos datos de
+                salud, para recibir orientación y contacto del equipo de la Dra.
+                Elika Luque, según la <a href="#" class="underline">Política de privacidad y Habeas Data</a>.
+                <!-- ⚠️ TODO: enlazar política real antes de lanzar pauta -->
+              </span>
+            </label>
+          </div>
+          <p id="lead-error" class="hidden mt-4 text-sm text-[#c9483a]" role="alert">Completa todos los campos y acepta la política de datos.</p>
+          <div class="mt-6 flex flex-col items-center gap-3.5">
+            <button type="button" id="btn-resultado" class="btn btn-navy w-full max-w-xs">Ver mi resultado</button>
+            <button type="button" id="btn-whatsapp" class="btn w-full max-w-xs !bg-[#25D366] text-white shadow-lg">Prefiero WhatsApp</button>
+          </div>
+          <p class="mt-4 text-[0.7rem] text-azul/45">Tu información es confidencial.</p>
+        </div>
+
+        <!-- Paso 9 · Resultado -->
+        <div class="quiz-step" data-step="9" role="group" aria-labelledby="q9">
+          <p class="eyebrow text-dorado-600 justify-center">Tu orientación según tus respuestas</p>
+          <h2 id="q9" tabindex="-1" class="mt-3 text-2xl md:text-3xl">Tus 2 opciones más probables:</h2>
+          <p class="mt-2 text-xs text-azul/50 italic">Esto es orientativo. La decisión final se confirma en valoración y estudios.</p>
+
+          <div class="mt-7 grid gap-4 sm:grid-cols-2 text-left">
+            <div class="rounded-2xl border-2 border-dorado-600 bg-dorado/10 p-5">
+              <p class="text-[0.65rem] uppercase tracking-[0.18em] font-display font-semibold text-dorado-600">Opción 1 · principal</p>
+              <p id="res-principal" class="mt-1.5 font-display font-bold text-2xl text-azul">—</p>
+            </div>
+            <div class="rounded-2xl border border-azul/15 bg-white p-5">
+              <p class="text-[0.65rem] uppercase tracking-[0.18em] font-display font-semibold text-azul/50">Opción 2 · alternativa</p>
+              <p id="res-alternativa" class="mt-1.5 font-display font-bold text-2xl text-azul">—</p>
+            </div>
+          </div>
+
+          <h3 class="mt-8 font-display font-bold text-xl text-azul">¿Por qué?</h3>
+          <ul id="res-porque" class="mt-4 space-y-2 text-left max-w-md mx-auto text-sm text-azul/75" role="list"></ul>
+
+          <div class="mt-8 flex flex-col items-center gap-3.5">
+            <button type="button" id="btn-agendar-embed" class="btn btn-navy">Agendar prevaloración (15 min)</button>
+            <a id="btn-wa-resultado" href="#" target="_blank" rel="noopener" class="btn !bg-[#25D366] text-white">Continuar por WhatsApp</a>
+          </div>
+          <div id="calendly-embed" class="hidden mt-8" style="min-width:300px;height:700px;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · AGENDA DIRECTA -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">Agenda tu prevaloración <span class="text-dorado-600">sin costo (15 min)</span></h2>
+      <p class="mt-3 text-sm text-azul/60">En 15 minutos definimos:</p>
+      <div class="max-w-md mx-auto mt-6 text-left">
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Candidatura</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Ruta orientativa</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Siguiente paso</div>
+      </div>
+      <div class="mt-7 flex flex-col items-center gap-3.5">
+        <a href={SITE.calendly} class="btn btn-navy">Agendar prevaloración (15 min)</a>
+        <a href={waLink('Hola, hice el quiz y quiero agendar mi prevaloración sin costo (15 min).')} target="_blank" rel="noopener" aria-label="WhatsApp" class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.06.9.92-2.98-.2-.31a8.2 8.2 0 1 1 6.82 3.72z"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · DIFERENCIALES / INTERNACIONAL / AGENDA -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-14 md:py-18">
+      <h2 class="text-2xl md:text-3xl text-center">Diferenciales <span class="text-dorado-600">reales</span></h2>
+      <div class="max-w-2xl mx-auto mt-7">
+        {diferenciales.map((d) => (
+          <div class="check-row"><img src="/images/landing/check.png" alt="" /> {d}</div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-18">
+      <h2 class="text-2xl md:text-3xl text-center">Si vienes desde <span class="text-dorado-600">otro país</span></h2>
+      <div class="max-w-2xl mx-auto mt-7">
+        {internacional.map((d) => (
+          <div class="check-row"><img src="/images/landing/check.png" alt="" /> {d}</div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-14 md:py-18">
+      <h2 class="text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
+      <div class="max-w-2xl mx-auto mt-7">
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Prevaloraciones: {SITE.horario}</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> WhatsApp (secretaría): {SITE.horarioWhatsapp}</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Confirmación de consultas: sí</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Si escribes fuera de horario: respuesta el siguiente día hábil</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · FAQ -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
+      <div class="max-w-3xl mx-auto mt-9">
+        {faqs.map((f) => (
+          <details class="faq-item" name="faq-quiz">
+            <summary>{f.q}</summary>
+            <p class="faq-body !pl-0">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script
+  is:inline
+  define:vars={{
+    CALENDLY: SITE.calendly,
+    WA_QUIZ: SITE.whatsappQuiz,
+    SHEET_URL: SITE.quizSheetEndpoint,
+  }}
+>
+  (function () {
+    var respuestas = {};
+    var imcNum = null;
+    var pasoActual = 1;
+    var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+
+    function $(id) { return document.getElementById(id); }
+    function utm(k) { try { return localStorage.getItem('el_' + k) || ''; } catch (e) { return ''; } }
+
+    function irAPaso(n) {
+      var actual = document.querySelector('.quiz-step[data-step="' + pasoActual + '"]');
+      var siguiente = document.querySelector('.quiz-step[data-step="' + n + '"]');
+      if (!siguiente) return;
+      actual.classList.remove('active');
+      siguiente.classList.add('active');
+      pasoActual = n;
+      var cont = $('quiz-container');
+      var top = cont.getBoundingClientRect().top + window.pageYOffset - 90;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+      var h = siguiente.querySelector('h2');
+      if (h) h.focus({ preventScroll: true });
+    }
+
+    /* Opciones de respuesta (delegación) */
+    $('quiz-container').addEventListener('click', function (e) {
+      var btn = e.target.closest('.quiz-option');
+      if (!btn) return;
+
+      if (btn.dataset.imcMode === 'manual') {
+        $('imc-manual').classList.remove('hidden');
+        $('imc-calc').classList.add('hidden');
+        $('imc-manual-input').focus();
+        return;
+      }
+      if (btn.dataset.imcMode === 'calc') {
+        $('imc-calc').classList.remove('hidden');
+        $('imc-manual').classList.add('hidden');
+        $('imc-altura').focus();
+        return;
+      }
+
+      var key = btn.dataset.key;
+      var value = btn.dataset.value;
+      if (!key) return;
+      if (key === 'imc' && value === '__skip__') {
+        respuestas.imc = 'No indicado';
+        imcNum = null;
+        irAPaso(5);
+        return;
+      }
+      respuestas[key] = value;
+      irAPaso(pasoActual + 1);
+    });
+
+    /* IMC manual */
+    $('imc-manual-next').addEventListener('click', function () {
+      var v = parseFloat(($('imc-manual-input').value || '').replace(',', '.'));
+      if (!v || v < 15 || v > 60) { alert('Ingresa un IMC válido (15–60).'); return; }
+      imcNum = v;
+      respuestas.imc = 'Manual: ' + v.toFixed(1);
+      irAPaso(5);
+    });
+
+    /* IMC calculado */
+    function categoriaIMC(v) {
+      if (v < 18.5) return 'Bajo de lo normal';
+      if (v < 25) return 'Peso saludable';
+      if (v < 30) return 'Sobrepeso';
+      if (v < 35) return 'Obesidad grado I';
+      if (v < 40) return 'Obesidad grado II';
+      if (v < 50) return 'Obesidad grado III';
+      return 'Obesidad grado III alta';
+    }
+    $('imc-calc-btn').addEventListener('click', function () {
+      var alt = parseFloat(($('imc-altura').value || '').replace(',', '.'));
+      var peso = parseFloat(($('imc-peso').value || '').replace(',', '.'));
+      var err = $('imc-calc-error');
+      if (!alt || !peso || alt < 120 || alt > 230 || peso < 30 || peso > 350) {
+        err.classList.remove('hidden');
+        return;
+      }
+      err.classList.add('hidden');
+      var m = alt / 100;
+      imcNum = peso / (m * m);
+      $('imc-calc-value').textContent = imcNum.toFixed(1).replace('.', ',');
+      $('imc-calc-cat').textContent = categoriaIMC(imcNum);
+      $('imc-calc-result').classList.remove('hidden');
+      respuestas.imc = 'Calculado: ' + imcNum.toFixed(1);
+    });
+    $('imc-calc-next').addEventListener('click', function () { irAPaso(5); });
+
+    /* ============================================================
+       MOTOR DE ORIENTACIÓN — criterio clínico validado por la Dra.
+       Balón: IMC ≤32, sin procedimiento previo ni reflujo frecuente.
+       Manga: 29.5–37.9 (base) · Bypass: ≥38 o salto por reflujo severo.
+       Diabetes: el salto aplica si lleva >2 años (no se pregunta la
+       duración) → se refleja como alternativa con nota, no como salto.
+       IMC <29.5 sin balón → manejo médico. Nunca se descarta a nadie.
+       ============================================================ */
+    function calcularOrientacion(r, imc) {
+      var reflujoSevero = r.reflujo === 'Sí frecuente (sobre todo nocturno)';
+      var previo = r.intentos === 'Ya tuve procedimiento previo (balón/cirugía)';
+      var diabetes = r.salud === 'Prediabetes/diabetes';
+      var evitarCirugia = r.freno === 'Quiero evitar cirugía' || r.motivo === 'Quiero bajar sin cirugía';
+      var balonOk = imc !== null && imc <= 32 && !previo && !reflujoSevero;
+
+      var principal, alternativa;
+      var notas = [];
+
+      if (imc === null) {
+        if (reflujoSevero) { principal = 'Definir manga vs. bypass'; alternativa = 'Se precisa con tu IMC y estudios'; }
+        else if (evitarCirugia) { principal = 'Balón gástrico (sujeto a IMC)'; alternativa = 'Manga gástrica'; }
+        else { principal = 'Manga gástrica'; alternativa = 'Se precisa con tu IMC en valoración'; }
+        notas.push('Sin tu IMC la orientación es más general: en la prevaloración se precisa.');
+      } else if (imc >= 38) {
+        principal = 'Bypass gástrico';
+        alternativa = 'Manga gástrica';
+      } else if (imc >= 29.5) {
+        if (reflujoSevero) {
+          principal = 'Bypass gástrico';
+          alternativa = 'Manga gástrica';
+          notas.push('El reflujo frecuente suele inclinar la ruta hacia bypass.');
+        } else if (evitarCirugia && balonOk) {
+          principal = 'Balón gástrico';
+          alternativa = 'Manga gástrica';
+        } else {
+          principal = 'Manga gástrica';
+          alternativa = balonOk ? 'Balón gástrico' : 'Bypass gástrico';
+        }
+        if (diabetes) notas.push('Si tu diabetes lleva más de 2 años, la ruta puede inclinarse a bypass; se confirma en valoración.');
+      } else {
+        if (balonOk) { principal = 'Balón gástrico'; alternativa = 'Manejo médico y nutricional'; }
+        else { principal = 'Manejo médico y nutricional'; alternativa = 'Valoración para definir opciones'; }
+      }
+
+      return { principal: principal, alternativa: alternativa, notas: notas };
+    }
+
+    /* Paso 8: validación + envío */
+    function leerFormulario() {
+      var nombre = $('lead-nombre').value.trim();
+      var ind = $('lead-indicativo').value;
+      var num = $('lead-whatsapp').value.trim();
+      var pais = $('lead-pais').value.trim();
+      var correo = $('lead-correo').value.trim();
+      var consent = $('lead-consent').checked;
+      if (!nombre || !num || !pais || !correo || !consent) return null;
+      return { nombre: nombre, whatsapp: '+' + ind + num.replace(/\D/g, ''), pais: pais, correo: correo };
+    }
+
+    function enviarASheets(lead, res) {
+      try {
+        var fd = new URLSearchParams();
+        fd.append('nombre', lead.nombre);
+        fd.append('whatsapp', lead.whatsapp);
+        fd.append('pais', lead.pais);
+        fd.append('correo', lead.correo);
+        fd.append('recomendacion', res.principal + ' (alt: ' + res.alternativa + ')');
+        fd.append('motivo', respuestas.motivo || '');
+        fd.append('intentos', respuestas.intentos || '');
+        fd.append('patron', respuestas.patron || '');
+        fd.append('imc', respuestas.imc || '');
+        fd.append('salud', respuestas.salud || '');
+        fd.append('reflujo', respuestas.reflujo || '');
+        fd.append('freno', respuestas.freno || '');
+        UTM_KEYS.forEach(function (k) { fd.append(k, utm(k)); });
+        fd.append('pagina', '/quiz/');
+        fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: fd });
+      } catch (e) { /* el registro no debe bloquear al usuario */ }
+    }
+
+    function mensajeWhatsApp(lead, res) {
+      var ref = (utm('utm_source') || utm('utm_campaign')) ? ' [ref:' + (utm('utm_source') || '-') + '|' + (utm('utm_campaign') || '-') + ']' : '';
+      return 'Hola, soy ' + lead.nombre + ' (' + lead.pais + '). Hice el quiz y mi orientación fue: ' +
+        res.principal + ' (alternativa: ' + res.alternativa + '). IMC: ' + (respuestas.imc || 'no indicado') +
+        '. Motivo: ' + (respuestas.motivo || '-') + '. Reflujo: ' + (respuestas.reflujo || '-') + '.' + ref;
+    }
+
+    function mostrarResultado(res, lead) {
+      $('res-principal').textContent = res.principal;
+      $('res-alternativa').textContent = res.alternativa;
+      var ul = $('res-porque');
+      ul.innerHTML = '';
+      var porque = [
+        'Tu patrón: ' + (respuestas.patron || '—'),
+        'Reflujo: ' + (respuestas.reflujo || '—'),
+        'Objetivo principal: ' + (respuestas.freno || respuestas.motivo || '—'),
+      ].concat(res.notas);
+      porque.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = '· ' + t;
+        ul.appendChild(li);
+      });
+      $('btn-wa-resultado').href = 'https://wa.me/' + WA_QUIZ + '?text=' + encodeURIComponent(mensajeWhatsApp(lead, res));
+      irAPaso(9);
+    }
+
+    var CAL_LOADED = false;
+    function abrirCalendly(lead) {
+      var box = $('calendly-embed');
+      box.classList.remove('hidden');
+      var url = new URL(CALENDLY);
+      UTM_KEYS.forEach(function (k) { var v = utm(k); if (v) url.searchParams.set(k, v); });
+      function init() {
+        window.Calendly.initInlineWidget({
+          url: url.toString(),
+          parentElement: box,
+          prefill: { name: lead.nombre, email: lead.correo },
+        });
+      }
+      if (CAL_LOADED && window.Calendly) { init(); return; }
+      var s = document.createElement('script');
+      s.src = 'https://assets.calendly.com/assets/external/widget.js';
+      s.async = true;
+      s.onload = function () { CAL_LOADED = true; init(); };
+      document.head.appendChild(s);
+    }
+
+    var ultimoLead = null;
+    var ultimoRes = null;
+
+    $('btn-resultado').addEventListener('click', function () {
+      var lead = leerFormulario();
+      if (!lead) { $('lead-error').classList.remove('hidden'); return; }
+      $('lead-error').classList.add('hidden');
+      var res = calcularOrientacion(respuestas, imcNum);
+      ultimoLead = lead; ultimoRes = res;
+      enviarASheets(lead, res);
+      mostrarResultado(res, lead);
+    });
+
+    $('btn-whatsapp').addEventListener('click', function () {
+      var lead = leerFormulario();
+      if (!lead) { $('lead-error').classList.remove('hidden'); return; }
+      $('lead-error').classList.add('hidden');
+      var res = calcularOrientacion(respuestas, imcNum);
+      ultimoLead = lead; ultimoRes = res;
+      enviarASheets(lead, res);
+      window.open('https://wa.me/' + WA_QUIZ + '?text=' + encodeURIComponent(mensajeWhatsApp(lead, res)), '_blank');
+      mostrarResultado(res, lead);
+    });
+
+    $('btn-agendar-embed').addEventListener('click', function () {
+      if (ultimoLead) abrirCalendly(ultimoLead);
+    });
+  })();
+</script>

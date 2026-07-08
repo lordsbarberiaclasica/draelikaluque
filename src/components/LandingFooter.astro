@@ -1,0 +1,15 @@
+---
+import { SITE } from '../config';
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-azul-950 text-marfil/70">
+  <div class="wrap py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+    <img src="/images/logo-el.png" alt="" width="34" height="34" class="h-8 w-8 object-contain" />
+    <p class="text-center">
+      La información de esta página es orientativa y no reemplaza una valoración médica.
+    </p>
+    <!-- ⚠️ TODO: enlazar política de privacidad / Habeas Data real -->
+    <p>© {year} {SITE.name} · <a href="#" class="underline hover:text-dorado" aria-disabled="true">Habeas Data (próximamente)</a></p>
+  </div>
+</footer>

@@ -1,0 +1,15 @@
+---
+/** Línea de tiempo de los 7 controles del primer año. */
+interface Props { nota?: string }
+const { nota = 'Los 2 primeros presenciales; los demás pueden ser virtuales.' } = Astro.props;
+const hitos = ['72 horas', 'Día 6–8', 'Día 15', 'Día 30', 'Mes 3', 'Mes 6', 'Año'];
+---
+
+<ul class="flex flex-wrap justify-center gap-2.5" role="list">
+  {hitos.map((t) => (
+    <li class="rounded-lg border border-azul/15 bg-marfil px-4 py-3 font-display font-semibold text-sm text-azul min-w-[5.5rem] text-center">
+      {t}
+    </li>
+  ))}
+</ul>
+<p class="mt-6 text-sm text-azul/60 text-center">{nota}</p>

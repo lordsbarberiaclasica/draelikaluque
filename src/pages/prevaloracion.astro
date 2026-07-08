@@ -1,0 +1,343 @@
+---
+/**
+ * L1 /prevaloracion/ — Landing de conversión directa (templado/caliente).
+ * URL conservada de WordPress. Fiel a los mockups Landing_1_PC / RESPONSIVE.
+ *
+ * ⚠️ COMPLIANCE / PENDIENTES:
+ *  - Horario: el mockup dice "Lun-Mar-Jue-Vie 2:00-6:00pm · Mié 9am-6pm";
+ *    aquí se usa el CONFIRMADO por la Dra. (3-7pm, sin miércoles) vía config.ts.
+ *  - Testimonios: los nombres/frases vienen del mockup. NO lanzar pauta sin
+ *    confirmar que son pacientes reales con consentimiento firmado (se usan
+ *    avatares de iniciales, no fotos de stock, para no fabricar rostros).
+ *  - Respuestas de FAQ: borrador basado en los datos validados del proyecto.
+ *    ⚠️ Validar con la Dra. antes de publicar (en especial la #7, estudios).
+ */
+import Base from '../layouts/Base.astro';
+import { SITE, waLink } from '../config';
+
+const waMsg = 'Hola, quiero agendar mi prevaloración sin costo (15 min) con la Dra. Elika Luque.';
+
+const salesCon = [
+  { icon: '/images/landing/icon-candidatura.png', titulo: 'Candidatura', desc: 'Sí / no / pendiente por estudios' },
+  { icon: '/images/landing/icon-ruta.png', titulo: 'Ruta recomendada', desc: 'Y los siguientes pasos claros' },
+  { icon: '/images/landing/icon-dudas.png', titulo: 'Dudas resueltas', desc: 'Miedo, rebote, reflujo, balón' },
+];
+
+const timeline = ['72 horas', 'Día 6–8', 'Día 15', 'Día 30', 'Mes 3', 'Mes 6', 'Año'];
+
+const identifica = [
+  { n: 1, titulo: 'Salud en riesgo', desc: 'ruta clara' },
+  { n: 2, titulo: 'Reboté mil veces', desc: 'método y seguimiento' },
+  { n: 3, titulo: 'Miedo a cirugía', desc: 'proceso y seguridad' },
+  { n: 4, titulo: 'Quiero bajar sin cirugía', desc: 'balón en casos seleccionados' },
+  { n: 5, titulo: 'Reflujo', desc: 'manga vs. bypass según caso' },
+];
+
+const internacional = [
+  { icon: '/images/landing/icon-prevaloracion.png', titulo: 'Prevaloración antes de viajar', desc: 'Virtual, desde tu país' },
+  { icon: '/images/landing/icon-coordinacion.png', titulo: 'Coordinación de fechas', desc: 'Según tu disponibilidad' },
+  { icon: '/images/landing/icon-seguimiento.png', titulo: 'Seguimiento por WhatsApp', desc: 'Según tu plan' },
+];
+
+/* ⚠️ Del mockup — confirmar consentimiento antes de pauta */
+const testimonios = [
+  { nombre: 'Alexandra Peralta', frase: 'Me quitó el miedo, ahora entiendo el proceso.' },
+  { nombre: 'Marcela Pardo', frase: 'La claridad y el seguimiento fueron la diferencia.' },
+  { nombre: 'Camilo Restrepo', frase: 'Mejoré mi calidad de vida.' },
+];
+
+const sellos = [
+  { src: '/images/landing/sello-el-bosque.png', alt: 'Médico Cirujano · Universidad El Bosque' },
+  { src: '/images/landing/sello-cirugia-general.png', alt: 'Especialista en Cirugía General · Universidad El Bosque' },
+  { src: '/images/landing/sello-laparoscopia.png', alt: 'Formación Continua en Laparoscopia' },
+  { src: '/images/landing/sello-felac.png', alt: 'Miembro Activo FELAC · Asociación Colombiana de Cirugía' },
+];
+
+/* Borrador de respuestas — ⚠️ validar con la Dra. antes de publicar */
+const faqs = [
+  {
+    q: '¿La prevaloración realmente es sin costo (15 min)?',
+    a: 'Sí. Son 15 minutos sin costo para revisar tu caso, definir si eres candidata o candidato y aclarar tu ruta. No genera ninguna obligación.',
+  },
+  {
+    q: '¿Es virtual o presencial?',
+    a: 'Puede ser cualquiera de las dos: virtual por videollamada o presencial en Barranquilla. Lo eliges al agendar.',
+  },
+  {
+    q: '¿Qué incluye exactamente?',
+    a: 'Candidatura (sí / no / pendiente por estudios), ruta orientativa (manga, bypass u otra) y, si aplica, el tiempo estimado de dieta preoperatoria. La recomendación final se confirma tras valoración clínica y estudios.',
+  },
+  {
+    q: '¿Qué pasa después?',
+    a: 'Si decides avanzar, siguen los exámenes y la valoración preoperatoria. El equipo te acompaña en cada paso y coordina las fechas contigo.',
+  },
+  {
+    q: '¿Qué procedimientos realizan y cuáles priorizan?',
+    a: 'La ruta prioritaria es la manga gástrica; el bypass se indica en casos específicos (como reflujo severo o diabetes de larga evolución) y el balón gástrico en casos seleccionados. También existe manejo médico y nutricional.',
+  },
+  {
+    q: '¿Qué pasa si tengo reflujo?',
+    a: 'El reflujo cambia la ecuación: según su grado, la ruta puede ser manga o bypass. Se define en la valoración, con tus estudios en la mano.',
+  },
+  {
+    q: '¿Qué estudios podrían pedirme?',
+    a: 'Depende de tu caso: pueden incluir laboratorios, endoscopia y valoraciones complementarias. La lista exacta se define en tu prevaloración.',
+  },
+  {
+    q: '¿Cómo es el seguimiento de 1 año?',
+    a: 'Incluye controles a las 72 horas, día 6–8, día 15, día 30, mes 3, mes 6 y al año. Los dos primeros son presenciales; el resto pueden ser virtuales.',
+  },
+  {
+    q: '¿Cuánto tarda el proceso?',
+    a: 'En promedio, alrededor de 1 mes desde la valoración hasta la cirugía, según tus exámenes y la agenda. Para pacientes internacionales depende de las fechas de viaje.',
+  },
+  {
+    q: 'Soy de otro país, ¿cómo coordinamos?',
+    a: 'Hacemos la prevaloración virtual antes de que viajes, coordinamos exámenes y cirugía según tu disponibilidad, y parte del seguimiento se hace por WhatsApp cuando regresas a tu país.',
+  },
+  {
+    q: '¿Quién responde el WhatsApp y en qué horario?',
+    a: `El equipo de secretaría responde de lunes a viernes, de 9:00 a. m. a 6:00 p. m. Si escribes fuera de horario, recibes respuesta el siguiente día hábil.`,
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+---
+
+<Base
+  variant="landing"
+  title="Agenda tu prevaloración sin costo (15 min) · Dra. Elika Luque"
+  description="Prevaloración de cirugía bariátrica sin costo (15 minutos, virtual o presencial): define tu candidatura, tu ruta (manga, bypass, balón en casos seleccionados) y resuelve tus dudas. Barranquilla, Colombia."
+  ogImage="/images/landing/hero-consulta.webp"
+>
+  <script is:inline type="application/ld+json" set:html={faqJsonLd} />
+
+  <!-- 1 · HERO -->
+  <section class="bg-white">
+    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center">
+      <div>
+        <h1 class="text-3xl md:text-[2.6rem] leading-tight text-azul">
+          Agenda tu prevaloración <span class="text-dorado-600">sin costo (15 min)</span> y recibe una ruta clara
+        </h1>
+        <p class="mt-4 font-display font-semibold text-dorado-600 leading-relaxed">
+          Cirugía bariátrica/metabólica (prioridad: manga, luego bypass) y
+          alternativas (balón en casos seleccionados). Decisión segura, paso a paso.
+        </p>
+        <div class="mt-7 flex items-center gap-3.5">
+          <a href={SITE.calendly} class="btn btn-navy">Agendar prevaloración (15 min)</a>
+          <a
+            href={waLink(waMsg)}
+            target="_blank"
+            rel="noopener"
+            aria-label="Escríbenos por WhatsApp"
+            class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg hover:scale-105 transition-transform"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.06.9.92-2.98-.2-.31a8.2 8.2 0 1 1 6.82 3.72zm4.5-6.13c-.25-.12-1.46-.72-1.68-.8-.23-.09-.4-.13-.56.12-.17.25-.64.8-.79.97-.14.16-.29.18-.53.06a6.7 6.7 0 0 1-3.35-2.93c-.25-.43.25-.4.72-1.34.08-.16.04-.3-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.43.06-.66.3-.22.25-.86.85-.86 2.07s.89 2.4 1.01 2.56c.13.17 1.75 2.67 4.23 3.74.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
+          </a>
+        </div>
+        <p class="mt-5 text-xs text-azul/50 max-w-md">
+          La recomendación final se confirma tras valoración clínica y estudios, según tu caso. ⚕
+        </p>
+      </div>
+      <img
+        src="/images/landing/hero-consulta.webp"
+        alt="Médica tomando notas durante una consulta con un paciente"
+        class="w-full max-w-lg justify-self-center lg:justify-self-end"
+        width="1000"
+        height="945"
+        fetchpriority="high"
+      />
+    </div>
+  </section>
+
+  <!-- 2 · CHECKLIST QUÉ DEFINIMOS -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-10 md:py-12">
+      <div class="max-w-2xl mx-auto">
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Definimos si eres candidato(a) — historia clínica y antecedentes</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Aclaramos tu ruta orientativa (manga / bypass / otra)</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Si aplica: tiempo estimado de dieta preoperatoria</div>
+        <p class="mt-5 text-center text-xs text-azul/50 italic">
+          La recomendación final se confirma tras valoración clínica y estudios, según tu caso.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · EN ESTA PREVALORACIÓN SALES CON -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">
+        En esta <span class="text-dorado-600">prevaloración</span> (15 min) sales con:
+      </h2>
+      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
+        {salesCon.map((s) => (
+          <div class="reveal">
+            <img src={s.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <h3 class="mt-4 font-display font-semibold text-azul">{s.titulo}</h3>
+            <p class="mt-1 text-sm text-azul/60">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-9 text-xs text-azul/50">Puede ser virtual o presencial.</p>
+      <a href={SITE.calendly} class="btn btn-navy mt-4">Agendar (15 min)</a>
+    </div>
+  </section>
+
+  <!-- 4 · TU PREVALORACIÓN ES CON LA DRA. -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">
+        Tu prevaloración es con<br />la <span class="text-dorado-600">Dra. Elika Luque Ariza</span>
+      </h2>
+      <p class="mt-3 text-sm text-azul/60">Cirujana general · laparoscopia · cirugía bariátrica.</p>
+      <div class="max-w-xl mx-auto mt-8 text-left">
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Cirugías en clínicas de alto nivel en Barranquilla</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Seguimiento personal</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Controles postoperatorios incluidos hasta 1 año (sin costo)</div>
+      </div>
+      <ul class="mt-9 flex flex-wrap items-center justify-center gap-6" role="list">
+        {sellos.map((s) => (
+          <li><img src={s.src} alt={s.alt} class="h-16 w-16 md:h-20 md:w-20 object-contain" loading="lazy" /></li>
+        ))}
+      </ul>
+      <a href="/dra-elika-luque-2/" class="mt-6 inline-block text-sm underline text-azul/60 hover:text-dorado-600 transition-colors">
+        Ver credenciales
+      </a>
+    </div>
+  </section>
+
+  <!-- 5 · SEGUIMIENTO 1 AÑO -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">
+        <span class="text-dorado-600">Seguimiento incluido</span> hasta 1 año · Controles:
+      </h2>
+      <ul class="mt-10 flex flex-wrap justify-center gap-2.5" role="list">
+        {timeline.map((t) => (
+          <li class="rounded-lg border border-azul/15 bg-marfil px-4 py-3 font-display font-semibold text-sm text-azul min-w-[5.5rem]">
+            {t}
+          </li>
+        ))}
+      </ul>
+      <p class="mt-6 text-sm text-azul/60">2 primeros presenciales; el resto pueden ser virtuales.</p>
+      <a href={SITE.calendly} class="btn btn-navy mt-6">Agendar (15 min)</a>
+    </div>
+  </section>
+
+  <!-- 6 · SI TE IDENTIFICAS CON ALGUNO -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">
+        Si te identificas con alguno, <span class="text-dorado-600">esto es para ti…</span>
+      </h2>
+      <ul class="mt-11 grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-5 max-w-5xl mx-auto text-center" role="list">
+        {identifica.map((i) => (
+          <li class="reveal">
+            <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-dorado-600 font-display font-bold text-white">
+              {i.n}
+            </span>
+            <p class="mt-3.5 font-display font-semibold text-azul leading-snug">{i.titulo}</p>
+            <p class="mt-1 text-sm text-azul/60">({i.desc})</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 7 · QUÉ PASA DESPUÉS DE AGENDAR -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">¿Qué pasa <span class="text-dorado-600">después de agendar?</span></h2>
+      <div class="max-w-2xl mx-auto mt-9">
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Prevaloración de 15 min (virtual o presencial)</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Exámenes + valoración preoperatoria (internacional: depende de fechas de viaje)</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Proceso típico: ~1 mes de valoración a cirugía + preoperatorio (según caso)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · INTERNACIONAL -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">
+        ¿Vienes desde <span class="text-dorado-600">Panamá, Guatemala u otro país?</span>
+      </h2>
+      <p class="mt-3 text-sm text-azul/60">Atención presencial en Barranquilla, Colombia.</p>
+      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
+        {internacional.map((s) => (
+          <div class="reveal">
+            <img src={s.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <h3 class="mt-4 font-display font-semibold text-azul">{s.titulo}</h3>
+            <p class="mt-1 text-sm text-azul/60">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+      <a href={SITE.calendly} class="btn btn-navy mt-10">Agendar (15 min)</a>
+    </div>
+  </section>
+
+  <!-- 9 · TESTIMONIOS ⚠️ confirmar consentimiento antes de pauta -->
+  <section class="bg-dorado/15">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">
+        Lo que más mencionan <span class="text-dorado-600">nuestros pacientes</span>
+      </h2>
+      <div class="mt-10 grid gap-5 sm:grid-cols-3 max-w-4xl mx-auto">
+        {testimonios.map((t) => (
+          <figure class="card p-6">
+            <div class="flex items-center gap-3">
+              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-azul-950 font-display font-bold text-dorado text-sm" aria-hidden="true">
+                {t.nombre.split(' ').map((w) => w[0]).join('')}
+              </span>
+              <figcaption class="font-display font-semibold text-sm text-azul">{t.nombre}</figcaption>
+            </div>
+            <blockquote class="mt-3.5 text-sm text-azul/70 leading-relaxed">«{t.frase}»</blockquote>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · FAQ -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
+      <div class="max-w-3xl mx-auto mt-9">
+        {faqs.map((f, i) => (
+          <details class="faq-item" name="faq">
+            <summary>
+              <span class="text-dorado-600 font-bold">{i + 1}.</span>
+              {f.q}
+            </summary>
+            <p class="faq-body">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · AGENDA Y CONTACTO -->
+  <section class="bg-marfil border-t border-azul/10">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
+      <div class="max-w-2xl mx-auto mt-9">
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Prevaloraciones: {SITE.horario}</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> WhatsApp (secretaría): {SITE.horarioWhatsapp}</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Confirmación de consultas: sí</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Si escribes fuera de horario: respuesta el siguiente día hábil</div>
+      </div>
+      <div class="text-center">
+        <a href={SITE.calendly} class="btn btn-navy mt-9">Agendar (15 min)</a>
+      </div>
+    </div>
+  </section>
+</Base>

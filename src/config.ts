@@ -17,6 +17,10 @@ export const SITE = {
 
   whatsapp: '573107005772',
   whatsappAlt: '573218211819', // publicado como "WhatsApp" en el sitio actual
+  // ⚠️ TERCER número detectado (prototipo del quiz). ¿Línea de asesoras? Confirmar.
+  whatsappQuiz: '573218960696',
+  // Google Apps Script que escribe en la hoja de leads del quiz (de Walter)
+  quizSheetEndpoint: 'https://script.google.com/macros/s/AKfycby8AVZSZBIprh9DPcs2fTJY8mDkn5PDokvL1rVkr3tEdT_yZw-xt5AruvAAADLdqwPWcA/exec',
   whatsappMsg: 'Hola, quiero agendar una valoración con la Dra. Elika Luque.',
   phone: '+57 310 700 5772',
   phoneAlt: '+57 321 821 1819',
@@ -25,6 +29,9 @@ export const SITE = {
   gtmId: 'GTM-MMMK2ZD',
 
   horario: 'Lunes, martes, jueves y viernes · 3:00 – 7:00 p. m.',
+  // ⚠️ El mockup de L1 dice "Lun-Mar-Jue-Vie 2:00-6:00 pm · Mié 9am-6pm".
+  // Se usa el horario CONFIRMADO por la Dra. (3-7pm, sin miércoles) hasta nueva orden.
+  horarioWhatsapp: 'Lunes a viernes · 9:00 a. m. – 6:00 p. m.',
 
   instagram: 'https://www.instagram.com/draelikaluque',
   facebook: 'https://www.facebook.com/draelikaluque',

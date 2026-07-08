@@ -6,6 +6,8 @@ import '@fontsource/open-sans/latin-600.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import LandingHeader from '../components/LandingHeader.astro';
+import LandingFooter from '../components/LandingFooter.astro';
 import StickyCtaMobile from '../components/StickyCtaMobile.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
 import { SITE } from '../config';
@@ -15,12 +17,15 @@ interface Props {
   description?: string;
   /** Imagen para compartir en redes (ruta absoluta desde /public) */
   ogImage?: string;
+  /** 'landing' usa header/footer mínimos sin navegación (L1–L6) */
+  variant?: 'site' | 'landing';
 }
 
 const {
   title = SITE.title,
   description = SITE.description,
   ogImage = '/images/hero-poster.jpg',
+  variant = 'site',
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
@@ -139,13 +144,13 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
         style="display:none;visibility:hidden"></iframe>
     </noscript>
 
-    <Header />
+    {variant === 'site' ? <Header /> : <LandingHeader />}
 
     <main class="flex-1">
       <slot />
     </main>
 
-    <Footer />
+    {variant === 'site' ? <Footer /> : <LandingFooter />}
     <StickyCtaMobile />
     <WhatsAppFloat />
 

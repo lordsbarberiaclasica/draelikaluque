@@ -1,0 +1,389 @@
+---
+/**
+ * L3 /seguridad/ — Remarketing: derribar el miedo. URL conservada de WordPress.
+ * Fiel a mockups Landing_3 (H1–H4, PC + responsive).
+ *
+ * HERO DINÁMICO POR UTM (message match):
+ *   El hero cambia según la variante detectada, en este orden de prioridad:
+ *     1. ?hero= (o ?h=)  → seguridad | miedo | rebote | reflujo
+ *     2. utm_content / utm_term / utm_campaign de la URL que contengan esas palabras
+ *     3. UTMs guardados de la sesión (localStorage, 30 días)
+ *     4. Default: "seguridad" (pre-renderizado en HTML → lo que ve Google)
+ *   Cada carga hace dataLayer.push({event:'hero_variant', ...}) para GA4/GTM.
+ *
+ * ⚠️ Testimonios del mockup (Sonia, M. Camila, Silvana): confirmar que son
+ *    pacientes reales con consentimiento firmado antes de encender pauta.
+ * ⚠️ FAQ: respuestas borrador — validar con la Dra.
+ */
+import Base from '../layouts/Base.astro';
+import SellosCredenciales from '../components/landing/SellosCredenciales.astro';
+import AgendaContacto from '../components/landing/AgendaContacto.astro';
+import TimelineSeguimiento from '../components/landing/TimelineSeguimiento.astro';
+import { SITE, waLink } from '../config';
+
+const waMsg = 'Hola, quiero información sobre el proceso y la seguridad de la cirugía bariátrica con la Dra. Elika Luque.';
+
+/* Variante por defecto (pre-renderizada, SEO). Las demás se aplican por JS. */
+const heroDefault = {
+  titulo: 'Seguridad y claridad antes de decidir',
+  sub: 'Te explicamos el proceso paso a paso para que tomes una decisión informada.',
+  img: '/images/landing/hero-seguridad.webp',
+  alt: 'Médica explicando un documento a su paciente en consulta',
+};
+
+const heroChecks = [
+  'Proceso claro: antes / durante / después',
+  '«Día de cirugía» explicado en simple',
+  'Seguimiento real para sostener el cambio',
+];
+
+const salesCon = [
+  { icon: '/images/landing/icon-candidatura.png', titulo: 'Si eres candidato(a)', desc: 'Según historia clínica y antecedentes' },
+  { icon: '/images/landing/icon-ruta-checks.png', titulo: 'Ruta orientativa', desc: 'Manga / Bypass / Balón si aplica' },
+  { icon: '/images/landing/icon-pasos.png', titulo: 'Próximos pasos claros', desc: 'Incluye tiempo estimado de dieta preoperatoria si aplica' },
+];
+
+const miedos = [
+  {
+    n: 1,
+    titulo: 'Anestesia',
+    texto: 'Es normal tener miedo. Por eso revisamos tu caso y coordinamos el plan de forma segura.',
+    respuesta: 'Evaluación + preanestesia (según caso)',
+  },
+  {
+    n: 2,
+    titulo: 'Complicaciones',
+    texto: 'Riesgo cero no existe. Lo que sí existe es protocolo + experiencia + seguimiento.',
+    respuesta: 'Protocolo + controles',
+  },
+  {
+    n: 3,
+    titulo: '«¿Quedar mal?»',
+    texto: 'Disminuye mucho cuando entiendes el proceso y tienes una ruta clara.',
+    respuesta: 'Seguimiento y ajustes',
+  },
+  {
+    n: 4,
+    titulo: 'No sé qué elegir',
+    texto: 'Primero evaluamos y luego definimos la opción más segura para tu caso.',
+    respuesta: 'Asesoramiento según tu caso',
+  },
+];
+
+/* ⚠️ Del mockup — confirmar consentimiento antes de pauta */
+const testimonios = [
+  { nombre: 'Sonia Muñoz', frase: 'Me dio tranquilidad entender el proceso.' },
+  { nombre: 'M. Camila Toro', frase: 'El seguimiento me dio mucha seguridad.' },
+  { nombre: 'Silvana Acosta', frase: 'Tomé una decisión con claridad.' },
+];
+
+const diaCirugia = [
+  { titulo: 'Ingreso', desc: 'recepción + confirmaciones necesarias' },
+  { titulo: 'Verificación', desc: 'checklist + evaluación preanestesia (según caso)' },
+  { titulo: 'Recuperación', desc: 'monitoreo + plan de controles (no termina ese día)' },
+];
+
+const protocolo = [
+  { icon: '/images/landing/icon-antes.png', titulo: 'Antes', desc: 'historia clínica + evaluación; si se requiere, apoyo.' },
+  { icon: '/images/landing/icon-durante.png', titulo: 'Durante', desc: 'técnica + coordinación de equipo (según caso).' },
+  { icon: '/images/landing/icon-despues.png', titulo: 'Después', desc: 'controles y ajustes para acompañarte.' },
+];
+
+/* Borrador — ⚠️ validar con la Dra. */
+const faqs = [
+  { q: '¿Qué incluye la prevaloración sin costo (15 min)?', a: 'Revisamos tu caso, definimos si eres candidata o candidato, aclaramos tu ruta orientativa (manga, bypass o balón si aplica) y los próximos pasos, incluyendo tiempo estimado de dieta preoperatoria si aplica.' },
+  { q: '¿Es virtual o presencial?', a: 'Puede ser cualquiera de las dos: por videollamada o presencial en Barranquilla. Lo eliges al agendar.' },
+  { q: '¿Qué pasa después de la prevaloración?', a: 'Si decides avanzar, siguen los exámenes y la valoración preoperatoria. El equipo coordina las fechas contigo, paso a paso.' },
+  { q: '¿Cómo se define manga vs. bypass?', a: 'Con criterios clínicos: tu IMC, la presencia de reflujo, condiciones como la diabetes y tu historia completa. La Dra. lo define en la valoración, con tus estudios.' },
+  { q: '¿Qué pasa si tengo reflujo?', a: 'Según su grado, la ruta puede inclinarse hacia manga o bypass. Es una de las cosas que se precisa en la valoración.' },
+  { q: '¿Qué pasa si quiero evitar cirugía?', a: 'Existe el balón gástrico para casos seleccionados y el manejo médico y nutricional. En la prevaloración vemos si aplica para ti.' },
+  { q: '¿Qué estudios podrían pedirme?', a: 'Depende de tu caso: pueden incluir laboratorios, endoscopia y valoraciones complementarias. La lista exacta se define en tu prevaloración.' },
+  { q: '¿Qué incluye el seguimiento de 1 año?', a: 'Controles a las 72 horas, día 6–8, día 15, día 30, mes 3, mes 6 y al año, sin costo adicional. Los dos primeros presenciales; los demás pueden ser virtuales.' },
+  { q: '¿Cuánto tarda el proceso?', a: 'En promedio, alrededor de 1 mes desde la valoración hasta la cirugía, según tus exámenes y la agenda.' },
+  { q: 'Pacientes internacionales: ¿cómo coordinamos fechas?', a: 'Hacemos la prevaloración virtual antes de viajar y coordinamos exámenes y cirugía según tus fechas de viaje. Parte del seguimiento puede ser virtual desde tu país.' },
+  { q: '¿Quién responde el WhatsApp y en qué horario?', a: 'El equipo de secretaría, de lunes a viernes de 9:00 a. m. a 6:00 p. m. Fuera de horario, respondemos el siguiente día hábil.' },
+  { q: '¿Cómo agendo si no puedo por Calendly?', a: 'Escríbenos por WhatsApp y la secretaría agenda por ti la fecha y hora de tu prevaloración.' },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+---
+
+<Base
+  variant="landing"
+  title="Seguridad y claridad antes de decidir · Cirugía bariátrica · Dra. Elika Luque"
+  description="Conoce el proceso real de la cirugía bariátrica —antes, durante y después—, cómo se aborda cada miedo común y el seguimiento de un año incluido. Protocolo riguroso en clínicas de alto nivel de Barranquilla."
+  ogImage="/images/landing/hero-seguridad.webp"
+>
+  <script is:inline type="application/ld+json" set:html={faqJsonLd} />
+
+  <!-- 1 · HERO (variante dinámica por UTM) -->
+  <section class="bg-white">
+    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center">
+      <div>
+        <h1 id="hero-title" class="text-3xl md:text-[2.6rem] leading-tight text-azul">{heroDefault.titulo}</h1>
+        <p id="hero-sub" class="mt-4 font-display font-semibold text-dorado-600 leading-relaxed">{heroDefault.sub}</p>
+        <ul class="mt-6 space-y-2.5" role="list">
+          {heroChecks.map((c) => (
+            <li class="flex items-start gap-2.5 text-sm text-azul/80">
+              <img src="/images/landing/check.png" alt="" class="h-4 w-4 mt-0.5" />
+              <span set:html={c.replace('antes / durante / después', '<strong>antes / durante / después</strong>')} />
+            </li>
+          ))}
+        </ul>
+        <div class="mt-7 flex items-center gap-3.5">
+          <a href={SITE.calendly} class="btn btn-navy">Agendar prevaloración (15 min)</a>
+          <a
+            href={waLink(waMsg)}
+            target="_blank"
+            rel="noopener"
+            aria-label="Escríbenos por WhatsApp"
+            class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg hover:scale-105 transition-transform"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.06.9.92-2.98-.2-.31a8.2 8.2 0 1 1 6.82 3.72zm4.5-6.13c-.25-.12-1.46-.72-1.68-.8-.23-.09-.4-.13-.56.12-.17.25-.64.8-.79.97-.14.16-.29.18-.53.06a6.7 6.7 0 0 1-3.35-2.93c-.25-.43.25-.4.72-1.34.08-.16.04-.3-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.43.06-.66.3-.22.25-.86.85-.86 2.07s.89 2.4 1.01 2.56c.13.17 1.75 2.67 4.23 3.74.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
+          </a>
+        </div>
+        <p class="mt-5 text-xs text-azul/50 max-w-md">
+          La recomendación final se confirma tras valoración clínica y estudios, según tu caso. ⚕
+        </p>
+      </div>
+      <img
+        id="hero-img"
+        src={heroDefault.img}
+        alt={heroDefault.alt}
+        class="w-full max-w-lg justify-self-center lg:justify-self-end"
+        width="1000"
+        height="945"
+        fetchpriority="high"
+      />
+    </div>
+  </section>
+
+  <!-- Selección de variante: se ejecuta inmediatamente tras el hero (sin parpadeo) -->
+  <script is:inline>
+    (function () {
+      var V = {
+        seguridad: null, /* default ya renderizado */
+        miedo: {
+          t: 'Si te da miedo la cirugía, empecemos por claridad y seguridad',
+          s: 'Conoce el proceso real (antes/durante/después) y resuelve dudas con una ruta médica segura.',
+          i: '/images/landing/hero-miedo.webp',
+          a: 'Paciente diligenciando su historia clínica junto a la médica',
+        },
+        rebote: {
+          t: 'El éxito no es solo bajar. Es sostener (con método y seguimiento)',
+          s: 'Te mostramos cómo se construye una ruta para evitar el rebote.',
+          i: '/images/landing/hero-rebote.webp',
+          a: 'Médica mostrando un plan de seguimiento en tableta a su paciente',
+        },
+        reflujo: {
+          t: 'Reflujo y peso: definimos la mejor opción según tu caso',
+          s: 'La decisión se confirma con evaluación y estudios. Aquí te contamos cómo lo definimos.',
+          i: '/images/landing/hero-reflujo.webp',
+          a: 'Médica acompañando a su paciente durante la consulta',
+        },
+      };
+      function ls(k) { try { return localStorage.getItem('el_' + k) || ''; } catch (e) { return ''; } }
+      var p = new URLSearchParams(location.search);
+      var v = (p.get('hero') || p.get('h') || '').toLowerCase();
+      if (!(v in V)) {
+        var pool = [
+          p.get('utm_content'), p.get('utm_term'), p.get('utm_campaign'),
+          ls('utm_content'), ls('utm_term'), ls('utm_campaign'),
+        ].join(' ').toLowerCase();
+        v = pool.indexOf('miedo') > -1 ? 'miedo'
+          : (pool.indexOf('rebote') > -1 || pool.indexOf('sosten') > -1) ? 'rebote'
+          : pool.indexOf('reflujo') > -1 ? 'reflujo'
+          : 'seguridad';
+      }
+      var d = V[v];
+      if (d) {
+        document.getElementById('hero-title').textContent = d.t;
+        document.getElementById('hero-sub').textContent = d.s;
+        var img = document.getElementById('hero-img');
+        img.src = d.i;
+        img.alt = d.a;
+      }
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'hero_variant', hero_variant: v, pagina: '/seguridad/' });
+    })();
+  </script>
+
+  <!-- 2 · SALES CON -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">
+        En tu <span class="text-dorado-600">prevaloración</span> sin costo <span class="text-dorado-600">(15 min)</span> sales con:
+      </h2>
+      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
+        {salesCon.map((s) => (
+          <div class="reveal">
+            <img src={s.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <h3 class="mt-4 font-display font-semibold text-azul">{s.titulo}</h3>
+            <p class="mt-1 text-sm text-azul/60">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-8 text-xs text-azul/50">Puede ser virtual o presencial.</p>
+      <a href={SITE.calendly} class="btn btn-navy mt-4">Agendar (15 min)</a>
+      <p class="mt-9 font-display italic text-azul/80">
+        Puedes hacer la prevaloración antes de viajar y coordinar fechas.
+        <span class="block text-sm not-italic text-azul/50 mt-1">Pacientes LATAM</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- 3 · MIEDOS COMUNES -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">
+        Miedos comunes<br /><span class="text-dorado-600">(y cómo los abordamos con claridad)</span>
+      </h2>
+      <div class="mt-12 grid gap-7 sm:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">
+        {miedos.map((m) => (
+          <div class="reveal flex flex-col">
+            <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-dorado-600 font-display font-bold text-white">{m.n}</span>
+            <h3 class="mt-4 font-display font-semibold text-azul text-center">{m.titulo}</h3>
+            <p class="mt-2.5 text-sm text-azul/65 leading-relaxed text-center flex-1">{m.texto}</p>
+            <div class="mt-4 border-t border-dorado/40 pt-3 text-center">
+              <p class="text-[0.65rem] uppercase tracking-[0.18em] font-display font-semibold text-dorado-600">Respuesta:</p>
+              <p class="mt-1 text-sm font-display font-semibold text-azul/80">{m.respuesta}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="text-center">
+        <a href={SITE.calendly} class="btn btn-navy mt-11">Agendar prevaloración (15 min)</a>
+      </div>
+      <div class="mt-12">
+        <SellosCredenciales />
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · TESTIMONIOS ⚠️ confirmar consentimiento antes de pauta -->
+  <section class="bg-dorado/15">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">Lo que más mencionan <span class="text-dorado-600">los pacientes</span></h2>
+      <div class="mt-10 grid gap-5 sm:grid-cols-3 max-w-4xl mx-auto">
+        {testimonios.map((t) => (
+          <figure class="card p-6">
+            <div class="flex items-center gap-3">
+              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-azul-950 font-display font-bold text-dorado text-sm" aria-hidden="true">
+                {t.nombre.split(' ').map((w) => w[0]).join('')}
+              </span>
+              <figcaption class="font-display font-semibold text-sm text-azul">{t.nombre}</figcaption>
+            </div>
+            <blockquote class="mt-3.5 text-sm text-azul/70 leading-relaxed">«{t.frase}»</blockquote>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · EL DÍA DE LA CIRUGÍA -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">El <span class="text-dorado-600">día</span> de la <span class="text-dorado-600">cirugía</span></h2>
+      <div class="max-w-2xl mx-auto mt-9">
+        {diaCirugia.map((d, i) => (
+          <div class="check-row">
+            <img src="/images/landing/check.png" alt="" />
+            <span><strong class="font-display">{i + 1}. {d.titulo}:</strong> {d.desc}</span>
+          </div>
+        ))}
+      </div>
+      <div class="text-center">
+        <a href={SITE.calendly} class="btn btn-navy mt-9">Agendar prevaloración (15 min)</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · LA SEGURIDAD ES PROTOCOLO -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">La <span class="text-dorado-600">seguridad</span> no es suerte: <span class="text-dorado-600">es protocolo</span></h2>
+      <div class="mt-12 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto text-center">
+        {protocolo.map((p) => (
+          <div class="reveal">
+            <img src={p.icon} alt="" class="h-12 w-auto mx-auto" loading="lazy" />
+            <h3 class="mt-4 font-display font-bold text-azul">{p.titulo}:</h3>
+            <p class="mt-1.5 text-sm text-azul/65 leading-relaxed max-w-[16rem] mx-auto">{p.desc}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-11 text-center font-display italic text-azul/80">
+        Cirugías en clínicas de alto nivel <span class="underline decoration-dorado-600">en Barranquilla</span>.
+      </p>
+    </div>
+  </section>
+
+  <!-- 7 · SEGUIMIENTO 1 AÑO -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">
+        <span class="text-dorado-600">Seguimiento personal incluido</span><br />hasta 1 año (sin costo)
+      </h2>
+      <div class="mt-10">
+        <TimelineSeguimiento />
+      </div>
+      <a href={SITE.calendly} class="btn btn-navy mt-7">Agendar prevaloración (15 min)</a>
+    </div>
+  </section>
+
+  <!-- 8 · TIEMPOS TÍPICOS -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-14 md:py-18">
+      <h2 class="text-2xl md:text-3xl text-center"><span class="text-dorado-600">Tiempos</span> típicos</h2>
+      <div class="max-w-2xl mx-auto mt-7">
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> <span><strong class="font-display">1. De valoración a cirugía:</strong> ~1 mes promedio</span></div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> <span><strong class="font-display">2. Pacientes internacionales:</strong> se coordina según fechas de viaje</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · AGENDA Y CONTACTO -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-18">
+      <h2 class="text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
+      <div class="mt-7">
+        <AgendaContacto />
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · FAQ -->
+  <section class="bg-marfil border-t border-azul/10">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
+      <div class="max-w-3xl mx-auto mt-9">
+        {faqs.map((f, i) => (
+          <details class="faq-item" name="faq-seguridad">
+            <summary>
+              <span class="text-dorado-600 font-bold">{i + 1}.</span>
+              {f.q}
+            </summary>
+            <p class="faq-body">{f.a}</p>
+          </details>
+        ))}
+      </div>
+      <div class="mt-11 flex flex-col items-center gap-3.5">
+        <a href={SITE.calendly} class="btn btn-navy">Agendar prevaloración (15 min)</a>
+        <a href={waLink(waMsg)} target="_blank" rel="noopener" aria-label="WhatsApp" class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.06.9.92-2.98-.2-.31a8.2 8.2 0 1 1 6.82 3.72z"/></svg>
+        </a>
+      </div>
+      <p class="mt-10 text-center font-display italic text-azul/70 text-sm">
+        Atención presencial en Barranquilla, Colombia.<br />
+        Prevaloración antes de viajar + coordinación de fechas.
+      </p>
+    </div>
+  </section>
+</Base>
