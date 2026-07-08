@@ -39,6 +39,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="preconnect" href="https://calendly.com" />
     <link rel="icon" type="image/png" href="/favicon.png" />
 
     <!-- Open Graph -->
@@ -107,6 +108,8 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
                 if (v && !u.searchParams.has(k)) u.searchParams.set(k, v);
               });
               a.href = u.toString();
+              a.target = '_blank';
+              a.rel = 'noopener';
             } catch (e) {}
           });
           // WhatsApp: referencia legible para las asesoras
@@ -151,8 +154,8 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     </main>
 
     {variant === 'site' ? <Footer /> : <LandingFooter />}
-    <StickyCtaMobile />
-    <WhatsAppFloat />
+    {variant === 'landing' && <StickyCtaMobile />}
+    <WhatsAppFloat raised={variant === 'landing'} />
 
     <!-- Revelado suave en scroll -->
     <script is:inline>

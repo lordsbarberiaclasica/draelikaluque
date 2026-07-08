@@ -9,6 +9,7 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Cirujana from '../components/sections/Cirujana.astro';
 import Credenciales from '../components/sections/Credenciales.astro';
+import TestimoniosVideo from '../components/sections/TestimoniosVideo.astro';
 import CtaFinal from '../components/sections/CtaFinal.astro';
 import { SITE } from '../config';
 
@@ -95,6 +96,8 @@ const jsonLd = JSON.stringify({
       </div>
     </div>
   </section>
+
+  <TestimoniosVideo />
 
   <Credenciales />
   <CtaFinal />

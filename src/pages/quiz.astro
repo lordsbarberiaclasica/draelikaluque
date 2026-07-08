@@ -310,7 +310,6 @@ const faqJsonLd = JSON.stringify({
             <button type="button" id="btn-agendar-embed" class="btn btn-navy">Agendar prevaloración (15 min)</button>
             <a id="btn-wa-resultado" href="#" target="_blank" rel="noopener" class="btn !bg-[#25D366] text-white">Continuar por WhatsApp</a>
           </div>
-          <div id="calendly-embed" class="hidden mt-8" style="min-width:300px;height:700px;"></div>
         </div>
       </div>
     </div>
@@ -588,28 +587,28 @@ const faqJsonLd = JSON.stringify({
         ul.appendChild(li);
       });
       $('btn-wa-resultado').href = 'https://wa.me/' + WA_QUIZ + '?text=' + encodeURIComponent(mensajeWhatsApp(lead, res));
+      try {
+        document.querySelectorAll('a[href*="calendly.com"]').forEach(function (a) {
+          var u = new URL(a.href);
+          u.searchParams.set('name', lead.nombre);
+          u.searchParams.set('email', lead.correo);
+          u.searchParams.set('a1', lead.whatsapp);
+          a.href = u.toString();
+        });
+      } catch (e) {}
       irAPaso(9);
     }
 
-    var CAL_LOADED = false;
+    /* Enlace DIRECTO a Calendly (sin iframe ni scripts de terceros).
+       La precarga viaja en la URL: name/email nativos + a1 para la
+       pregunta personalizada #1 del evento (configurarla como "WhatsApp"). */
     function abrirCalendly(lead) {
-      var box = $('calendly-embed');
-      box.classList.remove('hidden');
       var url = new URL(CALENDLY);
       UTM_KEYS.forEach(function (k) { var v = utm(k); if (v) url.searchParams.set(k, v); });
-      function init() {
-        window.Calendly.initInlineWidget({
-          url: url.toString(),
-          parentElement: box,
-          prefill: { name: lead.nombre, email: lead.correo },
-        });
-      }
-      if (CAL_LOADED && window.Calendly) { init(); return; }
-      var s = document.createElement('script');
-      s.src = 'https://assets.calendly.com/assets/external/widget.js';
-      s.async = true;
-      s.onload = function () { CAL_LOADED = true; init(); };
-      document.head.appendChild(s);
+      url.searchParams.set('name', lead.nombre);
+      url.searchParams.set('email', lead.correo);
+      url.searchParams.set('a1', lead.whatsapp);
+      window.open(url.toString(), '_blank', 'noopener');
     }
 
     var ultimoLead = null;

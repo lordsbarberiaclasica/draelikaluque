@@ -547,6 +547,15 @@ const faqJsonLd = JSON.stringify({
       var msj = 'Hola, soy ' + nombre + ' (' + pais + '). Vengo de la página del balón gástrico.' +
         (buscas ? ' Lo que busco: ' + buscas + '.' : ' Quiero saber si soy candidata(o).') + ref;
       $('bl-ok').classList.remove('hidden');
+      try {
+        document.querySelectorAll('a[href*="calendly.com"]').forEach(function (a) {
+          var u = new URL(a.href);
+          u.searchParams.set('name', nombre);
+          u.searchParams.set('email', correo);
+          u.searchParams.set('a1', whatsappCompleto);
+          a.href = u.toString();
+        });
+      } catch (e) {}
       window.open('https://wa.me/' + WA_QUIZ + '?text=' + encodeURIComponent(msj), '_blank');
     });
   })();

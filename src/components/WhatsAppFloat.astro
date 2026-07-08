@@ -1,5 +1,16 @@
 ---
+/**
+ * Botón flotante de WhatsApp (todas las páginas).
+ * En landings sube para no chocar con la barra fija móvil; en el sitio
+ * institucional (sin barra) se asienta en la esquina.
+ */
 import { waLink } from '../config';
+
+interface Props {
+  /** true cuando la página tiene barra fija móvil (landings) */
+  raised?: boolean;
+}
+const { raised = false } = Astro.props;
 ---
 
 <a
@@ -7,7 +18,7 @@ import { waLink } from '../config';
   target="_blank"
   rel="noopener"
   aria-label="Escríbenos por WhatsApp"
-  class="fixed z-40 right-4 bottom-20 sm:bottom-6 inline-flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-black/25 hover:scale-105 transition-transform"
+  class={`fixed z-40 right-4 ${raised ? 'bottom-24 sm:bottom-6' : 'bottom-6'} inline-flex items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-black/25 hover:scale-105 transition-transform`}
   style="height:3.4rem;width:3.4rem"
 >
   <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

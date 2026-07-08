@@ -1,0 +1,168 @@
+---
+/**
+ * Testimonios en VIDEO (reels publicados en el Instagram de la Dra.).
+ * Galería deslizable (scroll-snap) + popup con el reel embebido: nada de
+ * Instagram se carga hasta que la persona hace clic (Core Web Vitals a salvo).
+ * Reutilizable: home, /dra-elika-luque-2/ y, cuando se decida, las landings.
+ */
+import { SITE } from '../../config';
+
+const reels = [
+  'DUWvaoVjC63',
+  'CsZSBERRe1-',
+  'DAb6AGGSHkt',
+  'DOKJklljA78',
+  'Csg50a-L8y_',
+  'DNWgi5LNqz3',
+  'DMOfDgoRJYQ',
+];
+---
+
+<section id="testimonios" class="bg-marfil border-t border-azul/10">
+  <div class="wrap py-20 md:py-24">
+    <div class="max-w-xl reveal">
+      <p class="eyebrow text-dorado-600">Historias reales</p>
+      <h2 class="mt-4 text-3xl md:text-4xl">Pacientes que ya recorrieron este camino</h2>
+      <p class="mt-4 text-azul/70 leading-relaxed">
+        Testimonios en video publicados en el Instagram de la Dra. Toca cualquiera para verlo.
+      </p>
+    </div>
+
+    <div class="relative mt-10">
+      <div
+        id="reel-slider"
+        class="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {reels.map((code, i) => (
+          <button
+            type="button"
+            class="reel-card group relative shrink-0 snap-start w-52 md:w-60 aspect-[9/16] rounded-2xl overflow-hidden bg-azul-950 text-left border border-marfil/10 focus-visible:outline-dorado-600"
+            data-reel={code}
+            aria-label={`Ver testimonio en video ${i + 1} de ${reels.length}`}
+          >
+            <!-- Respaldo brandado (visible si falta la portada local) -->
+            <span
+              class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(246,210,154,0.22),transparent_65%)]"
+              aria-hidden="true"
+            ></span>
+            <img
+              src="/images/logo-el.png"
+              alt=""
+              class="absolute inset-0 m-auto h-24 w-24 object-contain opacity-10"
+              loading="lazy"
+              aria-hidden="true"
+            />
+            <!-- Portada real del reel (descargada con scripts/fetch-reel-covers.sh) -->
+            <img
+              src={`/images/testimonios/${code}.jpg`}
+              alt=""
+              class="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+              loading="lazy"
+              onerror="this.remove()"
+            />
+            <span
+              class="absolute inset-0 bg-gradient-to-t from-azul-950 via-azul-950/25 to-azul-950/20"
+              aria-hidden="true"
+            ></span>
+            <span class="absolute inset-0 grid place-items-center" aria-hidden="true">
+              <span class="grid h-16 w-16 place-items-center rounded-full bg-dorado text-azul-950 shadow-xl shadow-black/30 group-hover:scale-110 transition-transform">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg>
+              </span>
+            </span>
+            <span class="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-azul-950 to-transparent" aria-hidden="true">
+              <span class="block font-display font-semibold text-marfil text-sm">Historia real {i + 1}</span>
+              <span class="mt-0.5 flex items-center gap-1.5 text-[0.7rem] text-dorado/90">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
+                Ver testimonio
+              </span>
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        id="reel-prev"
+        class="hidden md:grid absolute -left-4 top-1/2 -translate-y-1/2 h-11 w-11 place-items-center rounded-full bg-white border border-azul/15 text-azul shadow-lg hover:border-dorado-600 transition-colors"
+        aria-label="Anterior"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <button
+        type="button"
+        id="reel-next"
+        class="hidden md:grid absolute -right-4 top-1/2 -translate-y-1/2 h-11 w-11 place-items-center rounded-full bg-white border border-azul/15 text-azul shadow-lg hover:border-dorado-600 transition-colors"
+        aria-label="Siguiente"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <p class="mt-5 text-xs text-azul/50 max-w-2xl">
+      Cada proceso es individual y los resultados varían según el caso.
+      <a href={SITE.instagram} target="_blank" rel="noopener" class="underline hover:text-dorado-600 transition-colors">
+        Sigue a la Dra. en Instagram →
+      </a>
+    </p>
+  </div>
+</section>
+
+<!-- Popup: el reel solo se carga al abrir -->
+<dialog
+  id="reel-dialog"
+  class="m-auto rounded-2xl border-0 p-0 bg-azul-950 shadow-2xl backdrop:bg-azul-950/80 backdrop:backdrop-blur-sm"
+  aria-label="Testimonio en video"
+>
+  <div class="relative w-[min(400px,92vw)] h-[min(80vh,700px)]">
+    <button
+      type="button"
+      id="reel-close"
+      class="absolute -top-0 right-0 z-10 grid h-10 w-10 place-items-center rounded-bl-2xl bg-azul-950/90 text-marfil hover:text-dorado transition-colors"
+      aria-label="Cerrar"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <iframe
+      id="reel-iframe"
+      src=""
+      title="Testimonio en video de Instagram"
+      class="h-full w-full border-0 bg-azul-950"
+      loading="lazy"
+      allow="autoplay; encrypted-media; clipboard-write"
+      allowfullscreen
+    ></iframe>
+  </div>
+</dialog>
+
+<script is:inline>
+  (function () {
+    var dialog = document.getElementById('reel-dialog');
+    var iframe = document.getElementById('reel-iframe');
+    if (!dialog || !iframe) return;
+
+    document.querySelectorAll('.reel-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        iframe.src = 'https://www.instagram.com/reel/' + card.dataset.reel + '/embed/';
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+        else dialog.setAttribute('open', '');
+      });
+    });
+
+    function cerrar() {
+      if (dialog.open) dialog.close();
+    }
+    document.getElementById('reel-close').addEventListener('click', cerrar);
+    dialog.addEventListener('click', function (e) {
+      if (e.target === dialog) cerrar();
+    });
+    dialog.addEventListener('close', function () { iframe.src = ''; });
+
+    var slider = document.getElementById('reel-slider');
+    var prev = document.getElementById('reel-prev');
+    var next = document.getElementById('reel-next');
+    if (slider && prev && next) {
+      prev.addEventListener('click', function () { slider.scrollBy({ left: -280, behavior: 'smooth' }); });
+      next.addEventListener('click', function () { slider.scrollBy({ left: 280, behavior: 'smooth' }); });
+    }
+  })();
+</script>

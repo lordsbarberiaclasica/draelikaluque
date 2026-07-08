@@ -13,7 +13,10 @@ export const SITE = {
     'Cirugía bariátrica en Barranquilla con la Dra. Elika Luque: balón gástrico, manga y bypass con formación europea (IRCAD Estrasburgo, Saint-Pierre Bruselas), protocolo riguroso y acompañamiento de un año.',
   url: 'https://draelikaluque.com',
 
-  calendly: 'https://calendly.com/TODO-prevaloracion',
+  // ⚠️ URL FUNCIONAL DE PRUEBA: es la cuenta de Hemma Usaquén (otro negocio
+  // de Hernando) y el evento "nueva-reunion". ANTES DE LANZAR: reemplazar por
+  // el evento de PREVALORACIÓN en la cuenta de la Dra. (Lun/Mar/Jue/Vie 3-7pm).
+  calendly: 'https://calendly.com/contacto-hemmausaquen/nueva-reunion',
 
   whatsapp: '573107005772',
   whatsappAlt: '573218211819', // publicado como "WhatsApp" en el sitio actual
