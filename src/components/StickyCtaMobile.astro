@@ -1,10 +1,30 @@
 ---
-import { SITE } from '../config';
+/** CTA fijo móvil dual (Agendar + WhatsApp), fiel a los mockups responsive. */
+import { SITE, waLink } from '../config';
 ---
 
-<!-- CTA principal siempre visible en móvil (regla del proyecto) -->
 <div
-  class="fixed inset-x-0 bottom-0 z-40 sm:hidden bg-azul-950/90 backdrop-blur-md border-t border-marfil/10 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+  class="fixed inset-x-0 bottom-0 z-40 sm:hidden bg-azul-950/95 backdrop-blur-md border-t border-marfil/10 px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]"
 >
-  <a href={SITE.calendly} class="btn btn-gold w-full">Agendar valoración</a>
+  <div class="flex items-stretch gap-2.5">
+    <a
+      href={SITE.calendly}
+      class="btn flex-1 !px-3 !py-3 text-sm text-marfil border border-marfil/20"
+      style="background:linear-gradient(90deg,#233a5c 0%,#16222c 100%)"
+    >
+      Agendar&nbsp;<span class="font-normal">(15 min)</span>
+    </a>
+    <a
+      href={waLink()}
+      target="_blank"
+      rel="noopener"
+      class="btn flex-1 !px-3 !py-3 text-sm text-white gap-2"
+      style="background:linear-gradient(90deg,#1d9e4b 0%,#25D366 100%)"
+    >
+      Whatsapp
+      <span class="grid h-6 w-6 place-items-center rounded-full bg-white/95" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.06.9.92-2.98-.2-.31a8.2 8.2 0 1 1 6.82 3.72zm4.5-6.13c-.25-.12-1.46-.72-1.68-.8-.23-.09-.4-.13-.56.12-.17.25-.64.8-.79.97-.14.16-.29.18-.53.06a6.7 6.7 0 0 1-3.35-2.93c-.25-.43.25-.4.72-1.34.08-.16.04-.3-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.43.06-.66.3-.22.25-.86.85-.86 2.07s.89 2.4 1.01 2.56c.13.17 1.75 2.67 4.23 3.74.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
+      </span>
+    </a>
+  </div>
 </div>

@@ -1,0 +1,553 @@
+---
+/**
+ * L4 /balon-gastrico/ — Producto de entrada (tráfico templado). URL conservada.
+ * Fiel a mockups Landing_4 (H1–H4, PC + responsive).
+ *
+ * HERO DINÁMICO POR UTM (como L3, pero aquí también cambia el CTA dorado):
+ *   ?hero= balon | dias | post | agenda  ·  o detección en utm_content/term/campaign.
+ *   La variante "agenda" oculta el CTA dorado y muestra "Ver qué incluye →".
+ *
+ * PRECIO: el mockup NO muestra la inversión aquí — se difiere a L6
+ * /incluye-y-pagos/ mediante los enlaces "qué incluye + opciones de pago".
+ *
+ * FORMULARIO "Ver si soy candidato(a)": registra en el mismo Google Sheets del
+ * quiz (campos mapeados) y abre WhatsApp de asesoras con el contexto.
+ * Checkbox de Habeas Data agregado (obligatorio; el mockup no lo traía).
+ *
+ * FAQ: respuestas REALES de la Dra. (borrador del WordPress), pulidas en
+ * redacción sin tocar el contenido clínico. ⚠️ Ítems de "Primeros 7 días"
+ * marcados para validación (el WP tenía placeholders en 3 de 4).
+ */
+import Base from '../layouts/Base.astro';
+import AgendaContacto from '../components/landing/AgendaContacto.astro';
+import TestimoniosLanding from '../components/landing/TestimoniosLanding.astro';
+import { SITE, waLink } from '../config';
+
+const waMsg = 'Hola, quiero saber si soy candidata(o) al balón gástrico con la Dra. Elika Luque.';
+
+const heroDefault = {
+  titulo: 'Baja sin cirugía: balón gástrico',
+  aclaracion: '(casos seleccionados + se confirma en 15 minutos)',
+  sub: 'Herramienta temporal para ayudarte a retomar control con plan por fases y acompañamiento.',
+  img: '/images/landing/hero-balon.webp',
+  alt: 'Médica atendiendo una consulta virtual desde su computador',
+};
+
+const beneficios = [
+  { icon: '/images/landing/icon-sin-cirugia.png', titulo: 'Sin cirugía', desc: '(según candidatura)' },
+  { icon: '/images/landing/icon-plan.png', titulo: 'Plan por fases', desc: '+ acompañamiento' },
+  { icon: '/images/landing/icon-enfoque.png', titulo: 'Enfoque en', desc: 'sostener el cambio' },
+];
+
+/* ⚠️ Del mockup — confirmar consentimiento antes de pauta */
+const testimonios = [
+  { nombre: 'Alexandra Peralta', frase: 'Me quitó el miedo, ahora entiendo el proceso.' },
+  { nombre: 'Marcela Pardo', frase: 'La claridad y el seguimiento fueron la diferencia.' },
+  { nombre: 'Camilo Restrepo', frase: 'Mejoré mi calidad de vida.' },
+];
+
+const comoFunciona = [
+  { icon: '/images/landing/icon-candidatura.png', titulo: 'Prevaloración / candidatura', desc: '(virtual o presencial)' },
+  { icon: '/images/landing/icon-plan.png', titulo: 'Plan por fases', desc: '(alimentación + ajustes)' },
+  { icon: '/images/landing/icon-acompanamiento.png', titulo: 'Acompañamiento + plan post', desc: '(para sostener)' },
+];
+
+/* ⚠️ Contenido clínico de "primeros 7 días": validar con la Dra.
+   (el item 1 viene de su respuesta real; 2–4 eran placeholders en el WP). */
+const primerosDias = [
+  {
+    q: 'Adaptación inicial (sin dramatizar)',
+    a: 'Las primeras 72 horas pueden ser molestas: es la adaptación normal del cuerpo. Se manejan con bomba analgésica que reduce el dolor y medicación según tu caso.',
+  },
+  {
+    q: 'Guía general',
+    a: 'Hidratación por sorbos pequeños, reposo relativo los primeros días y pautas simples de cuidado que recibes por escrito, para que no tengas que adivinar nada.',
+  },
+  {
+    q: 'Plan por fases',
+    a: 'La alimentación avanza por etapas —líquidos, luego purés y de ahí a sólidos— según las indicaciones médicas y tu tolerancia.',
+  },
+  {
+    q: 'Acompañamiento',
+    a: 'Durante esa primera semana tienes contacto directo con el equipo por WhatsApp, además de tus controles programados.',
+  },
+];
+
+const sostiene = [
+  { n: 1, titulo: 'Ruta alimentaria', desc: 'realista' },
+  { n: 2, titulo: 'Controles', desc: 'y ajustes' },
+  { n: 3, titulo: 'Estrategia para', desc: 'sostener hábitos' },
+];
+
+const internacional = [
+  { icon: '/images/landing/icon-prevaloracion.png', titulo: 'Prevaloración antes de viajar', desc: 'Virtual, desde tu país' },
+  { icon: '/images/landing/icon-coordinacion.png', titulo: 'Coordinación de fechas', desc: 'Según tu disponibilidad' },
+  { icon: '/images/landing/icon-seguimiento.png', titulo: 'Seguimiento por WhatsApp', desc: 'Según tu plan' },
+];
+
+/* FAQ con respuestas reales de la Dra. (WP), redacción pulida */
+const faqs = [
+  { q: '¿El balón es para todo el mundo?', a: 'No: es para casos seleccionados, como sobrepeso u obesidad en rangos específicos, sin antecedente de cirugía bariátrica previa. La candidatura se confirma en la prevaloración.' },
+  { q: '¿Es temporal / reversible?', a: 'Sí, es temporal: el balón se retira antes del año.' },
+  { q: '¿Qué se siente los primeros días?', a: 'Las primeras 72 horas pueden ser molestas o dolorosas; se manejan con una bomba analgésica que reduce el dolor, además de las indicaciones médicas para esa etapa.' },
+  { q: '¿Qué pasa cuando se retira?', a: 'Es posible recuperar el peso perdido si no se sostienen los cambios de hábito. Por eso el plan post-balón —método y seguimiento— es parte del tratamiento, no un extra.' },
+  { q: '¿Cómo se sostiene el cambio?', a: 'Mejorando hábitos de vida con una ruta alimentaria realista, controles con ajustes y estrategia para sostener lo logrado.' },
+  { q: '¿Qué incluye el acompañamiento?', a: 'Manejo del dolor inicial, manejo nutricional y controles hasta el retiro del balón, que debe hacerse antes del año.' },
+  { q: '¿Qué pasa si no soy candidato(a) a balón?', a: 'Se te explican las indicaciones y definimos juntos el mejor manejo para tu caso: manga, bypass o manejo médico. Nunca te quedas sin ruta.' },
+  { q: '¿Pacientes internacionales?', a: 'Hacemos la valoración virtual antes de tu viaje y, según disponibilidad, la inserción endoscópica del balón puede programarse desde un día después de tu llegada a la ciudad.' },
+  { q: '¿Cómo agendo / horarios?', a: 'Puedes agendar directamente en esta página o escribirnos por WhatsApp para que las asesoras agenden por ti. Prevaloraciones: lunes, martes, jueves y viernes de 3:00 a 7:00 p. m.' },
+  { q: '¿Qué incluye y opciones de pago?', a: 'El costo incluye: valoración, inserción del balón, bomba analgésica, controles hasta el retiro y guía nutricional. El detalle completo y las opciones de pago están en la página de inversión.' },
+  { q: '¿Para quién NO es el balón?', a: 'Para pacientes con reflujo severo, úlcera gástrica o con antecedente quirúrgico de manga (sleeve) o bypass gástrico.' },
+  { q: '¿Y si definitivamente no soy candidato(a)?', a: 'No te preocupes: en la valoración encontramos juntos tu mejor opción.' },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+---
+
+<Base
+  variant="landing"
+  title="Balón gástrico en Barranquilla: baja sin cirugía (casos seleccionados) · Dra. Elika Luque"
+  description="Balón gástrico con la Dra. Elika Luque: herramienta temporal sin cirugía mayor, con plan por fases y acompañamiento hasta el retiro. Confirma tu candidatura en una prevaloración sin costo de 15 minutos."
+  ogImage="/images/landing/hero-balon.webp"
+>
+  <script is:inline type="application/ld+json" set:html={faqJsonLd} />
+
+  <!-- 1 · HERO (variante dinámica por UTM, con CTA variable) — fiel al mockup: columna centrada, botones apilados de ancho uniforme -->
+  <section class="bg-white">
+    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center">
+      <div class="text-center">
+        <h1 class="text-3xl md:text-[2.5rem] leading-tight text-azul">
+          <span id="hero-title">{heroDefault.titulo}</span>
+          <span id="hero-aclaracion" class="block text-xl md:text-2xl font-semibold mt-1">{heroDefault.aclaracion}</span>
+        </h1>
+        <p id="hero-sub" class="mt-4 font-display font-semibold text-dorado-600 leading-relaxed max-w-md mx-auto">{heroDefault.sub}</p>
+        <p id="hero-nota" class="mt-4 text-xs text-azul/50">
+          La candidatura se confirma en una prevaloración<br />sin costo (15 minutos).
+        </p>
+        <div class="mt-6 flex flex-col items-center gap-3.5">
+          <a id="hero-cta-gold" href="#candidato" class="btn btn-gold w-full max-w-md">Ver si soy candidato(a)</a>
+          <a href={SITE.calendly} class="btn btn-navy w-full max-w-md">Agendar prevaloración (15 min)</a>
+          <a
+            id="hero-wa"
+            href={waLink(waMsg)}
+            target="_blank"
+            rel="noopener"
+            aria-label="Escríbenos por WhatsApp"
+            class="hidden h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg hover:scale-105 transition-transform"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.06.9.92-2.98-.2-.31a8.2 8.2 0 1 1 6.82 3.72zm4.5-6.13c-.25-.12-1.46-.72-1.68-.8-.23-.09-.4-.13-.56.12-.17.25-.64.8-.79.97-.14.16-.29.18-.53.06a6.7 6.7 0 0 1-3.35-2.93c-.25-.43.25-.4.72-1.34.08-.16.04-.3-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.43.06-.66.3-.22.25-.86.85-.86 2.07s.89 2.4 1.01 2.56c.13.17 1.75 2.67 4.23 3.74.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
+          </a>
+          <a id="hero-ver-incluye" href="/incluye-y-pagos/" class="hidden text-sm text-azul/50 hover:text-dorado-600 transition-colors">
+            Ver qué incluye <span aria-hidden="true">&gt; &gt; &gt;</span>
+          </a>
+        </div>
+        <p class="mt-5 text-xs text-azul/45">
+          La recomendación final se confirma tras valoración clínica<br />y estudios, según tu caso. ⚕
+        </p>
+      </div>
+      <img
+        id="hero-img"
+        src={heroDefault.img}
+        alt={heroDefault.alt}
+        class="w-full max-w-lg justify-self-center lg:justify-self-end rounded-3xl"
+        width="1000"
+        height="945"
+        fetchpriority="high"
+      />
+    </div>
+  </section>
+
+  <!-- Selección de variante (título + sub + foto + CTA dorado + nota) -->
+  <script is:inline>
+    (function () {
+      var V = {
+        balon: null,
+        dias: {
+          t: 'Balón gástrico: primeros 7 días',
+          ac: '(qué esperar)',
+          s: 'Te explicamos la adaptación y el plan por fases para vivir el proceso con claridad.',
+          i: '/images/landing/hero-balon-dias.webp',
+          alt: 'Médica explicando el proceso en una videollamada',
+          cta: { texto: 'Ver primeros 7 días', href: '#primeros-7-dias' },
+        },
+        post: {
+          t: 'Plan post-balón: lo que sostiene el cambio',
+          ac: '',
+          s: 'El balón es una herramienta. Lo que sostiene es método + seguimiento.',
+          i: '/images/landing/hero-balon-post.webp',
+          alt: 'Paciente en videollamada de seguimiento desde su casa',
+          cta: { texto: 'Ver plan post-balón', href: '#plan-post' },
+        },
+        agenda: {
+          t: 'Agenda tu prevaloración sin costo (15 min)',
+          ac: 'para confirmar candidatura',
+          s: 'En 15 min aclaras si el balón aplica para tu caso y cuál es el siguiente paso.',
+          i: '/images/landing/hero-balon-agenda.webp',
+          alt: 'Médica revisando su agenda en una tableta',
+          cta: null,
+        },
+      };
+      function ls(k) { try { return localStorage.getItem('el_' + k) || ''; } catch (e) { return ''; } }
+      var p = new URLSearchParams(location.search);
+      var v = (p.get('hero') || p.get('h') || '').toLowerCase();
+      if (!(v in V)) {
+        var pool = [
+          p.get('utm_content'), p.get('utm_term'), p.get('utm_campaign'),
+          ls('utm_content'), ls('utm_term'), ls('utm_campaign'),
+        ].join(' ').toLowerCase();
+        v = (pool.indexOf('7dias') > -1 || pool.indexOf('7-dias') > -1 || pool.indexOf('primeros') > -1) ? 'dias'
+          : (pool.indexOf('post') > -1 || pool.indexOf('sosten') > -1) ? 'post'
+          : (pool.indexOf('agendar') > -1 || pool.indexOf('agenda') > -1) ? 'agenda'
+          : 'balon';
+      }
+      var d = V[v];
+      if (d) {
+        document.getElementById('hero-title').textContent = d.t;
+        var ac = document.getElementById('hero-aclaracion');
+        ac.textContent = d.ac;
+        ac.style.display = d.ac ? '' : 'none';
+        document.getElementById('hero-sub').textContent = d.s;
+        document.getElementById('hero-nota').style.display = 'none';
+        var img = document.getElementById('hero-img');
+        img.src = d.i;
+        img.alt = d.alt;
+        var gold = document.getElementById('hero-cta-gold');
+        if (d.cta) {
+          gold.textContent = d.cta.texto;
+          gold.setAttribute('href', d.cta.href);
+        } else {
+          gold.style.display = 'none';
+          var wa = document.getElementById('hero-wa');
+          wa.classList.remove('hidden');
+          wa.classList.add('inline-flex');
+          document.getElementById('hero-ver-incluye').classList.remove('hidden');
+        }
+      }
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'hero_variant', hero_variant: v, pagina: '/balon-gastrico/' });
+    })();
+  </script>
+
+  <!-- 2 · BENEFICIOS -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-12 md:py-16">
+      <div class="grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto text-center">
+        {beneficios.map((b) => (
+          <div class="reveal">
+            <img src={b.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <h2 class="mt-4 font-display font-semibold text-azul">{b.titulo}</h2>
+            <p class="mt-1 text-sm text-azul/60">{b.desc}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-9 text-center text-xs text-azul/50">
+        La recomendación final se confirma tras valoración, según cada caso.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3 · TESTIMONIOS ⚠️ confirmar consentimiento antes de pauta -->
+  <TestimoniosLanding
+    titulo='Lo que más valoran quienes eligen balón: <span class="text-dorado-600">estructura + seguimiento</span>.'
+    items={testimonios}
+  />
+
+  <!-- 4 · SALES CON -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">
+        En tu <span class="text-dorado-600">prevaloración sin costo</span> (15 min) sales con:
+      </h2>
+      <div class="max-w-2xl mx-auto mt-8 text-left">
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Si eres candidato(a) a balón (o si conviene otra ruta)</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Siguientes pasos claros</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Respuestas sobre «primeros días» y «plan post»</div>
+      </div>
+      <a href={SITE.calendly} class="btn btn-navy mt-8">Agendar prevaloración (15 min)</a>
+      <p class="mt-4 text-sm">
+        <a href="#primeros-7-dias" class="text-azul/60 underline hover:text-dorado-600 transition-colors">Ver primeros 7 días</a>
+        <span class="text-azul/40 mx-1.5">/</span>
+        <a href="#plan-post" class="text-azul/60 underline hover:text-dorado-600 transition-colors">Ver plan post</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 5 · FORMULARIO CANDIDATURA -->
+  <section id="candidato" class="bg-marfil border-y border-azul/10 scroll-mt-16">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">
+        Ver si <span class="text-dorado-600">soy candidato(a)</span> (1 minuto)
+      </h2>
+      <div class="card max-w-lg mx-auto mt-9 p-7 md:p-9">
+        <div class="space-y-4">
+          <div>
+            <label for="bl-nombre" class="text-sm font-display font-semibold text-azul">Nombre</label>
+            <input id="bl-nombre" type="text" autocomplete="name" class="quiz-input mt-1.5" required />
+          </div>
+          <div>
+            <label for="bl-whatsapp" class="text-sm font-display font-semibold text-azul">WhatsApp</label>
+            <div class="mt-1.5 flex gap-2.5">
+              <select id="bl-indicativo" class="quiz-input !w-32" aria-label="Indicativo de país">
+                <option value="57">+57 (CO)</option>
+                <option value="507">+507 (PA)</option>
+                <option value="502">+502 (GT)</option>
+                <option value="1">+1 (US)</option>
+                <option value="52">+52 (MX)</option>
+                <option value="593">+593 (EC)</option>
+              </select>
+              <input id="bl-whatsapp" type="tel" inputmode="tel" placeholder="Número" class="quiz-input flex-1" required />
+            </div>
+          </div>
+          <div>
+            <label for="bl-correo" class="text-sm font-display font-semibold text-azul">Email</label>
+            <input id="bl-correo" type="email" autocomplete="email" class="quiz-input mt-1.5" required />
+          </div>
+          <div>
+            <label for="bl-pais" class="text-sm font-display font-semibold text-azul">País</label>
+            <input id="bl-pais" type="text" autocomplete="country-name" class="quiz-input mt-1.5" required />
+          </div>
+          <div>
+            <label for="bl-buscas" class="text-sm font-display font-semibold text-azul">¿Qué buscas?</label>
+            <textarea
+              id="bl-buscas"
+              rows="3"
+              class="quiz-input mt-1.5 !rounded-2xl resize-none"
+              placeholder="«Quiero balón» / «Quiero que la Dra. me recomiende la mejor opción»"
+            ></textarea>
+          </div>
+          <label class="flex items-start gap-2.5 text-xs text-azul/60 cursor-pointer">
+            <input id="bl-consent" type="checkbox" class="mt-0.5 h-4 w-4 accent-[#e2b877]" required />
+            <span>
+              Autorizo el tratamiento de mis datos personales, incluidos datos de
+              salud, para recibir orientación del equipo de la Dra. Elika Luque,
+              según la <a href="#" class="underline">Política de privacidad y Habeas Data</a>.
+              <!-- ⚠️ TODO: enlazar política real antes de lanzar pauta -->
+            </span>
+          </label>
+        </div>
+        <p id="bl-error" class="hidden mt-4 text-sm text-[#c9483a]" role="alert">
+          Completa todos los campos y acepta la política de datos.
+        </p>
+        <p id="bl-ok" class="hidden mt-4 text-sm text-[#3d8b3d]" role="status">
+          ¡Listo! Registramos tus datos y abrimos WhatsApp para darte orientación.
+        </p>
+        <button type="button" id="bl-enviar" class="btn btn-navy w-full mt-6">Enviar y recibir orientación</button>
+        <p class="mt-3 text-center text-[0.7rem] text-azul/45">Tu información es confidencial.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · CÓMO FUNCIONA -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">¿Cómo funciona el <span class="text-dorado-600">balón</span>? (en simple)</h2>
+      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
+        {comoFunciona.map((c) => (
+          <div class="reveal">
+            <img src={c.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <h3 class="mt-4 font-display font-semibold text-azul">{c.titulo}</h3>
+            <p class="mt-1 text-sm text-azul/60">{c.desc}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-8 text-xs text-azul/50">La ruta final depende del caso.</p>
+    </div>
+  </section>
+
+  <!-- 7 · PRIMEROS 7 DÍAS -->
+  <section id="primeros-7-dias" class="bg-marfil border-y border-azul/10 scroll-mt-16">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">
+        <span class="text-dorado-600">Primeros 7 días:</span> qué esperar (realista)
+      </h2>
+      <div class="max-w-3xl mx-auto mt-9">
+        {primerosDias.map((d) => (
+          <details class="faq-item" name="dias7">
+            <summary>{d.q}</summary>
+            <p class="faq-body !pl-0">{d.a}</p>
+          </details>
+        ))}
+      </div>
+      <div class="text-center">
+        <a href={SITE.calendly} class="btn btn-navy mt-9">Agendar (15 min)</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · LO QUE SOSTIENE -->
+  <section id="plan-post" class="bg-white scroll-mt-16">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">
+        <span class="text-dorado-600">Lo que sostiene</span> el cambio no es solo el balón:
+      </h2>
+      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-3xl mx-auto text-center">
+        {sostiene.map((s) => (
+          <div class="reveal">
+            <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-dorado-600 font-display font-bold text-white">{s.n}</span>
+            <p class="mt-3.5 font-display font-semibold text-azul">{s.titulo}</p>
+            <p class="text-sm text-azul/60">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-10 text-center font-display italic text-azul/75">
+        El balón es una herramienta; el método sostiene el cambio.
+      </p>
+    </div>
+  </section>
+
+  <!-- 9 · TIEMPOS -->
+  <section class="bg-marfil border-y border-azul/10">
+    <div class="wrap py-14 md:py-18">
+      <h2 class="text-2xl md:text-3xl text-center">Tiempos del proceso <span class="text-dorado-600">(referencia)</span></h2>
+      <div class="max-w-2xl mx-auto mt-7">
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> De valoración a cirugía (cuando aplica): ~1 mes promedio</div>
+        <div class="check-row"><img src="/images/landing/check.png" alt="" /> Si vienes del exterior: depende de fechas de viaje y coordinación</div>
+      </div>
+      <p class="mt-6 text-center text-sm font-display italic text-dorado-600">
+        El proceso se coordina según tu caso, disponibilidad o fechas de viaje.
+      </p>
+    </div>
+  </section>
+
+  <!-- 10 · AGENDA Y CONTACTO -->
+  <section class="bg-dorado/10">
+    <div class="wrap py-14 md:py-18">
+      <h2 class="text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
+      <div class="mt-7">
+        <AgendaContacto />
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · INTERNACIONAL -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">
+        ¿Vienes desde <span class="text-dorado-600">Panamá, Guatemala u otro país?</span>
+      </h2>
+      <p class="mt-3 text-sm text-azul/60">Atención presencial en Barranquilla, Colombia.</p>
+      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
+        {internacional.map((s) => (
+          <div class="reveal">
+            <img src={s.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <h3 class="mt-4 font-display font-semibold text-azul">{s.titulo}</h3>
+            <p class="mt-1 text-sm text-azul/60">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+      <a href="#candidato" class="btn btn-navy mt-10">Enviar y recibir orientación</a>
+      <p class="mt-3 text-[0.7rem] text-azul/45">Tu información es confidencial.</p>
+    </div>
+  </section>
+
+  <!-- 12 · FAQ -->
+  <section class="bg-marfil border-t border-azul/10">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
+      <div class="max-w-3xl mx-auto mt-9">
+        {faqs.map((f, i) => (
+          <details class="faq-item" name="faq-balon">
+            <summary>
+              <span class="text-dorado-600 font-bold">{i + 1}.</span>
+              {f.q}
+            </summary>
+            <p class="faq-body">
+              {f.a}
+              {i === 9 && (
+                <a href="/incluye-y-pagos/" class="block mt-2 font-display font-semibold text-dorado-600 hover:underline">
+                  Ver qué incluye + opciones de pago →
+                </a>
+              )}
+            </p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · ELIGE TU SIGUIENTE PASO -->
+  <section class="bg-white">
+    <div class="wrap py-14 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl">Elige tu <span class="text-dorado-600">siguiente paso</span></h2>
+      <div class="mt-8 flex flex-col items-center gap-3.5">
+        <a href="#candidato" class="btn btn-gold w-full max-w-xs">Ver si soy candidato(a)</a>
+        <a href={SITE.calendly} class="btn btn-navy w-full max-w-xs">Agendar prevaloración (15 min)</a>
+        <a href={waLink(waMsg)} target="_blank" rel="noopener" aria-label="WhatsApp" class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.06.9.92-2.98-.2-.31a8.2 8.2 0 1 1 6.82 3.72z"/></svg>
+        </a>
+        <a href="/incluye-y-pagos/" class="mt-2 text-sm text-azul/60 underline hover:text-dorado-600 transition-colors">
+          Qué incluye + opciones de pago
+        </a>
+        <!-- TODO fase L6: la página /incluye-y-pagos/ se construye a continuación -->
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script
+  is:inline
+  define:vars={{ WA_QUIZ: SITE.whatsappQuiz, SHEET_URL: SITE.quizSheetEndpoint }}
+>
+  (function () {
+    var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+    function $(id) { return document.getElementById(id); }
+    function utm(k) { try { return localStorage.getItem('el_' + k) || ''; } catch (e) { return ''; } }
+
+    var btn = $('bl-enviar');
+    if (!btn) return;
+
+    btn.addEventListener('click', function () {
+      var nombre = $('bl-nombre').value.trim();
+      var ind = $('bl-indicativo').value;
+      var num = $('bl-whatsapp').value.trim();
+      var correo = $('bl-correo').value.trim();
+      var pais = $('bl-pais').value.trim();
+      var buscas = $('bl-buscas').value.trim();
+      var consent = $('bl-consent').checked;
+
+      if (!nombre || !num || !correo || !pais || !consent) {
+        $('bl-error').classList.remove('hidden');
+        $('bl-ok').classList.add('hidden');
+        return;
+      }
+      $('bl-error').classList.add('hidden');
+
+      var whatsappCompleto = '+' + ind + num.replace(/\D/g, '');
+
+      /* Registro en Google Sheets (mismo endpoint del quiz, campos mapeados) */
+      try {
+        var fd = new URLSearchParams();
+        fd.append('nombre', nombre);
+        fd.append('whatsapp', whatsappCompleto);
+        fd.append('pais', pais);
+        fd.append('correo', correo);
+        fd.append('recomendacion', 'Interés: Balón gástrico');
+        fd.append('motivo', buscas ? '[L4] ' + buscas.slice(0, 200) : '[L4] Consulta balón');
+        fd.append('intentos', '');
+        fd.append('patron', '');
+        fd.append('imc', '');
+        fd.append('salud', '');
+        fd.append('reflujo', '');
+        fd.append('freno', '');
+        UTM_KEYS.forEach(function (k) { fd.append(k, utm(k)); });
+        fd.append('pagina', '/balon-gastrico/');
+        fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: fd });
+      } catch (e) { /* el registro no debe bloquear al usuario */ }
+
+      /* Handoff a WhatsApp de asesoras con contexto */
+      var ref = (utm('utm_source') || utm('utm_campaign')) ? ' [ref:' + (utm('utm_source') || '-') + '|' + (utm('utm_campaign') || '-') + ']' : '';
+      var msj = 'Hola, soy ' + nombre + ' (' + pais + '). Vengo de la página del balón gástrico.' +
+        (buscas ? ' Lo que busco: ' + buscas + '.' : ' Quiero saber si soy candidata(o).') + ref;
+      $('bl-ok').classList.remove('hidden');
+      window.open('https://wa.me/' + WA_QUIZ + '?text=' + encodeURIComponent(msj), '_blank');
+    });
+  })();
+</script>
