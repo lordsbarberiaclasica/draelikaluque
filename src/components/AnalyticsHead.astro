@@ -1,0 +1,35 @@
+---
+/**
+ * AnalyticsHead.astro · v0.9.7
+ *
+ * Va lo más ARRIBA posible dentro del <head> de src/layouts/Base.astro,
+ * REEMPLAZANDO el bloque actual de GTM-MMMK2ZD (no deben convivir dos
+ * contenedores: duplicarían la medición).
+ *
+ * Incluye: GTM (GTM-55C96K63) + Google Analytics 4 por gtag (G-X5XX8MNDJ2).
+ * ⚠️ Regla anti-duplicado: como GA4 ya se carga aquí por gtag, NO crear
+ * además una etiqueta "Google Analytics: GA4 Configuration" con el mismo ID
+ * dentro del panel de GTM — cada pageview contaría doble. GTM queda para
+ * píxeles, conversiones y los triggers de los eventos del dataLayer.
+ *
+ * Los `is:inline` son obligatorios: le dicen a Astro que no procese ni
+ * empaquete estos scripts.
+ */
+---
+
+<!-- Google Tag Manager -->
+<script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-55C96K63');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Google tag (gtag.js) · GA4 -->
+<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-X5XX8MNDJ2"></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X5XX8MNDJ2');
+</script>

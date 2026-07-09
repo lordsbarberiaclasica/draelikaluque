@@ -1,0 +1,357 @@
+---
+/**
+ * FormularioValoracion.astro · v0.9.6
+ *
+ * Modal previo a Calendly. Se incluye UNA vez por página (idealmente en
+ * Base.astro, antes de </body>) y desde ahí intercepta automáticamente TODOS
+ * los clics en enlaces que apunten a calendly.com — sin tocar ningún botón
+ * existente del sitio ni de las landings.
+ *
+ * Flujo (2 pasos dentro del mismo <dialog>):
+ *   1. Nombres · WhatsApp · Email · País · Motivo (+ Habeas Data, honeypot).
+ *      Al continuar → POST al Apps Script → fila en la pestaña
+ *      "Registros Valoración 15 Min" (el registro sale ANTES de ofrecer destinos).
+ *   2. Dos caminos: Calendly (name/email/a1 precargados + UTMs que ya traía el
+ *      enlace decorado) o WhatsApp de asesoras con mensaje contextual [ref:...].
+ *
+ * Progressive enhancement: si JS falla o <dialog> no existe, los enlaces a
+ * Calendly siguen funcionando como hasta hoy (no se hace preventDefault).
+ * Escape hatch: cualquier <a href*="calendly.com" data-skip-form> NO abre el modal.
+ */
+import { REGISTROS } from '../config-registros';
+---
+
+<dialog id="fv-dialog" class="fv-dialog" aria-labelledby="fv-titulo">
+  <div class="fv-card">
+    <button type="button" class="fv-cerrar" data-fv-cerrar aria-label="Cerrar">&times;</button>
+
+    <!-- ── Paso 1 · datos ─────────────────────────────────────────────── -->
+    <section class="fv-paso" data-fv-paso="1">
+      <p class="fv-eyebrow">Valoración de 15 minutos</p>
+      <h2 class="fv-titulo" id="fv-titulo">Agenda tu valoración</h2>
+      <p class="fv-sub">Déjanos tus datos y elige cómo continuar. Te toma menos de un minuto.</p>
+
+      <form id="fv-form" novalidate>
+        <div class="fv-campo">
+          <label for="fv-nombres">Nombres y apellidos</label>
+          <input id="fv-nombres" name="nombres" type="text" autocomplete="name" required maxlength="90" placeholder="Ej.: Laura Martínez" />
+        </div>
+
+        <div class="fv-grid2">
+          <div class="fv-campo">
+            <label for="fv-telefono">Teléfono / WhatsApp</label>
+            <input id="fv-telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" required maxlength="25" placeholder="+57 300 123 4567" />
+          </div>
+          <div class="fv-campo">
+            <label for="fv-email">Correo electrónico</label>
+            <input id="fv-email" name="email" type="email" autocomplete="email" required maxlength="120" placeholder="tucorreo@gmail.com" />
+          </div>
+        </div>
+
+        <div class="fv-grid2">
+          <div class="fv-campo">
+            <label for="fv-pais">País desde el que nos visitas</label>
+            <select id="fv-pais" name="pais" required>
+              <option value="" selected disabled>Selecciona tu país</option>
+              <option>Colombia</option>
+              <option>Estados Unidos</option>
+              <option>Panamá</option>
+              <option>Ecuador</option>
+              <option>Venezuela</option>
+              <option>México</option>
+              <option>España</option>
+              <option>Chile</option>
+              <option>Perú</option>
+              <option>Canadá</option>
+              <option value="__otro">Otro país</option>
+            </select>
+          </div>
+          <div class="fv-campo">
+            <label for="fv-motivo">Motivo de la consulta</label>
+            <select id="fv-motivo" name="motivo" required>
+              <option value="" selected disabled>Selecciona una opción</option>
+              <option>Manga gástrica</option>
+              <option>Balón gástrico</option>
+              <option>Bypass gástrico</option>
+              <option>Reflujo / hernia hiatal</option>
+              <option>Aún no lo tengo claro, quiero orientación</option>
+              <option>Otro motivo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fv-campo fv-oculto" data-fv-otro-pais>
+          <label for="fv-pais-otro">¿Cuál país?</label>
+          <input id="fv-pais-otro" name="pais_otro" type="text" maxlength="60" placeholder="Escribe tu país" />
+        </div>
+
+        <!-- Honeypot anti-spam: los humanos no lo ven ni lo llenan -->
+        <div class="fv-hp" aria-hidden="true">
+          <label for="fv-web">Sitio web</label>
+          <input id="fv-web" name="web" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <label class="fv-habeas">
+          <input type="checkbox" name="habeas" required />
+          <span>Autorizo el tratamiento de mis datos personales según la <a href="#" target="_blank" rel="noopener">política de privacidad y Habeas Data</a>.</span>
+        </label>
+
+        <button type="submit" class="fv-btn fv-btn-gold" data-fv-enviar>Continuar&nbsp;&rarr;</button>
+        <p class="fv-nota">Sin costo por dejar tus datos. La valoración se confirma en el siguiente paso.</p>
+      </form>
+    </section>
+
+    <!-- ── Paso 2 · destinos ──────────────────────────────────────────── -->
+    <section class="fv-paso fv-oculto" data-fv-paso="2">
+      <div class="fv-check" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h2 class="fv-titulo">¡Gracias, <span data-fv-nombre>listo</span>!</h2>
+      <p class="fv-sub">Tus datos quedaron registrados. Ahora elige cómo prefieres continuar:</p>
+
+      <a href="#" class="fv-btn fv-btn-gold" data-fv-calendly data-skip-form target="_blank" rel="noopener">Elegir fecha y hora en el calendario</a>
+      <a href="#" class="fv-btn fv-btn-wa" data-fv-whatsapp target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.11 3.22 5.11 4.51.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35Z"/><path d="M12.05 2a9.9 9.9 0 0 0-8.57 14.86L2 22l5.28-1.38A9.9 9.9 0 1 0 12.05 2Zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.13.82.84-3.05-.2-.31a8.2 8.2 0 1 1 6.97 3.87Z"/></svg>
+        Coordinar por WhatsApp
+      </a>
+
+      <p class="fv-nota">Nuestras asesoras confirman contigo la fecha y resuelven cualquier duda antes de la cita.</p>
+    </section>
+  </div>
+</dialog>
+
+<script>
+  import { REGISTROS } from '../config-registros';
+  import { tokenCaptcha } from '../scripts/captcha-cliente';
+
+  const dialog = document.getElementById('fv-dialog') as HTMLDialogElement | null;
+
+  if (dialog && typeof dialog.showModal === 'function') {
+    const form = dialog.querySelector('#fv-form') as HTMLFormElement;
+    const paso1 = dialog.querySelector('[data-fv-paso="1"]') as HTMLElement;
+    const paso2 = dialog.querySelector('[data-fv-paso="2"]') as HTMLElement;
+    const btnEnviar = dialog.querySelector('[data-fv-enviar]') as HTMLButtonElement;
+    const selPais = dialog.querySelector('#fv-pais') as HTMLSelectElement;
+    const campoOtroPais = dialog.querySelector('[data-fv-otro-pais]') as HTMLElement;
+    const inputOtroPais = dialog.querySelector('#fv-pais-otro') as HTMLInputElement;
+
+    let hrefCalendlyOrigen = REGISTROS.calendlyFallback;
+
+    const dl = (evento: string, extra: Record<string, string> = {}) => {
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      (window as any).dataLayer.push({ event: evento, pagina: location.pathname, ...extra });
+    };
+
+    /* UTMs: primero los frescos de la URL actual, luego los que el script de
+       Base ya inyectó en el enlace de Calendly clicado (persistidos 30 días). */
+    const leerUtms = () => {
+      const claves = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'];
+      const out: Record<string, string> = {};
+      const actual = new URLSearchParams(location.search);
+      let delEnlace = new URLSearchParams('');
+      try { delEnlace = new URL(hrefCalendlyOrigen, location.origin).searchParams; } catch (_e) { /* noop */ }
+      for (const k of claves) out[k] = actual.get(k) || delEnlace.get(k) || '';
+      return out;
+    };
+
+    /* ── Interceptor global: cualquier <a> hacia calendly.com abre el modal ── */
+    document.addEventListener('click', (ev) => {
+      const enlace = (ev.target as Element | null)?.closest?.('a[href*="calendly.com"]') as HTMLAnchorElement | null;
+      if (!enlace || enlace.hasAttribute('data-skip-form')) return;
+      ev.preventDefault();
+      hrefCalendlyOrigen = enlace.href;
+      paso2.classList.add('fv-oculto');
+      paso1.classList.remove('fv-oculto');
+      dialog.showModal();
+      dl('valoracion_form_abierto');
+    }, true);
+
+    dialog.querySelector('[data-fv-cerrar]')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (ev) => { if (ev.target === dialog) dialog.close(); });
+
+    selPais?.addEventListener('change', () => {
+      const esOtro = selPais.value === '__otro';
+      campoOtroPais.classList.toggle('fv-oculto', !esOtro);
+      if (esOtro) inputOtroPais?.focus();
+    });
+
+    /* ── Envío: registrar en Sheets y pasar al paso 2 ── */
+    form?.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const datos = new FormData(form);
+      if ((datos.get('web') as string || '').trim() !== '') { dialog.close(); return; }
+
+      const nombres = (datos.get('nombres') as string || '').trim();
+      const telefono = (datos.get('telefono') as string || '').trim();
+      const email = (datos.get('email') as string || '').trim();
+      const paisSel = (datos.get('pais') as string || '').trim();
+      const pais = paisSel === '__otro' ? ((datos.get('pais_otro') as string || '').trim() || 'Otro país') : paisSel;
+      const motivo = (datos.get('motivo') as string || '').trim();
+      const utms = leerUtms();
+
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = 'Guardando…';
+
+      const captcha = await tokenCaptcha('valoracion');
+
+      const cuerpo = new URLSearchParams({
+        hoja: REGISTROS.hojaValoracion,
+        nombres, telefono, email, pais, motivo,
+        pagina: location.pathname,
+        url_completa: location.href,
+        referrer: document.referrer || '',
+        recaptcha_token: captcha,
+        ...utms,
+      });
+
+      if (REGISTROS.appsScriptUrl.startsWith('http')) {
+        fetch(REGISTROS.appsScriptUrl, { method: 'POST', mode: 'no-cors', keepalive: true, body: cuerpo })
+          .catch(() => { /* no-cors: fire and forget */ });
+      } else {
+        console.warn('[FormularioValoracion] appsScriptUrl sin configurar: el lead NO se guardó en Sheets.');
+      }
+      dl('valoracion_form_enviado', { motivo, pais });
+
+      /* Calendly precargado: el href ya traía UTMs; sumamos name/email y a1–a3 */
+      let urlCalendly = hrefCalendlyOrigen;
+      try {
+        const u = new URL(hrefCalendlyOrigen, location.origin);
+        u.searchParams.set('name', nombres);
+        u.searchParams.set('email', email);
+        u.searchParams.set('a1', telefono);
+        u.searchParams.set('a2', pais);
+        u.searchParams.set('a3', motivo);
+        urlCalendly = u.toString();
+      } catch (_e) { /* deja el href original */ }
+
+      const ref = `[ref:${utms.utm_source || 'directo'}|${utms.utm_campaign || '-'}]`;
+      const msg = `Hola, soy ${nombres} y escribo desde ${pais}. Acabo de dejar mis datos en la web para agendar una valoración con la Dra. Elika. Motivo: ${motivo}. ${ref}`;
+      const urlWa = `https://wa.me/${REGISTROS.whatsappAsesoras}?text=${encodeURIComponent(msg)}`;
+
+      (paso2.querySelector('[data-fv-nombre]') as HTMLElement).textContent = nombres.split(' ')[0] || 'listo';
+      (paso2.querySelector('[data-fv-calendly]') as HTMLAnchorElement).href = urlCalendly;
+      (paso2.querySelector('[data-fv-whatsapp]') as HTMLAnchorElement).href = urlWa;
+
+      window.setTimeout(() => {
+        paso1.classList.add('fv-oculto');
+        paso2.classList.remove('fv-oculto');
+        btnEnviar.disabled = false;
+        btnEnviar.innerHTML = 'Continuar&nbsp;&rarr;';
+        (paso2.querySelector('[data-fv-calendly]') as HTMLElement).focus();
+      }, 350);
+    });
+
+    paso2.querySelector('[data-fv-calendly]')?.addEventListener('click', () => {
+      dl('valoracion_destino', { destino: 'calendly' });
+      window.setTimeout(() => dialog.close(), 250);
+    });
+    paso2.querySelector('[data-fv-whatsapp]')?.addEventListener('click', () => {
+      dl('valoracion_destino', { destino: 'whatsapp' });
+      window.setTimeout(() => dialog.close(), 250);
+    });
+  }
+</script>
+
+<style>
+  .fv-dialog {
+    padding: 0;
+    border: none;
+    border-radius: 1.25rem;
+    width: min(34rem, calc(100vw - 2rem));
+    max-height: min(92dvh, 60rem);
+    background: transparent;
+    overflow: visible;
+  }
+  .fv-dialog::backdrop { background: rgba(14, 22, 29, 0.72); backdrop-filter: blur(3px); }
+
+  .fv-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 1.25rem;
+    border-top: 5px solid #f6d29a;
+    box-shadow: 0 24px 64px rgba(14, 22, 29, 0.35);
+    padding: 2rem 1.5rem 1.75rem;
+    max-height: min(92dvh, 60rem);
+    overflow-y: auto;
+    font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+    color: #1d2b38;
+  }
+  @media (min-width: 640px) { .fv-card { padding: 2.5rem 2.5rem 2rem; } }
+
+  .fv-cerrar {
+    position: absolute; top: 0.75rem; right: 0.9rem;
+    background: none; border: none; cursor: pointer;
+    font-size: 1.75rem; line-height: 1; color: #94a3ad;
+  }
+  .fv-cerrar:hover { color: #1d2b38; }
+
+  .fv-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: #b98d4f; margin: 0 0 0.35rem;
+  }
+  .fv-titulo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 1.45rem; line-height: 1.2;
+    margin: 0 0 0.4rem; color: #1d2b38;
+  }
+  .fv-sub { margin: 0 0 1.25rem; font-size: 0.95rem; color: #46586a; }
+
+  .fv-campo { margin-bottom: 0.9rem; }
+  .fv-campo label {
+    display: block; font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem; font-weight: 600; margin-bottom: 0.3rem; color: #1d2b38;
+  }
+  .fv-campo input, .fv-campo select {
+    width: 100%; box-sizing: border-box;
+    padding: 0.65rem 0.8rem;
+    border: 1.5px solid #d8dee4; border-radius: 0.6rem;
+    background: #fbfaf7; font: inherit; font-size: 0.95rem; color: #1d2b38;
+  }
+  .fv-campo input:focus, .fv-campo select:focus {
+    outline: 2px solid #f6d29a; outline-offset: 1px; border-color: #e2b877;
+  }
+  .fv-grid2 { display: grid; gap: 0 0.9rem; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .fv-grid2 { grid-template-columns: 1fr 1fr; } }
+
+  .fv-habeas {
+    display: flex; gap: 0.6rem; align-items: flex-start;
+    font-size: 0.8rem; color: #46586a; margin: 0.4rem 0 1.1rem; cursor: pointer;
+  }
+  .fv-habeas input { margin-top: 0.2rem; accent-color: #e2b877; }
+  .fv-habeas a { color: #b98d4f; text-decoration: underline; }
+
+  .fv-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%; box-sizing: border-box;
+    padding: 0.85rem 1.5rem; border: none; border-radius: 999px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.95rem;
+    white-space: nowrap; cursor: pointer; text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  .fv-btn:hover { transform: translateY(-1px); }
+  .fv-btn:focus-visible { outline: 3px solid #f6d29a; outline-offset: 2px; }
+  .fv-btn-gold { background: #f6d29a; color: #1d2b38; box-shadow: 0 8px 20px rgba(226, 184, 119, 0.4); }
+  .fv-btn-gold:hover { background: #e2b877; }
+  .fv-btn-gold:disabled { opacity: 0.65; cursor: wait; transform: none; }
+  .fv-btn-wa { background: #eef6f0; color: #1d5c3a; border: 1.5px solid #bfe0cb; margin-top: 0.7rem; }
+  .fv-btn-wa:hover { background: #e2f0e7; }
+  .fv-btn-wa svg { width: 1.15rem; height: 1.15rem; flex: none; }
+
+  .fv-nota { font-size: 0.75rem; color: #7b8b98; text-align: center; margin: 0.8rem 0 0; }
+
+  .fv-check {
+    width: 3.2rem; height: 3.2rem; margin: 0 auto 0.9rem;
+    border-radius: 999px; background: #f6d29a; color: #1d2b38;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(226, 184, 119, 0.45);
+  }
+  .fv-check svg { width: 1.6rem; height: 1.6rem; }
+  .fv-paso[data-fv-paso="2"] { text-align: center; }
+
+  .fv-oculto { display: none !important; }
+  .fv-hp { position: absolute; left: -9999px; top: -9999px; height: 1px; width: 1px; overflow: hidden; }
+</style>

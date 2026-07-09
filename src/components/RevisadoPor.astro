@@ -1,0 +1,39 @@
+---
+/**
+ * RevisadoPor.astro · v0.9.7 · Señal E-E-A-T + frescura para SEO/AI-SEO
+ *
+ * Los motores de IA (Perplexity, ChatGPT, AI Overviews) citan más el contenido
+ * médico con atribución experta visible y fecha de actualización (+25–30% de
+ * visibilidad según el estudio GEO de Princeton). Insertar al final del
+ * contenido principal de cada landing y página clínica:
+ *
+ *   <RevisadoPor fecha="julio de 2026" />
+ */
+interface Props { fecha?: string }
+const { fecha = 'julio de 2026' } = Astro.props;
+---
+
+<aside class="rp" aria-label="Revisión médica del contenido">
+  <svg class="rp-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/>
+  </svg>
+  <p>
+    Contenido revisado por la <strong>Dra. Elika Luque</strong>, cirujana bariátrica
+    y laparoscópica — Universidad El Bosque, IRCAD (Estrasburgo) y Universidad
+    Saint-Pierre (Bruselas). <span class="rp-fecha">Actualizado: {fecha}.</span>
+  </p>
+</aside>
+
+<style>
+  .rp {
+    display: flex; gap: 0.7rem; align-items: flex-start;
+    max-width: 42rem; margin: 2rem auto 0;
+    padding: 0.9rem 1.1rem; border-radius: 0.8rem;
+    background: #f8f5ef; border: 1px solid rgba(29, 43, 56, 0.1);
+    font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+  }
+  .rp-icono { width: 1.5rem; height: 1.5rem; flex: none; color: #b98d4f; margin-top: 0.1rem; }
+  .rp p { margin: 0; font-size: 0.82rem; line-height: 1.55; color: #46586a; }
+  .rp strong { color: #1d2b38; }
+  .rp-fecha { white-space: nowrap; color: #7b8b98; }
+</style>

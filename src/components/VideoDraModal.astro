@@ -1,0 +1,79 @@
+---
+/**
+ * VideoDraModal.astro · v0.9.6
+ *
+ * Popup <dialog> que reproduce el video de la Dra. (el mismo archivo del fondo
+ * del hero, sin recomprimir) CON sonido y controles. Mismo patrón nativo que el
+ * popup de reels de testimonios.
+ *
+ * Uso: incluir <VideoDraModal /> una vez en la página y disparar con cualquier
+ * elemento que lleve el atributo data-open-video-dra, por ejemplo:
+ *   <button type="button" class="btn ..." data-open-video-dra>Conoce a la Dra.</button>
+ *
+ * El video se carga solo al abrir (preload="none") para no tocar Core Web Vitals.
+ */
+import { REGISTROS } from '../config-registros';
+---
+
+<dialog id="vd-dialog" class="vd-dialog" aria-label="Video: conoce a la Dra. Elika Luque">
+  <div class="vd-marco">
+    <button type="button" class="vd-cerrar" data-vd-cerrar aria-label="Cerrar video">&times;</button>
+    <video class="vd-video" src={REGISTROS.videoDra} controls playsinline preload="none"></video>
+    <p class="vd-pie">Dra. Elika Luque · Cirugía bariátrica y laparoscópica</p>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('vd-dialog') as HTMLDialogElement | null;
+
+  if (dialog && typeof dialog.showModal === 'function') {
+    const video = dialog.querySelector('.vd-video') as HTMLVideoElement;
+
+    document.addEventListener('click', (ev) => {
+      const disparador = (ev.target as Element | null)?.closest?.('[data-open-video-dra]');
+      if (!disparador) return;
+      ev.preventDefault();
+      dialog.showModal();
+      video.muted = false;
+      video.play().catch(() => { /* el usuario puede dar play manual */ });
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      (window as any).dataLayer.push({ event: 'video_dra_abierto', pagina: location.pathname });
+    });
+
+    const cerrar = () => dialog.close();
+    dialog.querySelector('[data-vd-cerrar]')?.addEventListener('click', cerrar);
+    dialog.addEventListener('click', (ev) => { if (ev.target === dialog) cerrar(); });
+    dialog.addEventListener('close', () => video.pause());
+  }
+</script>
+
+<style>
+  .vd-dialog {
+    padding: 0; border: none; background: transparent;
+    width: min(56rem, calc(100vw - 1.5rem));
+    max-height: 92dvh; overflow: visible;
+  }
+  .vd-dialog::backdrop { background: rgba(14, 22, 29, 0.85); backdrop-filter: blur(4px); }
+
+  .vd-marco {
+    position: relative; background: #0e161d;
+    border-radius: 1rem; overflow: hidden;
+    border: 1px solid rgba(246, 210, 154, 0.35);
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.55);
+  }
+  .vd-video { display: block; width: 100%; max-height: 78dvh; background: #000; }
+  .vd-pie {
+    margin: 0; padding: 0.65rem 1rem;
+    font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #f6d29a; text-align: center;
+  }
+  .vd-cerrar {
+    position: absolute; top: 0.5rem; right: 0.65rem; z-index: 2;
+    width: 2.4rem; height: 2.4rem; border: none; border-radius: 999px;
+    background: rgba(14, 22, 29, 0.65); color: #fff;
+    font-size: 1.5rem; line-height: 1; cursor: pointer;
+  }
+  .vd-cerrar:hover { background: rgba(226, 184, 119, 0.9); color: #1d2b38; }
+  .vd-cerrar:focus-visible { outline: 3px solid #f6d29a; outline-offset: 2px; }
+</style>

@@ -1,4 +1,11 @@
+# robots.txt · draelikaluque.com
+# Todos los rastreadores permitidos, incluidos los de motores de IA que citan
+# fuentes (GPTBot, ChatGPT-User, ClaudeBot, PerplexityBot, Google-Extended,
+# Bingbot). Bloquearlos impediria que esos motores citen el sitio.
+# /gracias/ es la pagina de confirmacion post-agendamiento: no debe indexarse.
+
 User-agent: *
 Allow: /
+Disallow: /gracias/
 
 Sitemap: https://draelikaluque.com/sitemap-index.xml
