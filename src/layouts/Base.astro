@@ -1,4 +1,7 @@
 ---
+import FormularioValoracion from "../components/FormularioValoracion.astro";
+import VideoDraModal from "../components/VideoDraModal.astro";
+import Ga4Head from "../components/Ga4Head.astro";
 import '@fontsource/montserrat/latin-600.css';
 import '@fontsource/montserrat/latin-700.css';
 import '@fontsource/open-sans/latin-400.css';
@@ -135,7 +138,8 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
         }
       })();
     </script>
-  </head>
+  <Ga4Head />
+</head>
 
   <body class="min-h-screen flex flex-col">
     <!-- GTM noscript -->
@@ -179,5 +183,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
         els.forEach(function (el) { io.observe(el); });
       })();
     </script>
-  </body>
+  <FormularioValoracion />
+<VideoDraModal />
+</body>
 </html>

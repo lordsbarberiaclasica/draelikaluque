@@ -29,14 +29,14 @@ export const SITE = {
   phoneAlt: '+57 321 821 1819',
   email: 'dra.elikaluque@gmail.com',
 
-  gtmId: 'GTM-MMMK2ZD',
+  gtmId: 'GTM-55C96K63',
 
   horario: 'Lunes, martes, jueves y viernes · 3:00 – 7:00 p. m.',
   // ⚠️ El mockup de L1 dice "Lun-Mar-Jue-Vie 2:00-6:00 pm · Mié 9am-6pm".
   // Se usa el horario CONFIRMADO por la Dra. (3-7pm, sin miércoles) hasta nueva orden.
   horarioWhatsapp: 'Lunes a viernes · 9:00 a. m. – 6:00 p. m.',
 
-  instagram: 'https://www.instagram.com/draelikaluque',
+  instagram: 'https://www.instagram.com/dra.elikaluque',
   facebook: 'https://www.facebook.com/draelikaluque',
 };
 

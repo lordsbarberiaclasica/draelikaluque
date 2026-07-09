@@ -27,7 +27,7 @@ export const REGISTROS = {
    */
   recaptchaSiteKey: '',
 
-  /** Medición. El GTM nuevo REEMPLAZA a GTM-MMMK2ZD (ver doc, Paso F). */
+  /** Medición. El GTM nuevo REEMPLAZA a GTM-55C96K63 (ver doc, Paso F). */
   gtmId: 'GTM-55C96K63',
   ga4Id: 'G-X5XX8MNDJ2',
 
