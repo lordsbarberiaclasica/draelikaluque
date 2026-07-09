@@ -1,28 +1,33 @@
 /**
- * Registros Web · draelikaluque.com · v2 (jul 2026)
- * ------------------------------------------------
- * Apps Script NUEVO e independiente del que hoy usa el quiz L2 (ese no se
- * toca hasta migrar). Recibe POSTs del sitio y escribe cada lead como una
- * fila en la pestaña indicada por el parámetro `hoja`. Si la pestaña no
- * existe, la CREA con sus encabezados.
+ * Registros Web · draelikaluque.com · v3 (jul 2026)
+ * --------------------------------------------------
+ * REEMPLAZA el codigo del Apps Script EXISTENTE del quiz (misma URL /exec,
+ * sin tocar el sitio). Atiende con UNA sola URL los tres formularios,
+ * escribiendo cada lead en su pestana. Si la pestana no existe, la CREA
+ * con sus encabezados.
  *
- * Hoja destino:
- * https://docs.google.com/spreadsheets/d/1vbKpMXqxwGkLhpVEfQnIMJSkMP7LjiG4MW4u6YMqbxA
+ * Hoja de calculo destino (la real, donde llegan los registros hoy):
+ * https://docs.google.com/spreadsheets/d/1xae4I6KqQbvauBGSCLewrN5wEJ-mMlYAX1i3RrFZqjw
  *
- * Pestañas atendidas:
- *   1. "Registros Valoración 15 Min"        ← formulario pre-Calendly (todo el sitio)
- *   2. "Registros Landing Balón Gástrico"   ← mini-quiz de /balon-gastrico/
- *   3. "Registros Landing Quizz"            ← quiz completo de /quiz/ (L2, al migrar)
+ * Pestanas:
+ *   "Registros Landing Quizz"           <- quiz completo de /quiz/ (DEFECTO:
+ *                                          toda peticion sin campo `hoja` cae
+ *                                          aqui = retrocompatible con el quiz)
+ *   "Registros Valoración 15 Min"       <- formulario pre-Calendly (todo el sitio)
+ *   "Registros Landing Balón Gástrico"  <- mini-quiz de /balon-gastrico/
  *
- * reCAPTCHA v3 (opcional): si en Configuración del proyecto → Propiedades del
- * script existe la propiedad RECAPTCHA_SECRET, cada envío se verifica contra
- * Google y el resultado queda en la columna "Captcha" (score 0–1). La fila se
- * registra SIEMPRE — nunca se descarta un lead por un falso positivo; la
- * columna sirve para que las asesoras detecten spam de un vistazo.
+ * COMO ACTUALIZAR (conservando la URL):
+ *   1. script.google.com -> abrir el proyecto del quiz -> borrar el codigo
+ *      viejo -> pegar este completo -> Guardar.
+ *   2. Implementar -> ADMINISTRAR implementaciones -> lapiz (editar) ->
+ *      Version: "Nueva version" -> Implementar.  [NO crear "Nueva
+ *      implementacion": eso cambia la URL y rompe el sitio.]
+ *   3. Probar abriendo la URL /exec en el navegador: debe responder
+ *      {"ok":true,"version":3}.
  */
 
-var SPREADSHEET_ID = '1vbKpMXqxwGkLhpVEfQnIMJSkMP7LjiG4MW4u6YMqbxA';
-var HOJA_DEFECTO = 'Registros Valoración 15 Min';
+var SPREADSHEET_ID = '1xae4I6KqQbvauBGSCLewrN5wEJ-mMlYAX1i3RrFZqjw';
+var HOJA_DEFECTO = 'Registros Landing Quizz';
 
 var CAMPOS_ORIGEN = ['pagina', 'url_completa', 'referrer',
   'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
@@ -32,30 +37,36 @@ var ENCABEZADOS_ORIGEN = ['Página de origen', 'URL completa', 'Referrer',
   'gclid', 'fbclid'];
 
 var HOJAS = {
-  'Registros Valoración 15 Min': {
-    encabezados: ['Fecha y hora', 'Nombres', 'Teléfono / WhatsApp', 'Email', 'País', 'Motivo de consulta']
-      .concat(ENCABEZADOS_ORIGEN).concat(['Captcha']),
-    campos: ['nombres', 'telefono', 'email', 'pais', 'motivo'].concat(CAMPOS_ORIGEN)
-  },
-  'Registros Landing Balón Gástrico': {
-    encabezados: ['Fecha y hora', 'Nombre', 'WhatsApp', 'Peso (kg)', 'Estatura (cm)', 'IMC',
-      'Cirugía previa', 'Reflujo / hernia', 'Ruta', 'Rango IMC']
-      .concat(ENCABEZADOS_ORIGEN).concat(['Captcha']),
-    campos: ['nombre', 'whatsapp', 'peso', 'estatura', 'imc',
-      'cirugia_previa', 'reflujo', 'ruta', 'imc_rango'].concat(CAMPOS_ORIGEN)
-  },
   'Registros Landing Quizz': {
-    encabezados: ['Fecha y hora', 'Nombre', 'WhatsApp', 'País', 'Correo', 'Recomendación',
-      'Motivo', 'Intentos previos', 'Patrón alimentario', 'IMC', 'Salud', 'Reflujo', 'Freno principal']
+    encabezados: ['Fecha y hora', 'Nombre', 'WhatsApp', 'País', 'Correo',
+      'Recomendación', 'Motivo', 'Intentos previos', 'Patrón alimentario',
+      'IMC', 'Salud', 'Reflujo', 'Freno principal']
       .concat(ENCABEZADOS_ORIGEN).concat(['Captcha']),
     campos: ['nombre', 'whatsapp', 'pais', 'correo', 'recomendacion',
-      'motivo', 'intentos', 'patron', 'imc', 'salud', 'reflujo', 'freno'].concat(CAMPOS_ORIGEN)
+      'motivo', 'intentos', 'patron', 'imc', 'salud', 'reflujo', 'freno']
+      .concat(CAMPOS_ORIGEN)
+  },
+  'Registros Valoración 15 Min': {
+    encabezados: ['Fecha y hora', 'Nombres', 'Teléfono / WhatsApp', 'Email',
+      'País', 'Motivo de consulta']
+      .concat(ENCABEZADOS_ORIGEN).concat(['Captcha']),
+    campos: ['nombres', 'telefono', 'email', 'pais', 'motivo']
+      .concat(CAMPOS_ORIGEN)
+  },
+  'Registros Landing Balón Gástrico': {
+    encabezados: ['Fecha y hora', 'Nombre', 'WhatsApp', 'Peso (kg)',
+      'Estatura (cm)', 'IMC', 'Cirugía previa', 'Reflujo / hernia',
+      'Ruta', 'Rango IMC']
+      .concat(ENCABEZADOS_ORIGEN).concat(['Captcha']),
+    campos: ['nombre', 'whatsapp', 'peso', 'estatura', 'imc',
+      'cirugia_previa', 'reflujo', 'ruta', 'imc_rango']
+      .concat(CAMPOS_ORIGEN)
   }
 };
 
 function doPost(e) {
   try {
-    var p = (e && e.parameter) || {};
+    var p = leerParametros(e);
     var nombreHoja = (p.hoja && HOJAS[p.hoja]) ? p.hoja : HOJA_DEFECTO;
     var config = HOJAS[nombreHoja];
 
@@ -78,17 +89,37 @@ function doPost(e) {
 
     hoja.appendRow(fila);
     return salidaJson({ ok: true, hoja: nombreHoja });
-  } catch (err) {
-    return salidaJson({ ok: false, error: String(err) });
+  } catch (error) {
+    return salidaJson({ ok: false, error: String(error) });
   }
 }
 
+/** Lectura robusta (patron de Walter): parametros -> JSON -> urlencoded. */
+function leerParametros(e) {
+  var p = {};
+  if (e && e.parameter && Object.keys(e.parameter).length > 0) {
+    p = e.parameter;
+  } else if (e && e.postData && e.postData.contents) {
+    try {
+      p = JSON.parse(e.postData.contents);
+    } catch (parseError) {
+      var parts = e.postData.contents.split('&');
+      for (var i = 0; i < parts.length; i++) {
+        var kv = parts[i].split('=');
+        if (kv.length === 2) {
+          p[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1].replace(/\+/g, ' '));
+        }
+      }
+    }
+  }
+  return p;
+}
+
 /**
- * Devuelve el texto para la columna "Captcha":
- *   'sin verificar' → no hay RECAPTCHA_SECRET configurada (captcha apagado)
- *   'sin token'     → hay secret pero el navegador no envió token
- *   'score 0.9'     → verificado; <0.3 suele ser bot, revisar
- *   'fallido'       → Google rechazó el token
+ * Columna "Captcha": 'sin verificar' = no hay RECAPTCHA_SECRET configurada;
+ * 'sin token' = el navegador no envio token; 'score 0.9' = verificado
+ * (<0.3 suele ser bot); 'fallido' = Google rechazo el token.
+ * La fila se registra SIEMPRE: nunca se descarta un lead por falso positivo.
  */
 function verificarCaptcha(token) {
   var secret = PropertiesService.getScriptProperties().getProperty('RECAPTCHA_SECRET');
@@ -108,9 +139,8 @@ function verificarCaptcha(token) {
   }
 }
 
-/** Prueba rápida en el navegador: abrir la URL /exec debe mostrar este JSON. */
 function doGet() {
-  return salidaJson({ ok: true, servicio: 'registros-web-draelikaluque', version: 2 });
+  return salidaJson({ ok: true, servicio: 'registros-web-draelikaluque', version: 3 });
 }
 
 function salidaJson(obj) {

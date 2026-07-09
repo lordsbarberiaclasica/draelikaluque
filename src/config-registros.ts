@@ -13,7 +13,7 @@ export const REGISTROS = {
    * Con el placeholder, los formularios funcionan igual para el paciente
    * (Calendly/WhatsApp), pero NO guardan en Sheets y avisan por console.warn.
    */
-  appsScriptUrl: 'PEGAR_AQUI_URL_EXEC_DEL_APPS_SCRIPT',
+  appsScriptUrl: 'https://script.google.com/macros/s/AKfycby8AVZSZBIprh9DPcs2fTJY8mDkn5PDokvL1rVkr3tEdT_yZw-xt5AruvAAADLdqwPWcA/exec',
 
   /** Pestañas destino en la hoja de Google Sheets (nombres EXACTOS). */
   hojaValoracion: 'Registros Valoración 15 Min',
@@ -35,7 +35,7 @@ export const REGISTROS = {
    * Video de la Dra. (el mismo del fondo del hero, sin recomprimir).
    * ⚠️ Verificar el nombre real con:  find public -type f -name '*.mp4'
    */
-  videoDra: '/videos/hero-banner.mp4',
+  videoDra: '/videos/conoce-a-la-dra.mp4',
 
   /**
    * Calendly base para CTAs generados dinámicamente (resultado del quiz de
