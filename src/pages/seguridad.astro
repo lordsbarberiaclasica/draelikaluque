@@ -134,7 +134,7 @@ const faqJsonLd = JSON.stringify({
         <ul class="mt-6 space-y-2.5" role="list">
           {heroChecks.map((c) => (
             <li class="flex items-start gap-2.5 text-sm text-azul/80">
-              <img src="/images/landing/check.png" alt="" class="h-4 w-4 mt-0.5" />
+              <span class="check-svg check-svg-sm" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
               <span set:html={c.replace('antes / durante / después', '<strong>antes / durante / después</strong>')} />
             </li>
           ))}
@@ -282,7 +282,7 @@ const faqJsonLd = JSON.stringify({
       <div class="max-w-2xl mx-auto mt-9">
         {diaCirugia.map((d, i) => (
           <div class="check-row">
-            <img src="/images/landing/check.png" alt="" />
+            <span class="check-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
             <span><strong class="font-display">{i + 1}. {d.titulo}:</strong> {d.desc}</span>
           </div>
         ))}
@@ -330,8 +330,8 @@ const faqJsonLd = JSON.stringify({
     <div class="wrap py-14 md:py-18">
       <h2 class="titulo-linea text-2xl md:text-3xl text-center"><span class="text-dorado-600">Tiempos</span> típicos</h2>
       <div class="max-w-2xl mx-auto mt-7">
-        <div class="check-row"><img src="/images/landing/check.png" alt="" /> <span><strong class="font-display">1. De valoración a cirugía:</strong> ~1 mes promedio</span></div>
-        <div class="check-row"><img src="/images/landing/check.png" alt="" /> <span><strong class="font-display">2. Pacientes internacionales:</strong> se coordina según fechas de viaje</span></div>
+        <div class="check-row"><span class="check-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> <span><strong class="font-display">1. De valoración a cirugía:</strong> ~1 mes promedio</span></div>
+        <div class="check-row"><span class="check-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> <span><strong class="font-display">2. Pacientes internacionales:</strong> se coordina según fechas de viaje</span></div>
       </div>
     </div>
   </section>

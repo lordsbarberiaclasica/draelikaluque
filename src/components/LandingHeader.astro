@@ -1,17 +1,20 @@
 ---
-/** Header mínimo de landing: solo logo, sin menú (evita fugas del embudo). */
+/**
+ * Header de landing v1.2.0 — fondo oscuro como el sitio institucional,
+ * isotipo + nombre CENTRADOS, sin menú (embudo cerrado, cero fugas).
+ */
 ---
 
-<header class="bg-white">
-  <div class="wrap py-4">
-    <a href="/" aria-label="Dra. Elika Luque — inicio">
-      <img
-        src="/images/landing/logo-wordmark.png"
-        alt="Dra. Elika Luque"
-        class="h-12 w-auto"
-        width="120"
-        height="58"
-      />
+<header class="bg-azul-950 border-b border-dorado/30">
+  <div class="wrap py-4 flex justify-center">
+    <a href="/" class="flex items-center gap-3" aria-label="Dra. Elika Luque — inicio">
+      <img src="/images/logo-el.png" alt="" width="42" height="42" class="h-11 w-11 object-contain" />
+      <span class="font-display font-semibold text-marfil leading-tight text-left">
+        Dra. Elika Luque
+        <span class="block text-[0.62rem] font-normal tracking-[0.24em] uppercase text-dorado/90">
+          Cirugía bariátrica
+        </span>
+      </span>
     </a>
   </div>
 </header>

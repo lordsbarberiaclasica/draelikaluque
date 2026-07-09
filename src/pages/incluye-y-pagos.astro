@@ -118,15 +118,15 @@ const faqJsonLd = JSON.stringify({
 
         <ul class="mt-6 inline-flex flex-col items-start gap-2.5 text-left" role="list">
           <li class="flex items-start gap-2.5 text-sm text-azul/85">
-            <img src="/images/landing/check.png" alt="" class="h-4 w-4 mt-0.5" />
+            <span class="check-svg check-svg-sm" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
             <span><strong class="font-display">Claridad:</strong> qué incluye (sin sorpresas)</span>
           </li>
           <li class="flex items-start gap-2.5 text-sm text-azul/85">
-            <img src="/images/landing/check.png" alt="" class="h-4 w-4 mt-0.5" />
+            <span class="check-svg check-svg-sm" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
             <span><strong class="font-display">Seguimiento</strong> incluido hasta 1 año</span>
           </li>
           <li class="flex items-start gap-2.5 text-sm text-azul/85">
-            <img src="/images/landing/check.png" alt="" class="h-4 w-4 mt-0.5" />
+            <span class="check-svg check-svg-sm" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
             <span><strong class="font-display">Opciones de pago</strong> (particular)</span>
           </li>
         </ul>
@@ -292,7 +292,7 @@ const faqJsonLd = JSON.stringify({
       <h2 class="titulo-linea text-2xl md:text-3xl text-center">¿Qué procedimiento <span class="text-dorado-600">se prioriza</span>?</h2>
       <div class="max-w-2xl mx-auto mt-8">
         {prioriza.map((p) => (
-          <div class="check-row"><img src="/images/landing/check.png" alt="" /> {p}</div>
+          <div class="check-row"><span class="check-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> {p}</div>
         ))}
       </div>
       <p class="mt-6 text-center text-sm text-azul/60 italic">La decisión se toma por evaluación, no por moda.</p>
@@ -318,7 +318,7 @@ const faqJsonLd = JSON.stringify({
 
       <div class="max-w-xl mx-auto mt-10">
         {pagoMedios.map((m) => (
-          <div class="check-row !border-azul/15"><img src="/images/landing/check.png" alt="" /> {m}</div>
+          <div class="check-row !border-azul/15"><span class="check-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> {m}</div>
         ))}
       </div>
 
