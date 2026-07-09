@@ -9,15 +9,15 @@
 
 export const REGISTROS = {
   /**
-   * ⚠️ PEGAR AQUÍ la URL /exec del NUEVO Apps Script (docs/integracion-v0.9.7.md, Paso D).
+   * ⚠️ URL /exec del Apps Script v3 VINCULADO a la hoja oficial (Drive de Lords). Desplegado y verificado el 9-jul-2026.
    * Con el placeholder, los formularios funcionan igual para el paciente
    * (Calendly/WhatsApp), pero NO guardan en Sheets y avisan por console.warn.
    */
-  appsScriptUrl: 'https://script.google.com/macros/s/AKfycby8AVZSZBIprh9DPcs2fTJY8mDkn5PDokvL1rVkr3tEdT_yZw-xt5AruvAAADLdqwPWcA/exec',
+  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbzHV0WPklm49rvX_d5cHYz9u2OSBMfOwl7pB60F4ehSr8dSPdnZgrQO6zqbXX9TxZTF/exec',
 
   /** Pestañas destino en la hoja de Google Sheets (nombres EXACTOS). */
   hojaValoracion: 'Registros Valoración 15 Min',
-  hojaBalon: 'Registros Landing Balón Gástrico',
+  hojaBalon: 'Registros Landing Balón',
   hojaQuizL2: 'Registros Landing Quizz',
 
   /**

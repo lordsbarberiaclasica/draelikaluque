@@ -1,32 +1,28 @@
 /**
- * Registros Web · draelikaluque.com · v3 (jul 2026)
- * --------------------------------------------------
- * REEMPLAZA el codigo del Apps Script EXISTENTE del quiz (misma URL /exec,
- * sin tocar el sitio). Atiende con UNA sola URL los tres formularios,
- * escribiendo cada lead en su pestana. Si la pestana no existe, la CREA
- * con sus encabezados.
+ * Registros Web · draelikaluque.com · v3 vinculado (jul 2026) — DESPLEGADO
+ * ------------------------------------------------------------------------
+ * Este es el codigo que corre en produccion. Vive VINCULADO a la hoja
+ * oficial (Drive de Lords: 1D5hI8vIudoAZFy4TqHPwTjxaHBQKXjvjqornKYjIE40),
+ * creado desde Extensiones -> Apps Script con scope minimo
+ * (spreadsheets.currentonly) para esquivar el bloqueo de apps no verificadas.
  *
- * Hoja de calculo destino (la real, donde llegan los registros hoy):
- * https://docs.google.com/spreadsheets/d/1xae4I6KqQbvauBGSCLewrN5wEJ-mMlYAX1i3RrFZqjw
+ * URL de produccion (cableada en src/config-registros.ts):
+ * https://script.google.com/macros/s/AKfycbzHV0WPklm49rvX_d5cHYz9u2OSBMfOwl7pB60F4ehSr8dSPdnZgrQO6zqbXX9TxZTF/exec
  *
- * Pestanas:
- *   "Registros Landing Quizz"           <- quiz completo de /quiz/ (DEFECTO:
- *                                          toda peticion sin campo `hoja` cae
- *                                          aqui = retrocompatible con el quiz)
- *   "Registros Valoración 15 Min"       <- formulario pre-Calendly (todo el sitio)
- *   "Registros Landing Balón Gástrico"  <- mini-quiz de /balon-gastrico/
+ * Manifest (appsscript.json) del proyecto:
+ * {
+ *   "timeZone": "America/Bogota",
+ *   "exceptionLogging": "STACKDRIVER",
+ *   "runtimeVersion": "V8",
+ *   "oauthScopes": ["https://www.googleapis.com/auth/spreadsheets.currentonly"],
+ *   "webapp": { "executeAs": "USER_DEPLOYING", "access": "ANYONE_ANONYMOUS" }
+ * }
  *
- * COMO ACTUALIZAR (conservando la URL):
- *   1. script.google.com -> abrir el proyecto del quiz -> borrar el codigo
- *      viejo -> pegar este completo -> Guardar.
- *   2. Implementar -> ADMINISTRAR implementaciones -> lapiz (editar) ->
- *      Version: "Nueva version" -> Implementar.  [NO crear "Nueva
- *      implementacion": eso cambia la URL y rompe el sitio.]
- *   3. Probar abriendo la URL /exec en el navegador: debe responder
- *      {"ok":true,"version":3}.
+ * Para editar en el futuro: cambiar el codigo -> Guardar -> Implementar ->
+ * ADMINISTRAR implementaciones -> lapiz -> Version: Nueva -> Implementar
+ * (nunca "Nueva implementacion": cambiaria la URL).
  */
 
-var SPREADSHEET_ID = '1xae4I6KqQbvauBGSCLewrN5wEJ-mMlYAX1i3RrFZqjw';
 var HOJA_DEFECTO = 'Registros Landing Quizz';
 
 var CAMPOS_ORIGEN = ['pagina', 'url_completa', 'referrer',
@@ -53,7 +49,7 @@ var HOJAS = {
     campos: ['nombres', 'telefono', 'email', 'pais', 'motivo']
       .concat(CAMPOS_ORIGEN)
   },
-  'Registros Landing Balón Gástrico': {
+  'Registros Landing Balón': {
     encabezados: ['Fecha y hora', 'Nombre', 'WhatsApp', 'Peso (kg)',
       'Estatura (cm)', 'IMC', 'Cirugía previa', 'Reflujo / hernia',
       'Ruta', 'Rango IMC']
@@ -70,7 +66,7 @@ function doPost(e) {
     var nombreHoja = (p.hoja && HOJAS[p.hoja]) ? p.hoja : HOJA_DEFECTO;
     var config = HOJAS[nombreHoja];
 
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
     var hoja = ss.getSheetByName(nombreHoja);
     if (!hoja) {
       hoja = ss.insertSheet(nombreHoja);
@@ -85,7 +81,7 @@ function doPost(e) {
     for (var i = 0; i < config.campos.length; i++) {
       fila.push(p[config.campos[i]] || '');
     }
-    fila.push(verificarCaptcha(p.recaptcha_token));
+    fila.push('captcha desactivado');
 
     hoja.appendRow(fila);
     return salidaJson({ ok: true, hoja: nombreHoja });
@@ -94,7 +90,6 @@ function doPost(e) {
   }
 }
 
-/** Lectura robusta (patron de Walter): parametros -> JSON -> urlencoded. */
 function leerParametros(e) {
   var p = {};
   if (e && e.parameter && Object.keys(e.parameter).length > 0) {
@@ -113,30 +108,6 @@ function leerParametros(e) {
     }
   }
   return p;
-}
-
-/**
- * Columna "Captcha": 'sin verificar' = no hay RECAPTCHA_SECRET configurada;
- * 'sin token' = el navegador no envio token; 'score 0.9' = verificado
- * (<0.3 suele ser bot); 'fallido' = Google rechazo el token.
- * La fila se registra SIEMPRE: nunca se descarta un lead por falso positivo.
- */
-function verificarCaptcha(token) {
-  var secret = PropertiesService.getScriptProperties().getProperty('RECAPTCHA_SECRET');
-  if (!secret) return 'sin verificar';
-  if (!token) return 'sin token';
-  try {
-    var resp = UrlFetchApp.fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'post',
-      payload: { secret: secret, response: token },
-      muteHttpExceptions: true
-    });
-    var r = JSON.parse(resp.getContentText());
-    if (!r.success) return 'fallido';
-    return (typeof r.score === 'number') ? 'score ' + r.score : 'ok';
-  } catch (err) {
-    return 'error verificación';
-  }
 }
 
 function doGet() {
