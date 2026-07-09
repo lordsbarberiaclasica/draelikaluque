@@ -13,6 +13,8 @@
  *    ⚠️ Validar con la Dra. antes de publicar (en especial la #7, estudios).
  */
 import Base from '../layouts/Base.astro';
+import TimelineSeguimiento from '../components/landing/TimelineSeguimiento.astro';
+import TestimoniosLanding from '../components/landing/TestimoniosLanding.astro';
 import { SITE, waLink } from '../config';
 
 const waMsg = 'Hola, quiero agendar mi prevaloración sin costo (15 min) con la Dra. Elika Luque.';
@@ -121,8 +123,8 @@ const faqJsonLd = JSON.stringify({
   <script is:inline type="application/ld+json" set:html={faqJsonLd} />
 
   <!-- 1 · HERO -->
-  <section class="bg-white">
-    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center">
+  <section class="bg-white hero-lienzo">
+    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center hero-enter">
       <div>
         <h1 class="text-3xl md:text-[2.6rem] leading-tight text-azul">
           Agenda tu prevaloración <span class="text-dorado-600">sin costo (15 min)</span> y recibe una ruta clara
@@ -150,7 +152,7 @@ const faqJsonLd = JSON.stringify({
       <img
         src="/images/landing/hero-consulta.webp"
         alt="Médica tomando notas durante una consulta con un paciente"
-        class="w-full max-w-lg justify-self-center lg:justify-self-end"
+        class="w-full max-w-lg justify-self-center lg:justify-self-end rounded-3xl img-premium"
         width="1000"
         height="945"
         fetchpriority="high"
@@ -161,7 +163,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 2 · CHECKLIST QUÉ DEFINIMOS -->
   <section class="bg-marfil border-y border-azul/10">
     <div class="wrap py-10 md:py-12">
-      <div class="max-w-2xl mx-auto">
+      <div class="max-w-2xl mx-auto reveal reveal-stagger">
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Definimos si eres candidato(a) — historia clínica y antecedentes</div>
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Aclaramos tu ruta orientativa (manga / bypass / otra)</div>
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Si aplica: tiempo estimado de dieta preoperatoria</div>
@@ -175,13 +177,13 @@ const faqJsonLd = JSON.stringify({
   <!-- 3 · EN ESTA PREVALORACIÓN SALES CON -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20 text-center">
-      <h2 class="text-2xl md:text-3xl">
+      <h2 class="titulo-linea text-2xl md:text-3xl">
         En esta <span class="text-dorado-600">prevaloración</span> (15 min) sales con:
       </h2>
-      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
+      <div class="reveal reveal-stagger mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
         {salesCon.map((s) => (
           <div class="reveal">
-            <img src={s.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <img src={s.icon} alt="" class="icono-caja mx-auto" loading="lazy" />
             <h3 class="mt-4 font-display font-semibold text-azul">{s.titulo}</h3>
             <p class="mt-1 text-sm text-azul/60">{s.desc}</p>
           </div>
@@ -195,7 +197,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 4 · TU PREVALORACIÓN ES CON LA DRA. -->
   <section class="bg-marfil border-y border-azul/10">
     <div class="wrap py-14 md:py-20 text-center">
-      <h2 class="text-2xl md:text-3xl">
+      <h2 class="titulo-linea text-2xl md:text-3xl">
         Tu prevaloración es con<br />la <span class="text-dorado-600">Dra. Elika Luque Ariza</span>
       </h2>
       <p class="mt-3 text-sm text-azul/60">Cirujana general · laparoscopia · cirugía bariátrica.</p>
@@ -204,9 +206,9 @@ const faqJsonLd = JSON.stringify({
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Seguimiento personal</div>
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Controles postoperatorios incluidos hasta 1 año (sin costo)</div>
       </div>
-      <ul class="mt-9 flex flex-wrap items-center justify-center gap-6" role="list">
+      <ul class="mt-9 flex flex-wrap items-center justify-center gap-6 reveal reveal-stagger" role="list">
         {sellos.map((s) => (
-          <li><img src={s.src} alt={s.alt} class="h-16 w-16 md:h-20 md:w-20 object-contain" loading="lazy" /></li>
+          <li><img src={s.src} alt={s.alt} class="sello-img h-16 w-16 md:h-20 md:w-20 object-contain" loading="lazy" /></li>
         ))}
       </ul>
       <a href="/dra-elika-luque-2/" class="mt-6 inline-block text-sm underline text-azul/60 hover:text-dorado-600 transition-colors">
@@ -218,17 +220,12 @@ const faqJsonLd = JSON.stringify({
   <!-- 5 · SEGUIMIENTO 1 AÑO -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20 text-center">
-      <h2 class="text-2xl md:text-3xl">
+      <h2 class="titulo-linea text-2xl md:text-3xl">
         <span class="text-dorado-600">Seguimiento incluido</span> hasta 1 año · Controles:
       </h2>
-      <ul class="mt-10 flex flex-wrap justify-center gap-2.5" role="list">
-        {timeline.map((t) => (
-          <li class="rounded-lg border border-azul/15 bg-marfil px-4 py-3 font-display font-semibold text-sm text-azul min-w-[5.5rem]">
-            {t}
-          </li>
-        ))}
-      </ul>
-      <p class="mt-6 text-sm text-azul/60">2 primeros presenciales; el resto pueden ser virtuales.</p>
+      <div class="mt-10">
+        <TimelineSeguimiento nota="2 primeros presenciales; el resto pueden ser virtuales." />
+      </div>
       <a href={SITE.calendly} class="btn btn-navy mt-6">Agendar (15 min)</a>
     </div>
   </section>
@@ -236,12 +233,12 @@ const faqJsonLd = JSON.stringify({
   <!-- 6 · SI TE IDENTIFICAS CON ALGUNO -->
   <section class="bg-marfil border-y border-azul/10">
     <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">
         Si te identificas con alguno, <span class="text-dorado-600">esto es para ti…</span>
       </h2>
       <ul class="mt-11 grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-5 max-w-5xl mx-auto text-center" role="list">
         {identifica.map((i) => (
-          <li class="reveal">
+          <li class="reveal mini-card">
             <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-dorado-600 font-display font-bold text-white">
               {i.n}
             </span>
@@ -256,7 +253,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 7 · QUÉ PASA DESPUÉS DE AGENDAR -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">¿Qué pasa <span class="text-dorado-600">después de agendar?</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">¿Qué pasa <span class="text-dorado-600">después de agendar?</span></h2>
       <div class="max-w-2xl mx-auto mt-9">
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Prevaloración de 15 min (virtual o presencial)</div>
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Exámenes + valoración preoperatoria (internacional: depende de fechas de viaje)</div>
@@ -268,14 +265,14 @@ const faqJsonLd = JSON.stringify({
   <!-- 8 · INTERNACIONAL -->
   <section class="bg-marfil border-y border-azul/10">
     <div class="wrap py-14 md:py-20 text-center">
-      <h2 class="text-2xl md:text-3xl">
+      <h2 class="titulo-linea text-2xl md:text-3xl">
         ¿Vienes desde <span class="text-dorado-600">Panamá, Guatemala u otro país?</span>
       </h2>
       <p class="mt-3 text-sm text-azul/60">Atención presencial en Barranquilla, Colombia.</p>
-      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
+      <div class="reveal reveal-stagger mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
         {internacional.map((s) => (
           <div class="reveal">
-            <img src={s.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <img src={s.icon} alt="" class="icono-caja mx-auto" loading="lazy" />
             <h3 class="mt-4 font-display font-semibold text-azul">{s.titulo}</h3>
             <p class="mt-1 text-sm text-azul/60">{s.desc}</p>
           </div>
@@ -286,31 +283,15 @@ const faqJsonLd = JSON.stringify({
   </section>
 
   <!-- 9 · TESTIMONIOS ⚠️ confirmar consentimiento antes de pauta -->
-  <section class="bg-dorado/15">
-    <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">
-        Lo que más mencionan <span class="text-dorado-600">nuestros pacientes</span>
-      </h2>
-      <div class="mt-10 grid gap-5 sm:grid-cols-3 max-w-4xl mx-auto">
-        {testimonios.map((t) => (
-          <figure class="card p-6">
-            <div class="flex items-center gap-3">
-              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-azul-950 font-display font-bold text-dorado text-sm" aria-hidden="true">
-                {t.nombre.split(' ').map((w) => w[0]).join('')}
-              </span>
-              <figcaption class="font-display font-semibold text-sm text-azul">{t.nombre}</figcaption>
-            </div>
-            <blockquote class="mt-3.5 text-sm text-azul/70 leading-relaxed">«{t.frase}»</blockquote>
-          </figure>
-        ))}
-      </div>
-    </div>
-  </section>
+  <TestimoniosLanding
+    titulo='Lo que más mencionan <span class="text-dorado-600">nuestros pacientes</span>'
+    items={testimonios}
+  />
 
   <!-- 10 · FAQ -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
       <div class="max-w-3xl mx-auto mt-9">
         {faqs.map((f, i) => (
           <details class="faq-item" name="faq">
@@ -328,7 +309,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 11 · AGENDA Y CONTACTO -->
   <section class="bg-marfil border-t border-azul/10">
     <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
       <div class="max-w-2xl mx-auto mt-9">
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Prevaloraciones: {SITE.horario}</div>
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> WhatsApp (secretaría): {SITE.horarioWhatsapp}</div>
@@ -336,7 +317,7 @@ const faqJsonLd = JSON.stringify({
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Si escribes fuera de horario: respuesta el siguiente día hábil</div>
       </div>
       <div class="text-center">
-        <a href={SITE.calendly} class="btn btn-navy mt-9">Agendar (15 min)</a>
+        <a href={SITE.calendly} class="btn btn-gold mt-9">Agendar (15 min)</a>
       </div>
     </div>
   </section>

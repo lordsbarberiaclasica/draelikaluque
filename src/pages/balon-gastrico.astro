@@ -122,8 +122,8 @@ const faqJsonLd = JSON.stringify({
   <script is:inline type="application/ld+json" set:html={faqJsonLd} />
 
   <!-- 1 · HERO (variante dinámica por UTM, con CTA variable) — fiel al mockup: columna centrada, botones apilados de ancho uniforme -->
-  <section class="bg-white">
-    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center">
+  <section class="bg-white hero-lienzo">
+    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center hero-enter">
       <div class="text-center">
         <h1 class="text-3xl md:text-[2.5rem] leading-tight text-azul">
           <span id="hero-title">{heroDefault.titulo}</span>
@@ -158,7 +158,7 @@ const faqJsonLd = JSON.stringify({
         id="hero-img"
         src={heroDefault.img}
         alt={heroDefault.alt}
-        class="w-full max-w-lg justify-self-center lg:justify-self-end rounded-3xl"
+        class="w-full max-w-lg justify-self-center lg:justify-self-end rounded-3xl img-premium"
         width="1000"
         height="945"
         fetchpriority="high"
@@ -243,7 +243,7 @@ const faqJsonLd = JSON.stringify({
       <div class="grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto text-center">
         {beneficios.map((b) => (
           <div class="reveal">
-            <img src={b.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <img src={b.icon} alt="" class="icono-caja mx-auto" loading="lazy" />
             <h2 class="mt-4 font-display font-semibold text-azul">{b.titulo}</h2>
             <p class="mt-1 text-sm text-azul/60">{b.desc}</p>
           </div>
@@ -264,7 +264,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 4 · SALES CON -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20 text-center">
-      <h2 class="text-2xl md:text-3xl">
+      <h2 class="titulo-linea text-2xl md:text-3xl">
         En tu <span class="text-dorado-600">prevaloración sin costo</span> (15 min) sales con:
       </h2>
       <div class="max-w-2xl mx-auto mt-8 text-left">
@@ -281,68 +281,14 @@ const faqJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- 5 · FORMULARIO CANDIDATURA -->
+  <!-- 5 · TEST DE CANDIDATURA (mini-quiz clínico validado) -->
   <section id="candidato" class="bg-marfil border-y border-azul/10 scroll-mt-16">
-<QuizBalon />
     <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">
         Ver si <span class="text-dorado-600">soy candidato(a)</span> (1 minuto)
       </h2>
-      <div class="card max-w-lg mx-auto mt-9 p-7 md:p-9">
-        <div class="space-y-4">
-          <div>
-            <label for="bl-nombre" class="text-sm font-display font-semibold text-azul">Nombre</label>
-            <input id="bl-nombre" type="text" autocomplete="name" class="quiz-input mt-1.5" required />
-          </div>
-          <div>
-            <label for="bl-whatsapp" class="text-sm font-display font-semibold text-azul">WhatsApp</label>
-            <div class="mt-1.5 flex gap-2.5">
-              <select id="bl-indicativo" class="quiz-input !w-32" aria-label="Indicativo de país">
-                <option value="57">+57 (CO)</option>
-                <option value="507">+507 (PA)</option>
-                <option value="502">+502 (GT)</option>
-                <option value="1">+1 (US)</option>
-                <option value="52">+52 (MX)</option>
-                <option value="593">+593 (EC)</option>
-              </select>
-              <input id="bl-whatsapp" type="tel" inputmode="tel" placeholder="Número" class="quiz-input flex-1" required />
-            </div>
-          </div>
-          <div>
-            <label for="bl-correo" class="text-sm font-display font-semibold text-azul">Email</label>
-            <input id="bl-correo" type="email" autocomplete="email" class="quiz-input mt-1.5" required />
-          </div>
-          <div>
-            <label for="bl-pais" class="text-sm font-display font-semibold text-azul">País</label>
-            <input id="bl-pais" type="text" autocomplete="country-name" class="quiz-input mt-1.5" required />
-          </div>
-          <div>
-            <label for="bl-buscas" class="text-sm font-display font-semibold text-azul">¿Qué buscas?</label>
-            <textarea
-              id="bl-buscas"
-              rows="3"
-              class="quiz-input mt-1.5 !rounded-2xl resize-none"
-              placeholder="«Quiero balón» / «Quiero que la Dra. me recomiende la mejor opción»"
-            ></textarea>
-          </div>
-          <label class="flex items-start gap-2.5 text-xs text-azul/60 cursor-pointer">
-            <input id="bl-consent" type="checkbox" class="mt-0.5 h-4 w-4 accent-[#e2b877]" required />
-            <span>
-              Autorizo el tratamiento de mis datos personales, incluidos datos de
-              salud, para recibir orientación del equipo de la Dra. Elika Luque,
-              según la <a href="#" class="underline">Política de privacidad y Habeas Data</a>.
-              <!-- ⚠️ TODO: enlazar política real antes de lanzar pauta -->
-            </span>
-          </label>
-        </div>
-        <p id="bl-error" class="hidden mt-4 text-sm text-[#c9483a]" role="alert">
-          Completa todos los campos y acepta la política de datos.
-        </p>
-        <p id="bl-ok" class="hidden mt-4 text-sm text-[#3d8b3d]" role="status">
-          ¡Listo! Registramos tus datos y abrimos WhatsApp para darte orientación.
-        </p>
-        <button type="button" id="bl-enviar" class="btn btn-navy w-full mt-6">Enviar y recibir orientación</button>
-        <p class="mt-3 text-center text-[0.7rem] text-azul/45">Tu información es confidencial.</p>
+      <div class="mt-9">
+        <QuizBalon />
       </div>
     </div>
   </section>
@@ -350,11 +296,11 @@ const faqJsonLd = JSON.stringify({
   <!-- 6 · CÓMO FUNCIONA -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20 text-center">
-      <h2 class="text-2xl md:text-3xl">¿Cómo funciona el <span class="text-dorado-600">balón</span>? (en simple)</h2>
-      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
+      <h2 class="titulo-linea text-2xl md:text-3xl">¿Cómo funciona el <span class="text-dorado-600">balón</span>? (en simple)</h2>
+      <div class="reveal reveal-stagger mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
         {comoFunciona.map((c) => (
           <div class="reveal">
-            <img src={c.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <img src={c.icon} alt="" class="icono-caja mx-auto" loading="lazy" />
             <h3 class="mt-4 font-display font-semibold text-azul">{c.titulo}</h3>
             <p class="mt-1 text-sm text-azul/60">{c.desc}</p>
           </div>
@@ -367,7 +313,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 7 · PRIMEROS 7 DÍAS -->
   <section id="primeros-7-dias" class="bg-marfil border-y border-azul/10 scroll-mt-16">
     <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">
         <span class="text-dorado-600">Primeros 7 días:</span> qué esperar (realista)
       </h2>
       <div class="max-w-3xl mx-auto mt-9">
@@ -387,10 +333,10 @@ const faqJsonLd = JSON.stringify({
   <!-- 8 · LO QUE SOSTIENE -->
   <section id="plan-post" class="bg-white scroll-mt-16">
     <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">
         <span class="text-dorado-600">Lo que sostiene</span> el cambio no es solo el balón:
       </h2>
-      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-3xl mx-auto text-center">
+      <div class="reveal reveal-stagger mt-11 grid gap-9 sm:grid-cols-3 max-w-3xl mx-auto text-center">
         {sostiene.map((s) => (
           <div class="reveal">
             <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-dorado-600 font-display font-bold text-white">{s.n}</span>
@@ -408,7 +354,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 9 · TIEMPOS -->
   <section class="bg-marfil border-y border-azul/10">
     <div class="wrap py-14 md:py-18">
-      <h2 class="text-2xl md:text-3xl text-center">Tiempos del proceso <span class="text-dorado-600">(referencia)</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">Tiempos del proceso <span class="text-dorado-600">(referencia)</span></h2>
       <div class="max-w-2xl mx-auto mt-7">
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> De valoración a cirugía (cuando aplica): ~1 mes promedio</div>
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Si vienes del exterior: depende de fechas de viaje y coordinación</div>
@@ -422,7 +368,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 10 · AGENDA Y CONTACTO -->
   <section class="bg-dorado/10">
     <div class="wrap py-14 md:py-18">
-      <h2 class="text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
       <div class="mt-7">
         <AgendaContacto />
       </div>
@@ -432,14 +378,14 @@ const faqJsonLd = JSON.stringify({
   <!-- 11 · INTERNACIONAL -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20 text-center">
-      <h2 class="text-2xl md:text-3xl">
+      <h2 class="titulo-linea text-2xl md:text-3xl">
         ¿Vienes desde <span class="text-dorado-600">Panamá, Guatemala u otro país?</span>
       </h2>
       <p class="mt-3 text-sm text-azul/60">Atención presencial en Barranquilla, Colombia.</p>
-      <div class="mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
+      <div class="reveal reveal-stagger mt-11 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto">
         {internacional.map((s) => (
           <div class="reveal">
-            <img src={s.icon} alt="" class="h-20 w-20 mx-auto" loading="lazy" />
+            <img src={s.icon} alt="" class="icono-caja mx-auto" loading="lazy" />
             <h3 class="mt-4 font-display font-semibold text-azul">{s.titulo}</h3>
             <p class="mt-1 text-sm text-azul/60">{s.desc}</p>
           </div>
@@ -453,7 +399,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 12 · FAQ -->
   <section class="bg-marfil border-t border-azul/10">
     <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
       <div class="max-w-3xl mx-auto mt-9">
         {faqs.map((f, i) => (
           <details class="faq-item" name="faq-balon">
@@ -478,7 +424,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 13 · ELIGE TU SIGUIENTE PASO -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20 text-center">
-      <h2 class="text-2xl md:text-3xl">Elige tu <span class="text-dorado-600">siguiente paso</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl">Elige tu <span class="text-dorado-600">siguiente paso</span></h2>
       <div class="mt-8 flex flex-col items-center gap-3.5">
         <a href="#candidato" class="btn btn-gold w-full max-w-xs">Ver si soy candidato(a)</a>
         <a href={SITE.calendly} class="btn btn-navy w-full max-w-xs">Agendar prevaloración (15 min)</a>
@@ -494,71 +440,4 @@ const faqJsonLd = JSON.stringify({
   </section>
 </Base>
 
-<script
-  is:inline
-  define:vars={{ WA_QUIZ: SITE.whatsappQuiz, SHEET_URL: SITE.quizSheetEndpoint }}
->
-  (function () {
-    var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
-    function $(id) { return document.getElementById(id); }
-    function utm(k) { try { return localStorage.getItem('el_' + k) || ''; } catch (e) { return ''; } }
 
-    var btn = $('bl-enviar');
-    if (!btn) return;
-
-    btn.addEventListener('click', function () {
-      var nombre = $('bl-nombre').value.trim();
-      var ind = $('bl-indicativo').value;
-      var num = $('bl-whatsapp').value.trim();
-      var correo = $('bl-correo').value.trim();
-      var pais = $('bl-pais').value.trim();
-      var buscas = $('bl-buscas').value.trim();
-      var consent = $('bl-consent').checked;
-
-      if (!nombre || !num || !correo || !pais || !consent) {
-        $('bl-error').classList.remove('hidden');
-        $('bl-ok').classList.add('hidden');
-        return;
-      }
-      $('bl-error').classList.add('hidden');
-
-      var whatsappCompleto = '+' + ind + num.replace(/\D/g, '');
-
-      /* Registro en Google Sheets (mismo endpoint del quiz, campos mapeados) */
-      try {
-        var fd = new URLSearchParams();
-        fd.append('nombre', nombre);
-        fd.append('whatsapp', whatsappCompleto);
-        fd.append('pais', pais);
-        fd.append('correo', correo);
-        fd.append('recomendacion', 'Interés: Balón gástrico');
-        fd.append('motivo', buscas ? '[L4] ' + buscas.slice(0, 200) : '[L4] Consulta balón');
-        fd.append('intentos', '');
-        fd.append('patron', '');
-        fd.append('imc', '');
-        fd.append('salud', '');
-        fd.append('reflujo', '');
-        fd.append('freno', '');
-        UTM_KEYS.forEach(function (k) { fd.append(k, utm(k)); });
-        fd.append('pagina', '/balon-gastrico/');
-        fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: fd });
-      } catch (e) { /* el registro no debe bloquear al usuario */ }
-
-      /* Handoff a WhatsApp de asesoras con contexto */
-      var ref = (utm('utm_source') || utm('utm_campaign')) ? ' [ref:' + (utm('utm_source') || '-') + '|' + (utm('utm_campaign') || '-') + ']' : '';
-      var msj = 'Hola, soy ' + nombre + ' (' + pais + '). Vengo de la página del balón gástrico.' +
-        (buscas ? ' Lo que busco: ' + buscas + '.' : ' Quiero saber si soy candidata(o).') + ref;
-      $('bl-ok').classList.remove('hidden');
-      try {
-        document.querySelectorAll('a[href*="calendly.com"]').forEach(function (a) {
-          var u = new URL(a.href);
-          u.searchParams.set('name', nombre);
-          u.searchParams.set('email', correo);
-          u.searchParams.set('a1', whatsappCompleto);
-          a.href = u.toString();
-        });
-      } catch (e) {}
-      window.open('https://wa.me/' + WA_QUIZ + '?text=' + encodeURIComponent(msj), '_blank');
-    });
-  })();
-</script>

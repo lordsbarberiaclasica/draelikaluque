@@ -19,6 +19,7 @@
  *   · Walter: verificar que las filas llegan a la hoja (se envían los 12 campos del
  *     prototipo + utm_* extra; si el Apps Script usa columnas fijas, ampliarlo).
  */
+import { REGISTROS } from '../config-registros';
 import Base from '../layouts/Base.astro';
 import { SITE, waLink } from '../config';
 
@@ -57,6 +58,17 @@ const faqJsonLd = JSON.stringify({
     acceptedAnswer: { '@type': 'Answer', text: f.a },
   })),
 });
+
+/* Migración a la pestaña "Registros Landing Quizz": mientras el Apps Script v2
+   no esté configurado (placeholder en config-registros), el quiz sigue
+   escribiendo en el endpoint viejo de Walter, sin riesgo. Al pegar la URL
+   /exec real, la migración ocurre sola. */
+const quizEndpointActivo = REGISTROS.appsScriptUrl.startsWith('http')
+  ? REGISTROS.appsScriptUrl
+  : SITE.quizSheetEndpoint;
+const quizHojaDestino = REGISTROS.appsScriptUrl.startsWith('http')
+  ? REGISTROS.hojaQuizL2
+  : '';
 ---
 
 <Base
@@ -68,8 +80,8 @@ const faqJsonLd = JSON.stringify({
   <script is:inline type="application/ld+json" set:html={faqJsonLd} />
 
   <!-- 1 · HERO -->
-  <section class="bg-white">
-    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center">
+  <section class="bg-white hero-lienzo">
+    <div class="wrap py-8 md:py-14 grid gap-10 lg:grid-cols-2 items-center hero-enter">
       <div>
         <h1 class="text-3xl md:text-[2.6rem] leading-tight text-azul">
           Descubre tu ruta <span class="text-dorado-600">en 2 minutos</span>
@@ -94,7 +106,7 @@ const faqJsonLd = JSON.stringify({
       <img
         src="/images/landing/hero-quiz.webp"
         alt="Médica estrechando la mano de un paciente en consulta"
-        class="w-full max-w-lg justify-self-center lg:justify-self-end"
+        class="w-full max-w-lg justify-self-center lg:justify-self-end rounded-3xl img-premium"
         width="1000"
         height="945"
         fetchpriority="high"
@@ -239,7 +251,7 @@ const faqJsonLd = JSON.stringify({
 
         <!-- Paso 8 · Captura -->
         <div class="quiz-step" data-step="8" role="group" aria-labelledby="q8">
-          <h2 id="q8" tabindex="-1" class="text-2xl md:text-3xl">Te mostramos tu resultado</h2>
+          <h2 id="q8" tabindex="-1" class="titulo-linea text-2xl md:text-3xl">Te mostramos tu resultado</h2>
           <p class="mt-2 text-sm text-azul/60">Te enviamos tu orientación y el siguiente paso. Datos confidenciales.</p>
           <div class="mt-7 max-w-md mx-auto space-y-4 text-left">
             <div>
@@ -292,7 +304,7 @@ const faqJsonLd = JSON.stringify({
           <h2 id="q9" tabindex="-1" class="mt-3 text-2xl md:text-3xl">Tus 2 opciones más probables:</h2>
           <p class="mt-2 text-xs text-azul/50 italic">Esto es orientativo. La decisión final se confirma en valoración y estudios.</p>
 
-          <div class="mt-7 grid gap-4 sm:grid-cols-2 text-left">
+          <div class="reveal reveal-stagger mt-7 grid gap-4 sm:grid-cols-2 text-left">
             <div class="rounded-2xl border-2 border-dorado-600 bg-dorado/10 p-5">
               <p class="text-[0.65rem] uppercase tracking-[0.18em] font-display font-semibold text-dorado-600">Opción 1 · principal</p>
               <p id="res-principal" class="mt-1.5 font-display font-bold text-2xl text-azul">—</p>
@@ -318,7 +330,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 3 · AGENDA DIRECTA -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20 text-center">
-      <h2 class="text-2xl md:text-3xl">Agenda tu prevaloración <span class="text-dorado-600">sin costo (15 min)</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl">Agenda tu prevaloración <span class="text-dorado-600">sin costo (15 min)</span></h2>
       <p class="mt-3 text-sm text-azul/60">En 15 minutos definimos:</p>
       <div class="max-w-md mx-auto mt-6 text-left">
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Candidatura</div>
@@ -326,7 +338,7 @@ const faqJsonLd = JSON.stringify({
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Siguiente paso</div>
       </div>
       <div class="mt-7 flex flex-col items-center gap-3.5">
-        <a href={SITE.calendly} class="btn btn-navy">Agendar prevaloración (15 min)</a>
+        <a href={SITE.calendly} class="btn btn-gold">Agendar prevaloración (15 min)</a>
         <a href={waLink('Hola, hice el quiz y quiero agendar mi prevaloración sin costo (15 min).')} target="_blank" rel="noopener" aria-label="WhatsApp" class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.06.9.92-2.98-.2-.31a8.2 8.2 0 1 1 6.82 3.72z"/></svg>
         </a>
@@ -337,7 +349,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 4 · DIFERENCIALES / INTERNACIONAL / AGENDA -->
   <section class="bg-marfil border-y border-azul/10">
     <div class="wrap py-14 md:py-18">
-      <h2 class="text-2xl md:text-3xl text-center">Diferenciales <span class="text-dorado-600">reales</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">Diferenciales <span class="text-dorado-600">reales</span></h2>
       <div class="max-w-2xl mx-auto mt-7">
         {diferenciales.map((d) => (
           <div class="check-row"><img src="/images/landing/check.png" alt="" /> {d}</div>
@@ -348,7 +360,7 @@ const faqJsonLd = JSON.stringify({
 
   <section class="bg-white">
     <div class="wrap py-14 md:py-18">
-      <h2 class="text-2xl md:text-3xl text-center">Si vienes desde <span class="text-dorado-600">otro país</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">Si vienes desde <span class="text-dorado-600">otro país</span></h2>
       <div class="max-w-2xl mx-auto mt-7">
         {internacional.map((d) => (
           <div class="check-row"><img src="/images/landing/check.png" alt="" /> {d}</div>
@@ -359,7 +371,7 @@ const faqJsonLd = JSON.stringify({
 
   <section class="bg-marfil border-y border-azul/10">
     <div class="wrap py-14 md:py-18">
-      <h2 class="text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">Agenda y <span class="text-dorado-600">contacto</span></h2>
       <div class="max-w-2xl mx-auto mt-7">
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> Prevaloraciones: {SITE.horario}</div>
         <div class="check-row"><img src="/images/landing/check.png" alt="" /> WhatsApp (secretaría): {SITE.horarioWhatsapp}</div>
@@ -372,7 +384,7 @@ const faqJsonLd = JSON.stringify({
   <!-- 5 · FAQ -->
   <section class="bg-white">
     <div class="wrap py-14 md:py-20">
-      <h2 class="text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
       <div class="max-w-3xl mx-auto mt-9">
         {faqs.map((f) => (
           <details class="faq-item" name="faq-quiz">
@@ -390,7 +402,8 @@ const faqJsonLd = JSON.stringify({
   define:vars={{
     CALENDLY: SITE.calendly,
     WA_QUIZ: SITE.whatsappQuiz,
-    SHEET_URL: SITE.quizSheetEndpoint,
+    SHEET_URL: quizEndpointActivo,
+    HOJA: quizHojaDestino,
   }}
 >
   (function () {
@@ -560,6 +573,7 @@ const faqJsonLd = JSON.stringify({
         fd.append('freno', respuestas.freno || '');
         UTM_KEYS.forEach(function (k) { fd.append(k, utm(k)); });
         fd.append('pagina', '/quiz/');
+        if (HOJA) fd.append('hoja', HOJA);
         fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: fd });
       } catch (e) { /* el registro no debe bloquear al usuario */ }
     }

@@ -274,3 +274,241 @@ h1, h2, h3, h4 {
     .btn { white-space: normal; }
   }
 }
+
+/* Los <dialog> modales pierden su centrado nativo por el reset de márgenes
+   de Tailwind 4 (margin: 0 en todo). Esta regla lo restaura para TODOS los
+   popups del sitio (formulario, video de la Dra., reels de testimonios):
+   centrado horizontal y vertical. */
+dialog:modal {
+  margin: auto;
+}
+
+/* ================================================================
+   v1.1.0 · Capa de motion premium — "el oro como hilo de luz"
+   Una orquestación por vista: entradas en cascada, la regla dorada
+   del eyebrow que se enciende, un único destello en el CTA y
+   superficies con vida. CSS puro: cero costo en Core Web Vitals.
+   ================================================================ */
+
+/* -- Cascada: el contenedor lleva .reveal.reveal-stagger (el observer
+      de Base ya lo detecta); él no se anima, sus hijos entran uno a uno -- */
+.reveal.reveal-stagger { opacity: 1; transform: none; transition: none; }
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-stagger.is-visible > * { opacity: 1; transform: none; }
+.reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 90ms; }
+.reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 180ms; }
+.reveal-stagger.is-visible > *:nth-child(4) { transition-delay: 270ms; }
+.reveal-stagger.is-visible > *:nth-child(5) { transition-delay: 360ms; }
+.reveal-stagger.is-visible > *:nth-child(6) { transition-delay: 450ms; }
+.reveal-stagger.is-visible > *:nth-child(7) { transition-delay: 540ms; }
+.reveal-stagger.is-visible > *:nth-child(n + 8) { transition-delay: 630ms; }
+
+/* -- La regla dorada del eyebrow se dibuja al revelarse -- */
+.reveal .eyebrow::before {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1) 250ms;
+}
+.reveal.is-visible .eyebrow::before { transform: scaleX(1); }
+.hero-enter .eyebrow::before {
+  transform-origin: left;
+  animation: lineaDorada 800ms cubic-bezier(0.22, 1, 0.36, 1) 450ms both;
+}
+@keyframes lineaDorada { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* -- Un destello en el CTA dorado: una vez al entrar, y al hover -- */
+.btn { position: relative; overflow: hidden; }
+.btn-gold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.5) 50%, transparent 58%);
+  transform: translateX(-130%);
+}
+.reveal.is-visible .btn-gold::after,
+.reveal-stagger.is-visible .btn-gold::after,
+.hero-enter .btn-gold::after {
+  animation: btnShine 1.1s cubic-bezier(0.4, 0, 0.2, 1) 0.8s 1 both;
+}
+@media (hover: hover) {
+  .btn-gold:hover::after { animation: btnShineHover 0.7s ease 1 both; }
+}
+@keyframes btnShine { from { transform: translateX(-130%); } to { transform: translateX(130%); } }
+@keyframes btnShineHover { from { transform: translateX(-130%); } to { transform: translateX(130%); } }
+
+/* -- Tarjetas vivas -- */
+@media (hover: hover) {
+  .card {
+    transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 350ms cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 350ms ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(226, 184, 119, 0.5);
+    box-shadow: 0 28px 52px -26px rgba(14, 22, 29, 0.4), 0 0 0 1px rgba(226, 184, 119, 0.18);
+  }
+}
+
+/* -- FAQ: pregunta que responde al tacto, respuesta que respira -- */
+.faq-item summary { transition: color 180ms ease; }
+@media (hover: hover) { .faq-item summary:hover { color: var(--color-dorado-600); } }
+.faq-item[open] .faq-body { animation: faqIn 360ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes faqIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* -- Filas de check con hover que no mueve el layout -- */
+.check-row {
+  border-radius: 0.5rem;
+  padding-inline: 0.5rem;
+  margin-inline: -0.5rem;
+  transition: background-color 200ms ease;
+}
+@media (hover: hover) { .check-row:hover { background: rgba(246, 210, 154, 0.1); } }
+
+/* -- Atmósfera dorada para superficies azules -- */
+.bg-atmosfera { position: relative; isolation: isolate; }
+.bg-atmosfera::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(56rem 30rem at 88% -12%, rgba(246, 210, 154, 0.12), transparent 62%),
+    radial-gradient(42rem 26rem at -8% 112%, rgba(246, 210, 154, 0.07), transparent 60%);
+}
+
+/* -- Entrada orquestada del hero de landing (al cargar, sin scroll) -- */
+.hero-enter > * { opacity: 0; animation: heroIn 750ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hero-enter > *:nth-child(1) { animation-delay: 60ms; }
+.hero-enter > *:nth-child(2) { animation-delay: 180ms; }
+.hero-enter > *:nth-child(3) { animation-delay: 300ms; }
+.hero-enter > *:nth-child(4) { animation-delay: 420ms; }
+.hero-enter > *:nth-child(5) { animation-delay: 540ms; }
+.hero-enter > *:nth-child(n + 6) { animation-delay: 660ms; }
+@keyframes heroIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+/* -- Imagen protagonista con marco de luz -- */
+.img-premium {
+  border-radius: 1.5rem;
+  box-shadow:
+    0 34px 64px -32px rgba(14, 22, 29, 0.5),
+    0 0 0 1px rgba(226, 184, 119, 0.28),
+    0 0 90px -24px rgba(246, 210, 154, 0.4);
+}
+
+/* -- Sellos: sobrios en reposo, encendidos al tacto -- */
+@media (hover: hover) {
+  .sello-img { filter: grayscale(0.85) opacity(0.75); transition: filter 300ms ease, transform 300ms ease; }
+  li:hover > .sello-img, .sello-img:hover { filter: none; transform: translateY(-3px) scale(1.05); }
+}
+
+/* -- CTA fijo móvil: entra deslizando tras el primer vistazo -- */
+.sticky-cta {
+  animation: stickyUp 550ms cubic-bezier(0.22, 1, 0.36, 1) 700ms both;
+  box-shadow: 0 -14px 34px -18px rgba(0, 0, 0, 0.5);
+}
+@keyframes stickyUp { from { transform: translateY(110%); } to { transform: translateY(0); } }
+
+/* -- Todo lo nuevo respeta reduced-motion -- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-stagger > *, .hero-enter > * { opacity: 1; transform: none; transition: none; animation: none; }
+  .reveal .eyebrow::before, .hero-enter .eyebrow::before { transform: none; animation: none; transition: none; }
+  .btn-gold::after, .btn-gold:hover::after { animation: none !important; }
+  .card, .card:hover { transition: none; transform: none; }
+  .sello-img, .sticky-cta { animation: none; transition: none; transform: none; filter: none; }
+  .faq-item[open] .faq-body { animation: none; }
+}
+
+/* ================================================================
+   v1.1.0-b · Capa de composición premium — superficies y jerarquía
+   ================================================================ */
+
+/* Lienzo de hero: marfil→blanco con orbes dorados y trama sutil */
+.hero-lienzo { position: relative; isolation: isolate; }
+.hero-lienzo::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(46rem 26rem at 86% 8%, rgba(246, 210, 154, 0.2), transparent 60%),
+    radial-gradient(34rem 22rem at 4% 96%, rgba(246, 210, 154, 0.13), transparent 58%),
+    linear-gradient(180deg, var(--color-marfil) 0%, #ffffff 55%);
+}
+.hero-lienzo::after {
+  content: "";
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(rgba(29, 43, 56, 0.05) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(180deg, black, transparent 70%);
+}
+
+/* Remate dorado bajo títulos de sección */
+.titulo-linea::after {
+  content: "";
+  display: block;
+  width: 3.25rem; height: 3px;
+  margin: 0.85rem auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f9dfb4, var(--color-dorado-600));
+}
+
+/* Medallón para iconos: el PNG deja de flotar y gana superficie */
+.icono-caja {
+  height: 5.75rem; width: 5.75rem;
+  padding: 1.2rem;
+  border-radius: 999px;
+  background: linear-gradient(155deg, #ffffff 0%, #fdf4e4 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(226, 184, 119, 0.4),
+    0 16px 30px -20px rgba(29, 43, 56, 0.45);
+  object-fit: contain;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 300ms ease;
+}
+@media (hover: hover) {
+  div:hover > .icono-caja, li:hover > .icono-caja {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow:
+      inset 0 0 0 1px rgba(226, 184, 119, 0.7),
+      0 22px 38px -20px rgba(226, 184, 119, 0.55);
+  }
+}
+
+/* Mini-tarjeta para ítems numerados (identifica, miedos) */
+.mini-card {
+  background: #ffffff;
+  border: 1px solid rgba(29, 43, 56, 0.09);
+  border-radius: 1.15rem;
+  padding: 1.5rem 1.1rem;
+  box-shadow: 0 18px 34px -28px rgba(14, 22, 29, 0.4);
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 300ms ease, border-color 300ms ease;
+}
+@media (hover: hover) {
+  .mini-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(226, 184, 119, 0.55);
+    box-shadow: 0 26px 44px -26px rgba(14, 22, 29, 0.45);
+  }
+}
+
+/* Tarjeta del valor referencial (L6): doble borde dorado degradado */
+.precio-tarjeta {
+  position: relative;
+  padding: 2.5rem 1.75rem 2.25rem;
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(140deg, #f9dfb4, var(--color-dorado-600) 45%, #f9dfb4) border-box;
+  border: 2px solid transparent;
+  box-shadow: 0 34px 64px -36px rgba(226, 184, 119, 0.7), 0 20px 44px -32px rgba(14, 22, 29, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icono-caja, .mini-card { transition: none; }
+  div:hover > .icono-caja, li:hover > .icono-caja, .mini-card:hover { transform: none; }
+}
