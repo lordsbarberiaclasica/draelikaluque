@@ -7,8 +7,10 @@ interface Props {
   sub?: string;
   ctaText?: string;
   ctaHref?: string;
+  imagen?: string;
+  imagenAlt?: string;
 }
-const { eyebrow, title, sub, ctaText = 'Agendar valoración', ctaHref = SITE.calendly } = Astro.props;
+const { eyebrow, title, sub, ctaText = 'Agendar valoración', ctaHref = SITE.calendly, imagen, imagenAlt = '' } = Astro.props;
 ---
 
 <section class="bg-azul-950 text-marfil relative overflow-hidden">
@@ -17,7 +19,7 @@ const { eyebrow, title, sub, ctaText = 'Agendar valoración', ctaHref = SITE.cal
     aria-hidden="true"
   >
   </div>
-  <div class="wrap relative pt-32 pb-14 md:pt-40 md:pb-20">
+  <div class={`wrap relative pt-32 pb-14 md:pt-40 md:pb-20 ${imagen ? 'grid gap-10 lg:grid-cols-[1fr_auto] items-center' : ''}`}>
     <div class="max-w-2xl border-l-2 border-dorado/80 pl-6 md:pl-9">
       <p class="eyebrow text-dorado">{eyebrow}</p>
       <h1 class="mt-4 text-3xl md:text-5xl">{title}</h1>
@@ -26,5 +28,15 @@ const { eyebrow, title, sub, ctaText = 'Agendar valoración', ctaHref = SITE.cal
         <a href={ctaHref} class="btn btn-gold mt-8">{ctaText}</a>
       )}
     </div>
+    {imagen && (
+      <img
+        src={imagen}
+        alt={imagenAlt}
+        width="380"
+        height="380"
+        class="hidden lg:block h-72 w-72 xl:h-[22rem] xl:w-[22rem] rounded-2xl object-cover shadow-2xl shadow-black/40 ring-1 ring-dorado/40 justify-self-end"
+        loading="eager"
+      />
+    )}
   </div>
 </section>
