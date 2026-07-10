@@ -1,18 +1,29 @@
 ---
-/** Fila de sellos de credenciales + enlace (usada en L1, L3 y siguientes). */
-const sellos = [
-  { src: '/images/landing/sello-el-bosque.png', alt: 'Médico Cirujano · Universidad El Bosque' },
-  { src: '/images/landing/sello-cirugia-general.png', alt: 'Especialista en Cirugía General · Universidad El Bosque' },
-  { src: '/images/landing/sello-laparoscopia.png', alt: 'Formación Continua en Laparoscopia' },
-  { src: '/images/landing/sello-felac.png', alt: 'Miembro Activo FELAC · Asociación Colombiana de Cirugía' },
+/**
+ * Formación y membresías — logos institucionales reales (unificado con el home).
+ * Usado en las landings; los sellos grises genéricos quedaron retirados.
+ */
+const logos = [
+  { src: '/images/credenciales/el-bosque.svg', alt: 'Universidad El Bosque' },
+  { src: '/images/credenciales/ircad.svg', alt: 'IRCAD France' },
+  { src: '/images/credenciales/acc.svg', alt: 'Asociación Colombiana de Cirugía' },
+  { src: '/images/credenciales/felac.svg', alt: 'FELAC' },
+  { src: '/images/credenciales/acs.svg', alt: 'American College of Surgeons' },
 ];
 ---
 
-<ul class="flex flex-wrap items-center justify-center gap-6" role="list">
-  {sellos.map((s) => (
-    <li><img src={s.src} alt={s.alt} class="h-16 w-16 md:h-20 md:w-20 object-contain" loading="lazy" /></li>
-  ))}
-</ul>
-<p class="text-center mt-5">
-  <a href="/dra-elika-luque-2/" class="text-sm underline text-azul/60 hover:text-dorado-600 transition-colors">Ver credenciales</a>
-</p>
+<div class="reveal reveal-stagger">
+  <p class="text-center text-[0.68rem] tracking-[0.26em] uppercase font-display font-semibold text-azul/50">
+    Formación y membresías
+  </p>
+  <ul class="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-6" role="list">
+    {logos.map((l) => (
+      <li class="flex items-center">
+        <img src={l.src} alt={l.alt} class="sello-img h-12 md:h-14 w-auto object-contain" loading="lazy" />
+      </li>
+    ))}
+  </ul>
+  <p class="text-center mt-6">
+    <a href="/dra-elika-luque-2/" class="text-sm underline text-azul/60 hover:text-dorado-600 transition-colors">Ver credenciales</a>
+  </p>
+</div>

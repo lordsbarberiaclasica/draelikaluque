@@ -18,13 +18,13 @@ const logos = [
     <p class="text-center text-[0.68rem] tracking-[0.26em] uppercase font-display font-semibold text-azul/50">
       Formación y membresías
     </p>
-    <ul class="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4" role="list">
+    <ul class="mt-5 flex flex-wrap items-center justify-center gap-x-12 gap-y-6" role="list">
       {logos.map((l) => (
         <li class="flex items-center">
           <img
             src={l.src}
             alt={l.alt}
-            class="h-9 w-auto opacity-70 hover:opacity-100 transition-opacity"
+            class="sello-img h-12 md:h-14 w-auto opacity-90 hover:opacity-100 transition-opacity"
             loading="lazy"
             onerror="this.outerHTML='<span class=&quot;text-sm font-display font-semibold text-azul/60&quot;>' + this.alt + '</span>'"
           />

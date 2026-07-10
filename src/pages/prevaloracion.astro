@@ -14,6 +14,7 @@
  */
 import Base from '../layouts/Base.astro';
 import SobreLaDra from '../components/landing/SobreLaDra.astro';
+import SellosCredenciales from '../components/landing/SellosCredenciales.astro';
 import TimelineSeguimiento from '../components/landing/TimelineSeguimiento.astro';
 import AgendaContacto from '../components/landing/AgendaContacto.astro';
 import TestimoniosLanding from '../components/landing/TestimoniosLanding.astro';
@@ -48,13 +49,6 @@ const testimonios = [
   { nombre: 'Alexandra Peralta', frase: 'Me quitó el miedo, ahora entiendo el proceso.', foto: 'https://randomuser.me/api/portraits/women/44.jpg' },
   { nombre: 'Marcela Pardo', frase: 'La claridad y el seguimiento fueron la diferencia.', foto: 'https://randomuser.me/api/portraits/women/68.jpg' },
   { nombre: 'Camilo Restrepo', frase: 'Mejoré mi calidad de vida.', foto: 'https://randomuser.me/api/portraits/men/32.jpg' },
-];
-
-const sellos = [
-  { src: '/images/landing/sello-el-bosque.png', alt: 'Médico Cirujano · Universidad El Bosque' },
-  { src: '/images/landing/sello-cirugia-general.png', alt: 'Especialista en Cirugía General · Universidad El Bosque' },
-  { src: '/images/landing/sello-laparoscopia.png', alt: 'Formación Continua en Laparoscopia' },
-  { src: '/images/landing/sello-felac.png', alt: 'Miembro Activo FELAC · Asociación Colombiana de Cirugía' },
 ];
 
 /* Borrador de respuestas — ⚠️ validar con la Dra. antes de publicar */
@@ -208,14 +202,9 @@ const faqJsonLd = JSON.stringify({
         <div class="check-row"><span class="check-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> Seguimiento personal</div>
         <div class="check-row"><span class="check-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span> Controles postoperatorios incluidos hasta 1 año (sin costo)</div>
       </div>
-      <ul class="mt-9 flex flex-wrap items-center justify-center gap-6 reveal reveal-stagger" role="list">
-        {sellos.map((s) => (
-          <li><img src={s.src} alt={s.alt} class="sello-img h-16 w-16 md:h-20 md:w-20 object-contain" loading="lazy" /></li>
-        ))}
-      </ul>
-      <a href="/dra-elika-luque-2/" class="mt-6 inline-block text-sm underline text-azul/60 hover:text-dorado-600 transition-colors">
-        Ver credenciales
-      </a>
+      <div class="mt-9">
+        <SellosCredenciales />
+      </div>
     </div>
   </section>
 
