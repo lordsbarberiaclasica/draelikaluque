@@ -16,7 +16,7 @@ export const SITE = {
   // ⚠️ URL FUNCIONAL DE PRUEBA: es la cuenta de Hemma Usaquén (otro negocio
   // de Hernando) y el evento "nueva-reunion". ANTES DE LANZAR: reemplazar por
   // el evento de PREVALORACIÓN en la cuenta de la Dra. (Lun/Mar/Jue/Vie 3-7pm).
-  calendly: 'https://calendly.com/contacto-hemmausaquen/nueva-reunion',
+  calendly: 'https://calendly.com/dra-elika-luque/nueva-reunion',
 
   whatsapp: '573104139307',
   whatsappAlt: '573104139307', // publicado como "WhatsApp" en el sitio actual

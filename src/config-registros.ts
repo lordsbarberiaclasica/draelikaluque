@@ -40,9 +40,9 @@ export const REGISTROS = {
   /**
    * Calendly base para CTAs generados dinámicamente (resultado del quiz de
    * balón) y fallback del interceptor.
-   * ⚠️ Handle temporal de Hemma — cambiar al crear el Calendly propio.
+   * ⚠️ Calendly propio de la Dra. (activo desde jul 2026).
    */
-  calendlyFallback: 'https://calendly.com/contacto-hemmausaquen/nueva-reunion',
+  calendlyFallback: 'https://calendly.com/dra-elika-luque/nueva-reunion',
 
   /**
    * WhatsApp que recibe los leads (Capa 3 · asesoras). Mismo número que ya
