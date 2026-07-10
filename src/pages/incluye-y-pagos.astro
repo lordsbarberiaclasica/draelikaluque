@@ -15,10 +15,11 @@
  *    mención de financiación. "Pagas al llegar. No cobramos anticipado" ✓.
  *  · "Reserva/abono (si aplica)" convive con "no cobramos anticipado":
  *    redacción del mockup respetada verbatim — la Dra. valida el matiz.
- * ⚠️ CTA verde usa SITE.whatsappQuiz (573218960696) — número aún por confirmar.
+ * ⚠️ CTA verde usa SITE.whatsappQuiz (573104139307) — número aún por confirmar.
  * ⚠️ Acordeones y FAQ: respuestas borrador para validación de la Dra.
  */
 import Base from '../layouts/Base.astro';
+import SobreLaDra from '../components/landing/SobreLaDra.astro';
 import SellosCredenciales from '../components/landing/SellosCredenciales.astro';
 import AgendaContacto from '../components/landing/AgendaContacto.astro';
 import TimelineSeguimiento from '../components/landing/TimelineSeguimiento.astro';
@@ -387,6 +388,8 @@ const faqJsonLd = JSON.stringify({
   </section>
 
   <!-- 11 · FAQ -->
+  <SobreLaDra />
+
   <section class="bg-marfil border-t border-azul/10">
     <div class="wrap py-14 md:py-20">
       <h2 class="titulo-linea text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>

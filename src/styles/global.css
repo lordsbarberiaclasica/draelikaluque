@@ -635,3 +635,27 @@ div:has(> .check-row) .check-row:last-child { border-bottom: none; }
   .anim-pulso::after { animation: none; box-shadow: none; }
   .ti, .ti:hover, .sello-img { transition: none; transform: none; }
 }
+
+/* v1.3.0 · Marca de agua del isotipo con respiración (fondos oscuros) */
+.marca-el { position: relative; isolation: isolate; overflow: hidden; }
+.marca-el::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: -7rem;
+  top: 50%;
+  width: 32rem;
+  height: 32rem;
+  transform: translateY(-50%);
+  background: url('/images/logo-el.png') center / contain no-repeat;
+  opacity: 0.05;
+  pointer-events: none;
+  animation: marcaRespira 9s ease-in-out infinite;
+}
+@keyframes marcaRespira {
+  0%, 100% { opacity: 0.04; transform: translateY(-50%) scale(1); }
+  50% { opacity: 0.09; transform: translateY(-50%) scale(1.03); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marca-el::before { animation: none; opacity: 0.05; }
+}

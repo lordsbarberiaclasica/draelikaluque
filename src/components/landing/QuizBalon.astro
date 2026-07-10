@@ -10,7 +10,7 @@
  *
  *   Rutas:  cirugía previa = Sí → D · reflujo = Sí → C · IMC > 32 → B ·
  *           IMC 25–32 → A · IMC < 25 → E.
- *           "No estoy segura" no bloquea; si cae en A, añade la nota de
+ *           "No estoy seguro(a)" no bloquea; si cae en A, añade la nota de
  *           confirmación en valoración.
  *
  * Nunca muestra el IMC crudo ni la palabra "obesidad". Toda ruta invita a la
@@ -69,7 +69,7 @@ import { REGISTROS } from '../../config-registros';
     <div class="qb-opciones" role="radiogroup" aria-label="Reflujo o hernia hiatal">
       <button type="button" class="qb-opcion" data-qb-reflujo="Sí">Sí</button>
       <button type="button" class="qb-opcion" data-qb-reflujo="No">No</button>
-      <button type="button" class="qb-opcion" data-qb-reflujo="No estoy segura">No estoy segura</button>
+      <button type="button" class="qb-opcion" data-qb-reflujo="No estoy seguro(a)">No estoy seguro(a)</button>
     </div>
     <button type="button" class="qb-atras" data-qb-atras="2">&larr; Atrás</button>
   </section>
@@ -229,7 +229,7 @@ import { REGISTROS } from '../../config-registros';
 
     const RUTAS: Record<string, { titulo: string; cuerpo: string; cta1: string; cta2?: { texto: string; tipo: 'wa' | 'link'; href?: string } }> = {
       A: {
-        titulo: '¡Buenas noticias! Todo indica que podrías ser candidata al balón',
+        titulo: '¡Buenas noticias! Todo indica que podrías ser candidato(a) al balón',
         cuerpo: 'El balón gástrico es temporal, sin cirugía mayor y con acompañamiento completo. El siguiente paso es confirmar tu candidatura con la Dra. Elika en una prevaloración de 15 minutos, sin costo.',
         cta1: 'Agenda tu prevaloración sin costo',
         cta2: { texto: 'Prefiero escribir por WhatsApp', tipo: 'wa' },
@@ -312,7 +312,7 @@ import { REGISTROS } from '../../config-registros';
       (raiz.querySelector('[data-qb-res-titulo]') as HTMLElement).textContent = r.titulo;
       (raiz.querySelector('[data-qb-res-cuerpo]') as HTMLElement).textContent = r.cuerpo;
       (raiz.querySelector('[data-qb-res-nota]') as HTMLElement).classList.toggle(
-        'qb-oculto', !(ruta === 'A' && estado.reflujo === 'No estoy segura')
+        'qb-oculto', !(ruta === 'A' && estado.reflujo === 'No estoy seguro(a)')
       );
 
       const cta1 = raiz.querySelector('[data-qb-cta1]') as HTMLAnchorElement;
@@ -333,7 +333,7 @@ import { REGISTROS } from '../../config-registros';
         cta2.textContent = r.cta2.texto;
         if (r.cta2.tipo === 'wa') {
           const ref = `[ref:${utms.utm_source || 'directo'}|${utms.utm_campaign || '-'}]`;
-          const msg = `Hola, hice el test del balón y salí candidata probable, quiero confirmar mi valoración. Soy ${estado.nombre}. ${ref}`;
+          const msg = `Hola, hice el test del balón y salí como candidato(a) probable, quiero confirmar mi valoración. Soy ${estado.nombre}. ${ref}`;
           cta2.href = `https://wa.me/${REGISTROS.whatsappAsesoras}?text=${encodeURIComponent(msg)}`;
           cta2.target = '_blank';
           cta2.onclick = () => dl('quiz_balon_destino', { destino: 'whatsapp', ruta });

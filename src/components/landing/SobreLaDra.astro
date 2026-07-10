@@ -1,0 +1,81 @@
+---
+/**
+ * SobreLaDra.astro · v1.3.0 — sección "Conoce a tu cirujana" para landings,
+ * espejo de la del home, con botón que abre el video de la Dra. en popup
+ * (VideoDraModal ya vive global en Base, el disparador funciona en cualquier página).
+ */
+const hitos = [
+  { titulo: 'Médica y cirujana general', detalle: 'Universidad El Bosque, Bogotá' },
+  { titulo: 'Cirugía laparoscópica avanzada', detalle: 'Instituto Europeo de Telecirugía IRCAD, Estrasburgo' },
+  { titulo: 'Cirugía bariátrica', detalle: 'Colegio Europeo de Cirugía Laparoscópica · Universidad Saint-Pierre, Bruselas' },
+  { titulo: 'Membresías activas', detalle: 'Asociación Colombiana de Cirugía · FELAC · American College of Surgeons · Sociedad Americana de Gastroenterología' },
+];
+---
+
+<section class="bg-marfil border-y border-azul/10">
+  <div class="wrap py-14 md:py-20 grid gap-10 lg:grid-cols-2 lg:gap-14 items-center">
+    <div class="relative reveal order-2 lg:order-1">
+      <div class="absolute -top-4 -left-4 h-full w-full rounded-2xl border border-dorado/50" aria-hidden="true"></div>
+      <img
+        src="/images/cirujana-retrato.jpg"
+        alt="La Dra. Elika Luque durante un procedimiento quirúrgico"
+        class="relative rounded-2xl w-full max-h-[480px] object-cover object-top shadow-2xl shadow-azul/20"
+        loading="lazy"
+      />
+      <figcaption class="absolute bottom-4 left-4 rounded-full bg-azul-950/80 backdrop-blur px-4 py-2 text-xs text-marfil/90">
+        Dra. Elika Luque · Cirugía bariátrica y laparoscópica
+      </figcaption>
+    </div>
+
+    <div class="order-1 lg:order-2 reveal">
+      <p class="eyebrow text-dorado-600">Conoce a tu cirujana</p>
+      <h2 class="mt-4 text-2xl md:text-3xl">Formación europea, práctica en Colombia</h2>
+      <p class="mt-5 leading-relaxed text-azul/80">
+        La Dra. Elika Luque cuenta con más de 10 años de experiencia en cirugía
+        general y procedimientos bariátricos por laparoscopia. Su formación une
+        la escuela quirúrgica colombiana con dos de los centros de referencia
+        europeos en cirugía mínimamente invasiva.
+      </p>
+
+      <ul class="mt-7 space-y-4" role="list">
+        {hitos.map((h) => (
+          <li class="flex gap-4">
+            <span class="mt-1.5 h-2 w-2 shrink-0 rotate-45 bg-dorado-600" aria-hidden="true"></span>
+            <div>
+              <p class="font-display font-semibold text-azul">{h.titulo}</p>
+              <p class="text-sm text-azul/65 leading-relaxed">{h.detalle}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <button type="button" class="sd-conoce mt-8" data-open-video-dra>
+        Conoce más sobre la Dra.<span class="sd-flecha" aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sd-conoce {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    padding: 0;
+    border: none;
+    border-bottom: 1.5px solid rgba(226, 184, 119, 0.55);
+    background: linear-gradient(#b98d4f, #b98d4f) no-repeat left bottom / 0% 1.5px;
+    color: #b98d4f;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-size 0.35s ease, color 0.2s ease;
+  }
+  .sd-conoce:hover { background-size: 100% 1.5px; color: #8a6a35; }
+  .sd-conoce:focus-visible { outline: 2px solid #e2b877; outline-offset: 3px; border-radius: 2px; }
+  .sd-flecha { display: inline-block; transition: transform 0.25s ease; animation: sdNudge 3.2s ease-in-out infinite; }
+  .sd-conoce:hover .sd-flecha { transform: translateX(4px); animation: none; }
+  @keyframes sdNudge { 0%, 86%, 100% { transform: translateX(0); } 93% { transform: translateX(5px); } }
+  @media (prefers-reduced-motion: reduce) { .sd-flecha { animation: none; } .sd-conoce { transition: none; } }
+</style>

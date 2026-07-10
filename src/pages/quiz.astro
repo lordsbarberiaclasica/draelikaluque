@@ -13,7 +13,7 @@
  * El resultado son 2 OPCIONES PROBABLES + porqués (orientación, no diagnóstico).
  *
  * ⚠️ PENDIENTES:
- *   · whatsappQuiz (573218960696, del prototipo) — confirmar que es la línea de asesoras.
+ *   · whatsappQuiz (573104139307, del prototipo) — confirmar que es la línea de asesoras.
  *   · SITE.calendly sigue en placeholder — bloqueante para lanzar.
  *   · Enlace real de Política de privacidad / Habeas Data en el checkbox.
  *   · Walter: verificar que las filas llegan a la hoja (se envían los 12 campos del
@@ -21,6 +21,7 @@
  */
 import { REGISTROS } from '../config-registros';
 import Base from '../layouts/Base.astro';
+import SobreLaDra from '../components/landing/SobreLaDra.astro';
 import AgendaContacto from '../components/landing/AgendaContacto.astro';
 import { SITE, waLink } from '../config';
 
@@ -263,12 +264,12 @@ const quizHojaDestino = REGISTROS.appsScriptUrl.startsWith('http')
               <label for="lead-whatsapp" class="text-sm font-display font-semibold text-azul">WhatsApp</label>
               <div class="mt-1.5 flex gap-2.5">
                 <select id="lead-indicativo" class="quiz-input !w-32" aria-label="Indicativo de país">
-                  <option value="57">+57 (CO)</option>
-                  <option value="507">+507 (PA)</option>
-                  <option value="502">+502 (GT)</option>
-                  <option value="1">+1 (US)</option>
-                  <option value="52">+52 (MX)</option>
-                  <option value="593">+593 (EC)</option>
+                  <option value="57">🇨🇴 +57</option>
+                  <option value="507">🇵🇦 +507</option>
+                  <option value="502">🇬🇹 +502</option>
+                  <option value="1">🇺🇸 +1</option>
+                  <option value="52">🇲🇽 +52</option>
+                  <option value="593">🇪🇨 +593</option>
                 </select>
                 <input id="lead-whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Número" class="quiz-input flex-1" required />
               </div>
@@ -329,7 +330,7 @@ const quizHojaDestino = REGISTROS.appsScriptUrl.startsWith('http')
   </section>
 
   <!-- 3 · AGENDA DIRECTA — banner de conversión -->
-  <section class="bg-azul-950 bg-atmosfera">
+  <section class="bg-azul-950 bg-atmosfera marca-el">
     <div class="wrap py-16 md:py-20 text-center reveal reveal-stagger">
       <h2 class="titulo-linea text-2xl md:text-3xl text-marfil">Agenda tu prevaloración <span class="text-dorado">sin costo (15 min)</span></h2>
       <p class="mt-4 text-sm text-marfil/70">En 15 minutos definimos:</p>
@@ -405,6 +406,8 @@ const quizHojaDestino = REGISTROS.appsScriptUrl.startsWith('http')
   </section>
 
   <!-- 5 · FAQ -->
+  <SobreLaDra />
+
   <section class="bg-white">
     <div class="wrap py-14 md:py-20">
       <h2 class="titulo-linea text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>

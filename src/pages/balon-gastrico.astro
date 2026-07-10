@@ -20,6 +20,7 @@ import QuizBalon from "../components/landing/QuizBalon.astro";
  * marcados para validación (el WP tenía placeholders en 3 de 4).
  */
 import Base from '../layouts/Base.astro';
+import SobreLaDra from '../components/landing/SobreLaDra.astro';
 import AgendaContacto from '../components/landing/AgendaContacto.astro';
 import TestimoniosLanding from '../components/landing/TestimoniosLanding.astro';
 import { SITE, waLink } from '../config';
@@ -42,9 +43,9 @@ const beneficios = [
 
 /* ⚠️ Del mockup — confirmar consentimiento antes de pauta */
 const testimonios = [
-  { nombre: 'Alexandra Peralta', frase: 'Me quitó el miedo, ahora entiendo el proceso.' },
-  { nombre: 'Marcela Pardo', frase: 'La claridad y el seguimiento fueron la diferencia.' },
-  { nombre: 'Camilo Restrepo', frase: 'Mejoré mi calidad de vida.' },
+  { nombre: 'Alexandra Peralta', frase: 'Me quitó el miedo, ahora entiendo el proceso.', foto: 'https://randomuser.me/api/portraits/women/44.jpg' },
+  { nombre: 'Marcela Pardo', frase: 'La claridad y el seguimiento fueron la diferencia.', foto: 'https://randomuser.me/api/portraits/women/68.jpg' },
+  { nombre: 'Camilo Restrepo', frase: 'Mejoré mi calidad de vida.', foto: 'https://randomuser.me/api/portraits/men/32.jpg' },
 ];
 
 const comoFunciona = [
@@ -397,6 +398,8 @@ const faqJsonLd = JSON.stringify({
   </section>
 
   <!-- 12 · FAQ -->
+  <SobreLaDra />
+
   <section class="bg-marfil border-t border-azul/10">
     <div class="wrap py-14 md:py-20">
       <h2 class="titulo-linea text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>

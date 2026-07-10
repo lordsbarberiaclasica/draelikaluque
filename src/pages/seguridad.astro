@@ -16,6 +16,7 @@
  * ⚠️ FAQ: respuestas borrador — validar con la Dra.
  */
 import Base from '../layouts/Base.astro';
+import SobreLaDra from '../components/landing/SobreLaDra.astro';
 import SellosCredenciales from '../components/landing/SellosCredenciales.astro';
 import AgendaContacto from '../components/landing/AgendaContacto.astro';
 import TimelineSeguimiento from '../components/landing/TimelineSeguimiento.astro';
@@ -73,9 +74,9 @@ const miedos = [
 
 /* ⚠️ Del mockup — confirmar consentimiento antes de pauta */
 const testimonios = [
-  { nombre: 'Sonia Muñoz', frase: 'Me dio tranquilidad entender el proceso.' },
-  { nombre: 'M. Camila Toro', frase: 'El seguimiento me dio mucha seguridad.' },
-  { nombre: 'Silvana Acosta', frase: 'Tomé una decisión con claridad.' },
+  { nombre: 'Sonia Muñoz', frase: 'Me dio tranquilidad entender el proceso.', foto: 'https://randomuser.me/api/portraits/women/65.jpg' },
+  { nombre: 'M. Camila Toro', frase: 'El seguimiento me dio mucha seguridad.', foto: 'https://randomuser.me/api/portraits/women/12.jpg' },
+  { nombre: 'Silvana Acosta', frase: 'Tomé una decisión con claridad.', foto: 'https://randomuser.me/api/portraits/women/47.jpg' },
 ];
 
 const diaCirugia = [
@@ -347,6 +348,8 @@ const faqJsonLd = JSON.stringify({
   </section>
 
   <!-- 10 · FAQ -->
+  <SobreLaDra />
+
   <section class="bg-marfil border-t border-azul/10">
     <div class="wrap py-14 md:py-20">
       <h2 class="titulo-linea text-2xl md:text-3xl text-center">Preguntas <span class="text-dorado-600">frecuentes</span></h2>
