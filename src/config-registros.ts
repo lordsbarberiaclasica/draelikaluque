@@ -42,7 +42,7 @@ export const REGISTROS = {
    * balón) y fallback del interceptor.
    * ⚠️ Calendly propio de la Dra. (activo desde jul 2026).
    */
-  calendlyFallback: 'https://calendly.com/dra-elika-luque/nueva-reunion',
+  calendlyFallback: 'https://calendly.com/dra-elika-luque/prevaloracion',
 
   /**
    * WhatsApp que recibe los leads (Capa 3 · asesoras). Mismo número que ya
