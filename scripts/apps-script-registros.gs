@@ -1,5 +1,5 @@
 /**
- * Registros Web · draelikaluque.com · v3 vinculado (jul 2026) — DESPLEGADO
+ * Registros Web · draelikaluque.com · v5 vinculado (jul 2026) — DESPLEGADO
  * ------------------------------------------------------------------------
  * Este es el codigo que corre en produccion. Vive VINCULADO a la hoja
  * oficial (Drive de Lords: 1D5hI8vIudoAZFy4TqHPwTjxaHBQKXjvjqornKYjIE40),
@@ -79,7 +79,7 @@ function doPost(e) {
 
     var fila = [Utilities.formatDate(new Date(), 'America/Bogota', 'yyyy-MM-dd HH:mm:ss')];
     for (var i = 0; i < config.campos.length; i++) {
-      fila.push(p[config.campos[i]] || '');
+      fila.push(textoSeguro(p[config.campos[i]] || ''));
     }
     fila.push('captcha desactivado');
 
@@ -88,6 +88,18 @@ function doPost(e) {
   } catch (error) {
     return salidaJson({ ok: false, error: String(error) });
   }
+}
+
+/**
+ * Blindaje anti-#ERROR!: si un valor empieza con + = - o @, Sheets lo
+ * interpreta como formula y rompe la celda. Anteponer un apostrofo lo
+ * fuerza a texto literal (el apostrofo no se muestra en la celda).
+ * Aplica a TODOS los campos de TODAS las pestanas.
+ */
+function textoSeguro(v) {
+  var s = String(v);
+  if (/^[=+\-@]/.test(s)) return "'" + s;
+  return s;
 }
 
 function leerParametros(e) {
@@ -110,8 +122,42 @@ function leerParametros(e) {
   return p;
 }
 
-function doGet() {
-  return salidaJson({ ok: true, servicio: 'registros-web-draelikaluque', version: 3 });
+/**
+ * API de lectura para el panel (panel.draelikaluque.com).
+ * Credenciales en Configuracion del proyecto -> Propiedades del script:
+ *   PANEL_USUARIO y PANEL_CLAVE (nunca en el codigo).
+ */
+function doGet(e) {
+  var p = (e && e.parameter) || {};
+
+  if (p.accion === 'login') {
+    if (credencialesValidas(p.usuario, p.clave)) return salidaJson({ ok: true });
+    Utilities.sleep(800);
+    return salidaJson({ ok: false, error: 'credenciales' });
+  }
+
+  if (p.accion === 'leer') {
+    if (!credencialesValidas(p.usuario, p.clave)) {
+      Utilities.sleep(800);
+      return salidaJson({ ok: false, error: 'credenciales' });
+    }
+    var nombre = (p.hoja && HOJAS[p.hoja]) ? p.hoja : HOJA_DEFECTO;
+    var hoja = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(nombre);
+    if (!hoja || hoja.getLastRow() === 0) {
+      return salidaJson({ ok: true, hoja: nombre, encabezados: HOJAS[nombre].encabezados, filas: [] });
+    }
+    var datos = hoja.getDataRange().getDisplayValues();
+    return salidaJson({ ok: true, hoja: nombre, encabezados: datos[0], filas: datos.slice(1) });
+  }
+
+  return salidaJson({ ok: true, servicio: 'registros-web-draelikaluque', version: 5 });
+}
+
+function credencialesValidas(u, c) {
+  var props = PropertiesService.getScriptProperties();
+  var pu = props.getProperty('PANEL_USUARIO');
+  var pc = props.getProperty('PANEL_CLAVE');
+  return !!(u && c && pu && pc && u === pu && c === pc);
 }
 
 function salidaJson(obj) {
