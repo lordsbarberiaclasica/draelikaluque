@@ -48,7 +48,7 @@ export const REGISTROS = {
    * WhatsApp que recibe los leads (Capa 3 · asesoras). Mismo número que ya
    * usa el quiz L2. ⚠️ Pendiente el veredicto final de los 3 números.
    */
-  whatsappAsesoras: '573104139307',
+  whatsappAsesoras: '573218211819',
 
   /** Rutas internas usadas por los CTAs secundarios del quiz de balón. */
   urlManga: '/procedimientos-bariaticos/',
