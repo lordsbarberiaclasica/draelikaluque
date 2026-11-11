@@ -1,0 +1,193 @@
+---
+/**
+ * /en/privacy-policy/ — English version of /politica-de-privacidad/.
+ * The rest of /en/ still lives only as a build on the server (no source yet);
+ * this page is the first English page with source in the repo.
+ * Keep both versions in sync. In case of discrepancy, the Spanish version prevails.
+ */
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import { SITE, URL_POLITICA_DATOS } from '../../config';
+
+const EFFECTIVE = 'November 11, 2026';
+const ADDRESS = 'Calle 85 # 50-37, Torre Médica del Mar, Clínica Iberoamérica, office 311, Barranquilla, Atlántico, Colombia';
+---
+
+<Base
+  title="Privacy Policy · Dr. Elika Luque"
+  description="How Dr. Elika Luque collects, uses, protects and processes the personal data of patients and users of draelikaluque.com, in accordance with Colombian Law 1581 of 2012."
+  variant="legal"
+  lang="en"
+  alterna={URL_POLITICA_DATOS}
+>
+  <PageHero
+    eyebrow="Data protection · Colombian Law 1581 of 2012"
+    title="Privacy Policy"
+    sub={`Effective ${EFFECTIVE}. It applies to the data we receive on this website, through our forms, Facebook and Instagram lead ads, WhatsApp, email and at the office.`}
+    ctaText=""
+  />
+
+  <section class="bg-marfil">
+    <div class="wrap py-14 md:py-20">
+      <article class="legal">
+        <p>
+          <a href={URL_POLITICA_DATOS} lang="es" hreflang="es">Leer esta política en español</a>.
+          In case of any discrepancy, the Spanish version prevails.
+        </p>
+
+        <h2>1. Data controller</h2>
+        <div class="legal-ficha">
+          <p><strong>Dr. Elika Luque</strong>, bariatric and laparoscopic surgeon.</p>
+          <p><strong>Address:</strong> {ADDRESS}.</p>
+          <p><strong>Email:</strong> <a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+          <p><strong>Phone and WhatsApp:</strong> {SITE.phone}</p>
+          <p><strong>Website:</strong> <a href={SITE.url}>draelikaluque.com</a></p>
+        </div>
+        <p>
+          In this policy, "we" means Dr. Elika Luque and her care team (advisors and
+          administrative staff). "You" or "the data subject" is the person the data belongs to.
+        </p>
+
+        <h2>2. Legal framework</h2>
+        <p>
+          This policy complies with Colombian Statutory Law 1581 of 2012, Decree 1377 of 2013
+          (compiled in Decree 1074 of 2015) and the rules on medical records and medical
+          confidentiality (Law 23 of 1981 and Resolution 1995 of 1999). The supervisory
+          authority is the Superintendence of Industry and Commerce (SIC).
+        </p>
+
+        <h2>3. Data we collect</h2>
+        <ul>
+          <li><strong>Identification and contact data:</strong> name, WhatsApp or phone number, email, country and city.</li>
+          <li><strong>Data about your inquiry:</strong> reason for contact and procedure of interest (for example gastric balloon, sleeve, bypass or reflux).</li>
+          <li>
+            <strong>Health data (sensitive data):</strong> what you choose to share in the quiz
+            or in the assessment, such as weight, height, body mass index (BMI), related
+            conditions (high blood pressure, diabetes, apnea, joint pain), reflux, previous
+            surgeries or procedures and previous weight-loss attempts.
+          </li>
+          <li>
+            <strong>Browsing and campaign data:</strong> the page you contact us from, the
+            source of your visit (UTM parameters and Google and Meta click identifiers),
+            IP address, browser type and the information collected by the cookies and
+            measurement tools described in section 9.
+          </li>
+        </ul>
+        <p>
+          We do not request data from minors through this website. If a minor needs care,
+          their data is provided by their legal representative.
+        </p>
+
+        <h2>4. Sensitive data</h2>
+        <p>Health data is sensitive data. Therefore:</p>
+        <ul>
+          <li>You are <strong>not required</strong> to provide it or to answer questions about your health.</li>
+          <li>We only process it with your <strong>prior, express and informed consent</strong>, which you give by checking the consent box in our forms or by another verifiable means.</li>
+          <li>We use it only to guide you, prepare your assessment and provide medical care.</li>
+          <li>No service, appointment or care depends on you providing sensitive data that is not necessary for your care.</li>
+        </ul>
+
+        <h2>5. Why we use your data (purposes)</h2>
+        <ol>
+          <li>Answer your inquiries and contact you by WhatsApp, phone or email about the service you requested.</li>
+          <li>Schedule, confirm and remind you of your pre-assessment, assessment, tests and follow-ups.</li>
+          <li>Give you initial guidance (for example, the quiz result) and prepare your medical assessment.</li>
+          <li>Provide medical care and follow up on your treatment.</li>
+          <li>Send you information about procedures, prices, payment options and care, when you have requested it.</li>
+          <li>Send you educational content, news and promotions about our services. You can ask us to stop at any time.</li>
+          <li>Measure and improve our website and advertising campaigns, and show relevant ads on platforms such as Google, Facebook and Instagram.</li>
+          <li>Comply with legal, accounting and medical-record obligations and respond to requests from authorities.</li>
+        </ol>
+        <p>Medical records are also governed by their own confidentiality and retention rules.</p>
+
+        <h2>6. How we obtain your consent</h2>
+        <p>
+          Before submitting any of our forms you must check the box authorizing the processing
+          of your data under this policy. You may also authorize it in writing, by WhatsApp,
+          by email or at the office. If you write to us directly by WhatsApp or email, we
+          understand you authorize us to use that data to reply (purposes 1 and 2). We keep
+          proof of your consent.
+        </p>
+        <p>
+          When you leave your data in a Facebook or Instagram lead form, Meta delivers it to
+          us so we can contact you, and we process it under this policy.
+        </p>
+
+        <h2>7. Who we share your data with</h2>
+        <p>We do not sell or rent your personal data. We only share it with:</p>
+        <ul>
+          <li><strong>Dr. Elika Luque's care team</strong>, bound by confidentiality.</li>
+          <li><strong>Clinics and healthcare providers</strong> where your care or tests take place (for example, Clínica Portoazul), when necessary to provide the service.</li>
+          <li>
+            <strong>Providers that process data on our behalf</strong> (processors), only for
+            the purposes of this policy: website and database hosting (Google Cloud), email
+            (Google Workspace), online scheduling (Calendly), messaging (WhatsApp), measurement
+            and advertising (Google Analytics, Google Tag Manager, Google Ads and Meta) and the
+            marketing agency that manages our campaigns.
+          </li>
+          <li><strong>Authorities</strong>, when required by law.</li>
+        </ul>
+
+        <h2>8. International transfers</h2>
+        <p>
+          Some of these providers store data on servers outside Colombia, mainly in the United
+          States. By accepting this policy you authorize that transfer. We only work with
+          providers that offer adequate levels of data protection.
+        </p>
+
+        <h2>9. Cookies and measurement tools</h2>
+        <p>
+          This website uses cookies and similar technologies from Google Tag Manager, Google
+          Analytics, Google Ads and Meta (Facebook pixel) to understand how the site is used,
+          measure our campaigns and show ads to people interested in our services. We also
+          store the source of your visit (UTM) in your browser. You can block or delete
+          cookies in your browser settings; some site features may not work the same way.
+        </p>
+
+        <h2>10. Your rights</h2>
+        <p>As the data subject you have the right to:</p>
+        <ol>
+          <li>Know, update and correct your data.</li>
+          <li>Request proof of the consent you gave us.</li>
+          <li>Be informed, upon request, of how your data has been used.</li>
+          <li>Revoke your consent and request deletion of your data, when there is no legal or contractual duty to keep it (for example, medical records).</li>
+          <li>File complaints with the Superintendence of Industry and Commerce, after submitting your inquiry or claim to us.</li>
+          <li>Access your personal data free of charge.</li>
+        </ol>
+
+        <h2>11. How to exercise your rights</h2>
+        <p>
+          Write to <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or WhatsApp
+          {' '}{SITE.phone}, including your name, ID number, contact details, your request
+          and, if applicable, supporting documents. If you act on behalf of someone else,
+          attach proof of authorization.
+        </p>
+        <ul>
+          <li><strong>Inquiries</strong> (what data we hold and how we use it): answered within 10 business days, extendable by up to 5 more business days with notice.</li>
+          <li><strong>Claims</strong> (correction, update, deletion or revocation): answered within 15 business days, extendable by up to 8 more business days with notice. If a claim is incomplete, we will ask you to complete it within 5 business days; after 2 months without a reply, it is considered withdrawn.</li>
+        </ul>
+
+        <h2>12. Security and retention</h2>
+        <p>
+          We protect your data with reasonable technical, human and administrative measures:
+          encrypted connection (HTTPS), password-protected access for authorized staff only,
+          and providers with recognized security standards. We keep your data as long as
+          needed for the purposes of this policy or as required by law. Medical records are
+          kept for the period set by law.
+        </p>
+
+        <h2>13. Changes to this policy</h2>
+        <p>
+          We may update this policy. Significant changes will be published on this page with
+          the new effective date. If the purposes change, we will ask for your consent again.
+        </p>
+
+        <h2>14. Effective date</h2>
+        <p>
+          This policy is effective as of {EFFECTIVE}. Data will be processed for as long as
+          necessary to fulfill its purposes.
+        </p>
+      </article>
+    </div>
+  </section>
+</Base>

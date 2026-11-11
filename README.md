@@ -1,74 +1,65 @@
-# draelikaluque.com · Rediseño
+# draelikaluque.com
 
-Sitio institucional + sistema de 6 landings de captación para la
-**Dra. Elika Luque** (cirugía bariátrica, Barranquilla).
+Sitio institucional + 6 landings de captación de la **Dra. Elika Luque**
+(cirugía bariátrica, Barranquilla).
 
-Stack: **Astro 5 + Tailwind CSS 4** · Fuentes self-hosted (@fontsource) ·
-Deploy: **GitHub Actions → cPanel (FTP)**.
+Stack: **Astro 5 + Tailwind CSS 4** · fuentes self-hosted (@fontsource).
+Servidor: VM con Apache, carpeta `/var/www/draelikaluque`, detrás de Cloudflare.
 
-## Instalación local
+> Datos del servidor, accesos y base de datos: ver `HANDOFF.md` en el repo
+> privado del panel (`Dev-Lords8812/draelikaluque-panel`). No se copian aquí.
+
+## Local
 
 ```bash
-cd ~/Developer
-# (descomprimir el zip aquí, o clonar cuando esté en GitHub)
-cd draelikaluque
 npm install
 npm run dev       # http://localhost:4321
 ```
 
 Requisitos: Node 20+.
 
-## Subir a GitHub
+## Formularios y leads
+
+Los formularios envían a **`/api/lead.php`** (ruta relativa, ver
+`src/config-registros.ts`). Ese archivo vive en el repo del panel y guarda en
+MariaDB. El campo `hoja` indica el formulario (`Registros Valoración 15 Min`,
+`Registros Landing Balón`, `Registros Landing Quizz`; con sufijo ` (EN)` en inglés).
+**Nunca** volver a apuntar a Google Apps Script.
+
+## Cómo publicar
 
 ```bash
-cd ~/Developer/draelikaluque
-git init && git add -A && git commit -m "feat: home institucional v1"
-git branch -M main
-git remote add origin git@github.com:TU_USUARIO/draelikaluque.git
-git push -u origin main
+DEPLOY_DESTINO=usuario@servidor bash scripts/deploy-web.sh
 ```
 
-## Deploy a cPanel
+El script compila, verifica que los formularios vayan a `/api/lead.php`, sube
+`dist/` con `rsync` y enlaza la política en las páginas en inglés.
 
-Automático con `.github/workflows/deploy.yml`: cada push a `main`
-construye el sitio y sube `dist/` por FTP.
+- **Sin `--delete`.** La versión en inglés (`/en/`) existe solo como build en el
+  servidor, con CSS/JS viejos de `_astro/`. Borrarlos la rompe.
+- **Nunca tocar `/api/`**: se publica desde el repo del panel.
+- El HTML sale sin caché; JS/CSS tienen hash en el nombre, no hace falta purgar Cloudflare.
 
-Configurar en GitHub → Settings → Secrets → Actions:
+## Páginas
 
-| Secret | Ejemplo |
-|---|---|
-| `FTP_SERVER` | ftp.draelikaluque.com |
-| `FTP_USERNAME` | usuario cPanel |
-| `FTP_PASSWORD` | contraseña |
-| `FTP_SERVER_DIR` | /public_html/ |
+| Página | URL |
+| --- | --- |
+| L1 Prevaloración | `/prevaloracion/` |
+| L2 Quiz | `/quiz/` |
+| L3 Seguridad | `/seguridad/` (`?h=` seguridad · miedo · rebote · reflujo) |
+| L4 Balón gástrico | `/balon-gastrico/` (`?h=` balon · dias · post · agenda) |
+| L5 Reflujo | `/reflujo/` (`?h=` reflujo · nocturno · antiacidos · decision) |
+| L6 Incluye y pagos | `/incluye-y-pagos/` (`?h=` proceso · balon · cirugia · internacional) |
+| Política de datos | `/politica-de-privacidad/` · `/en/privacy-policy/` |
 
-Alternativa manual: `npm run build` y subir el contenido de `dist/` a `public_html`.
+Inglés publicado: `/en/` + `pre-assessment`, `quiz`, `safety`, `gastric-balloon`,
+`reflux`, `included-and-pricing`, etc. Solo `/en/privacy-policy/` tiene fuente en
+`src/pages/en/`; el resto está pendiente de migrar a Astro.
 
-### Redirecciones 301
-El mapa vive en `public/.htaccess` (comentado). **Descomentar solo al lanzar.**
-Detalle completo en `docs/inventario-urls-301.md`.
+## Datos operativos
 
-## Pendientes antes de lanzar (⚠️)
-
-- [ ] URL real del evento de Calendly → `src/config.ts`
-- [ ] Correr `bash scripts/fetch-remote-assets.sh` (logos de credenciales, logo SVG)
-- [ ] Textos legales: Política de privacidad / Habeas Data (footer)
-- [ ] Testimonios reales (fotos con permiso + videos) → activar `<Testimonios />`
-- [ ] Confirmar handles de Instagram/Facebook → `src/config.ts`
-- [ ] Walter: verificar disparo de GTM (GTM-MMMK2ZD) y propagación de UTMs a Calendly
-
-## Estructura
-
-```
-src/
-├── config.ts              # Datos operativos (única fuente de verdad)
-├── layouts/Base.astro     # SEO, fuentes, GTM, captura de UTMs
-├── components/            # Header, Footer, StickyCtaMobile, WhatsAppFloat
-│   └── sections/          # Secciones del home (reutilizables en landings)
-├── pages/index.astro      # Home
-└── styles/global.css      # Tokens de marca + componentes base
-docs/                      # Inventario 301 + copy extraído del WordPress
-```
+Todo en `src/config.ts` (única fuente de verdad): WhatsApp **+57 321 821 1819**
+(`wa.me/573218211819`, único número), Calendly, GTM `GTM-55C96K63`, redes.
 
 ## Reglas de compliance (no negociables)
 

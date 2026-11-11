@@ -20,8 +20,15 @@ interface Props {
   description?: string;
   /** Imagen para compartir en redes (ruta absoluta desde /public) */
   ogImage?: string;
-  /** 'landing' usa header/footer mínimos sin navegación (L1–L6) */
-  variant?: 'site' | 'landing';
+  /**
+   * 'landing' usa header/footer mínimos sin navegación (L1–L6).
+   * 'legal' usa el mismo header/footer mínimo, sin CTA fijo móvil (políticas).
+   */
+  variant?: 'site' | 'landing' | 'legal';
+  /** Idioma de la página (por defecto español). */
+  lang?: 'es' | 'en';
+  /** URL de la versión en el otro idioma (hreflang), ruta absoluta desde la raíz. */
+  alterna?: string;
 }
 
 const {
@@ -29,25 +36,35 @@ const {
   description = SITE.description,
   ogImage = '/images/hero-poster.jpg',
   variant = 'site',
+  lang = 'es',
+  alterna,
 } = Astro.props;
+const htmlLang = lang === 'en' ? 'en' : 'es-CO';
+const ogLocale = lang === 'en' ? 'en_US' : 'es_CO';
 
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
 ---
 
 <!doctype html>
-<html lang="es-CO">
+<html lang={htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {alterna && (
+      <>
+        <link rel="alternate" hreflang={lang === 'en' ? 'en' : 'es'} href={canonical} />
+        <link rel="alternate" hreflang={lang === 'en' ? 'es' : 'en'} href={new URL(alterna, SITE.url).href} />
+      </>
+    )}
     <link rel="preconnect" href="https://calendly.com" />
     <link rel="icon" type="image/png" href="/favicon.png" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="es_CO" />
+    <meta property="og:locale" content={ogLocale} />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -151,13 +168,13 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
         style="display:none;visibility:hidden"></iframe>
     </noscript>
 
-    {variant === 'site' ? <Header /> : <LandingHeader />}
+    {variant === 'site' ? <Header /> : <LandingHeader lang={lang} />}
 
     <main class="flex-1">
       <slot />
     </main>
 
-    {variant === 'site' ? <Footer /> : <LandingFooter />}
+    {variant === 'site' ? <Footer /> : <LandingFooter lang={lang} />}
     {variant === 'landing' && <StickyCtaMobile />}
     <WhatsAppFloat raised={variant === 'landing'} />
 

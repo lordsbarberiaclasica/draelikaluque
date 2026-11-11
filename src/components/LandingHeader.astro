@@ -3,16 +3,21 @@
  * Header de landing v1.2.0 — fondo oscuro como el sitio institucional,
  * isotipo + nombre CENTRADOS, sin menú (embudo cerrado, cero fugas).
  */
+interface Props {
+  lang?: 'es' | 'en';
+}
+const { lang = 'es' } = Astro.props;
+const en = lang === 'en';
 ---
 
 <header class="bg-azul-950 border-b border-dorado/30">
   <div class="wrap py-4 flex justify-center">
-    <a href="/" class="flex items-center gap-3" aria-label="Dra. Elika Luque — inicio">
+    <a href={en ? '/en/' : '/'} class="flex items-center gap-3" aria-label={en ? 'Dr. Elika Luque — home' : 'Dra. Elika Luque — inicio'}>
       <img src="/images/logo-el.png" alt="" width="42" height="42" class="h-11 w-11 object-contain" />
       <span class="font-display font-semibold text-marfil leading-tight text-left">
-        Dra. Elika Luque
+        {en ? 'Dr. Elika Luque' : 'Dra. Elika Luque'}
         <span class="block text-[0.62rem] font-normal tracking-[0.24em] uppercase text-dorado/90">
-          Cirugía bariátrica
+          {en ? 'Bariatric surgery' : 'Cirugía bariátrica'}
         </span>
       </span>
     </a>

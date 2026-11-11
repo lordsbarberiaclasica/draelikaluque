@@ -19,6 +19,7 @@
  * Escape hatch: cualquier <a href*="calendly.com" data-skip-form> NO abre el modal.
  */
 import { REGISTROS } from '../config-registros';
+import { URL_POLITICA_DATOS } from '../config';
 ---
 
 <dialog id="fv-dialog" class="fv-dialog" aria-labelledby="fv-titulo">
@@ -107,7 +108,7 @@ import { REGISTROS } from '../config-registros';
 
         <label class="fv-habeas">
           <input type="checkbox" name="habeas" required />
-          <span>Autorizo el tratamiento de mis datos personales según la <a href="#" target="_blank" rel="noopener">política de privacidad y Habeas Data</a>.</span>
+          <span>Autorizo el tratamiento de mis datos personales según la <a href={URL_POLITICA_DATOS} target="_blank" rel="noopener">política de tratamiento de datos personales</a>.</span>
         </label>
 
         <button type="submit" class="fv-btn fv-btn-gold" data-fv-enviar>Continuar&nbsp;&rarr;</button>
@@ -236,12 +237,8 @@ import { REGISTROS } from '../config-registros';
         ...utms,
       });
 
-      if (REGISTROS.appsScriptUrl.startsWith('http')) {
-        fetch(REGISTROS.appsScriptUrl, { method: 'POST', mode: 'no-cors', keepalive: true, body: cuerpo })
-          .catch(() => { /* no-cors: fire and forget */ });
-      } else {
-        console.warn('[FormularioValoracion] appsScriptUrl sin configurar: el lead NO se guardó en Sheets.');
-      }
+      fetch(REGISTROS.appsScriptUrl, { method: 'POST', mode: 'no-cors', keepalive: true, body: cuerpo })
+        .catch(() => { /* fire and forget: el paciente sigue a Calendly/WhatsApp */ });
       dl('valoracion_form_enviado', { motivo, pais });
 
       /* Calendly precargado: el href ya traía UTMs; sumamos name/email y a1–a3 */

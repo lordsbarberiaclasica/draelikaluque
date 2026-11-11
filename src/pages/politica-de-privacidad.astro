@@ -1,0 +1,207 @@
+---
+/**
+ * /politica-de-privacidad/ — Política de tratamiento de datos personales
+ * (Ley 1581 de 2012 y Decreto 1377 de 2013, compilado en el Decreto 1074 de 2015).
+ * Requerida por Meta para los formularios de anuncios y antes de instalar el píxel.
+ * Versión en inglés: /en/privacy-policy/ (mantener ambas sincronizadas).
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { SITE, URL_POLITICA_DATOS_EN } from '../config';
+
+const VIGENCIA = '11 de noviembre de 2026';
+const DIRECCION = 'Calle 85 # 50-37, Torre Médica del Mar, Clínica Iberoamérica, consultorio 311, Barranquilla, Atlántico, Colombia';
+---
+
+<Base
+  title="Política de tratamiento de datos personales · Dra. Elika Luque"
+  description="Cómo la Dra. Elika Luque recolecta, usa, protege y trata los datos personales de pacientes y usuarios de draelikaluque.com, conforme a la Ley 1581 de 2012 (Habeas Data)."
+  alterna={URL_POLITICA_DATOS_EN}
+>
+  <PageHero
+    eyebrow="Habeas Data · Ley 1581 de 2012"
+    title="Política de tratamiento de datos personales"
+    sub={`Vigente desde el ${VIGENCIA}. Aplica a los datos que recibimos en este sitio web, en nuestros formularios, en los formularios de anuncios de Facebook e Instagram, por WhatsApp, por correo y en el consultorio.`}
+    ctaText=""
+  />
+
+  <section class="bg-marfil">
+    <div class="wrap py-14 md:py-20">
+      <article class="legal">
+        <p>
+          <a href={URL_POLITICA_DATOS_EN} lang="en" hreflang="en">Read this policy in English</a>
+        </p>
+
+        <h2>1. Responsable del tratamiento</h2>
+        <div class="legal-ficha">
+          <p><strong>Dra. Elika Luque</strong>, médica cirujana bariátrica y laparoscópica.</p>
+          <p><strong>Dirección:</strong> {DIRECCION}.</p>
+          <p><strong>Correo:</strong> <a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+          <p><strong>Teléfono y WhatsApp:</strong> {SITE.phone}</p>
+          <p><strong>Sitio web:</strong> <a href={SITE.url}>draelikaluque.com</a></p>
+        </div>
+        <p>
+          En esta política, "nosotros" se refiere a la Dra. Elika Luque y a su equipo de
+          atención (asesoras y personal administrativo). "Usted" o "el titular" es la persona
+          a quien pertenecen los datos.
+        </p>
+
+        <h2>2. Marco legal</h2>
+        <p>
+          Esta política cumple la Ley Estatutaria 1581 de 2012, el Decreto 1377 de 2013
+          (compilado en el Decreto Único 1074 de 2015), la Ley 1266 de 2008 en lo que
+          aplique y las normas sobre historia clínica y reserva médica (Ley 23 de 1981 y
+          Resolución 1995 de 1999). La autoridad de control es la Superintendencia de
+          Industria y Comercio (SIC).
+        </p>
+
+        <h2>3. Qué datos recolectamos</h2>
+        <ul>
+          <li>
+            <strong>Datos de identificación y contacto:</strong> nombre, número de WhatsApp o
+            teléfono, correo electrónico, país y ciudad.
+          </li>
+          <li>
+            <strong>Datos sobre su consulta:</strong> el motivo de contacto y el procedimiento
+            de interés (por ejemplo, balón gástrico, manga, bypass o reflujo).
+          </li>
+          <li>
+            <strong>Datos de salud (datos sensibles):</strong> los que usted decida darnos en
+            el quiz o en la valoración, como peso, estatura, índice de masa corporal (IMC),
+            enfermedades asociadas (presión alta, diabetes, apnea, dolor articular), reflujo,
+            cirugías o procedimientos previos e intentos anteriores de bajar de peso.
+          </li>
+          <li>
+            <strong>Datos de navegación y de campañas:</strong> página desde la que nos escribe,
+            origen de la visita (parámetros UTM e identificadores de clic de Google y Meta),
+            dirección IP, tipo de navegador y la información que recogen las cookies y
+            herramientas de medición descritas en el punto 9.
+          </li>
+        </ul>
+        <p>
+          No pedimos datos de niñas, niños ni adolescentes por este sitio. Si un menor de edad
+          requiere atención, sus datos los entrega su representante legal.
+        </p>
+
+        <h2>4. Datos sensibles</h2>
+        <p>
+          Los datos de salud son datos sensibles. Por eso:
+        </p>
+        <ul>
+          <li>Usted <strong>no está obligado</strong> a darlos ni a responder preguntas sobre su salud.</li>
+          <li>Solo los tratamos con su <strong>autorización previa, expresa e informada</strong>, que usted da al marcar la casilla de autorización de nuestros formularios o por otro medio verificable.</li>
+          <li>Los usamos únicamente para orientarle, preparar su valoración y prestarle atención médica.</li>
+          <li>Ningún servicio, cita o atención depende de que usted entregue datos sensibles que no sean necesarios para su atención.</li>
+        </ul>
+
+        <h2>5. Para qué usamos sus datos (finalidades)</h2>
+        <ol>
+          <li>Responder sus consultas y contactarle por WhatsApp, llamada o correo sobre el servicio que solicitó.</li>
+          <li>Agendar, confirmar y recordarle su prevaloración, valoración, exámenes y controles.</li>
+          <li>Darle una orientación inicial (por ejemplo, el resultado del quiz) y preparar su valoración médica.</li>
+          <li>Prestarle atención médica y hacer el seguimiento de su tratamiento.</li>
+          <li>Enviarle información sobre procedimientos, precios, formas de pago y cuidados, cuando la haya solicitado.</li>
+          <li>Enviarle contenido educativo, novedades y promociones de nuestros servicios. Puede pedir que dejemos de hacerlo en cualquier momento.</li>
+          <li>Medir y mejorar nuestro sitio web y nuestras campañas publicitarias, y mostrar anuncios relevantes en plataformas como Google, Facebook e Instagram.</li>
+          <li>Cumplir obligaciones legales, contables y de la historia clínica, y atender requerimientos de autoridades.</li>
+        </ol>
+        <p>
+          La historia clínica se rige por sus propias normas de reserva y conservación, además
+          de esta política.
+        </p>
+
+        <h2>6. Cómo obtenemos su autorización</h2>
+        <p>
+          Antes de enviar cualquiera de nuestros formularios usted debe marcar la casilla
+          en la que autoriza el tratamiento de sus datos según esta política. También puede
+          autorizarlo por escrito, por WhatsApp, por correo o en el consultorio. Si nos
+          escribe directamente por WhatsApp o correo, entendemos que nos autoriza a usar esos
+          datos para responderle (finalidades 1 y 2). Guardamos prueba de la autorización.
+        </p>
+        <p>
+          Cuando nos deja sus datos en un formulario de anuncios de Facebook o Instagram,
+          Meta nos los entrega para que le contactemos, y los tratamos según esta política.
+        </p>
+
+        <h2>7. Con quién compartimos sus datos</h2>
+        <p>No vendemos ni alquilamos sus datos personales. Solo los compartimos con:</p>
+        <ul>
+          <li><strong>El equipo de atención</strong> de la Dra. Elika Luque, con deber de confidencialidad.</li>
+          <li><strong>Las clínicas y entidades de salud</strong> donde se realiza su atención o sus exámenes (por ejemplo, Clínica Portoazul), cuando sea necesario para prestarle el servicio.</li>
+          <li>
+            <strong>Proveedores que procesan datos por nuestra cuenta</strong> (encargados),
+            solo para las finalidades de esta política: alojamiento del sitio y de la base de
+            datos (Google Cloud), correo (Google Workspace), agenda en línea (Calendly),
+            mensajería (WhatsApp), medición y publicidad (Google Analytics, Google Tag Manager,
+            Google Ads y Meta) y la agencia de marketing que administra nuestras campañas.
+          </li>
+          <li><strong>Autoridades</strong>, cuando la ley lo exija.</li>
+        </ul>
+
+        <h2>8. Transferencia internacional</h2>
+        <p>
+          Algunos de estos proveedores guardan los datos en servidores fuera de Colombia,
+          principalmente en Estados Unidos. Al aceptar esta política usted autoriza esa
+          transferencia o transmisión. Solo trabajamos con proveedores que ofrecen niveles
+          adecuados de protección de datos.
+        </p>
+
+        <h2>9. Cookies y herramientas de medición</h2>
+        <p>
+          Este sitio usa cookies y tecnologías similares de Google Tag Manager, Google
+          Analytics, Google Ads y Meta (píxel de Facebook) para saber cómo se usa el sitio,
+          medir los resultados de nuestras campañas y mostrar anuncios a personas interesadas
+          en nuestros servicios. También guardamos en su navegador el origen de su visita (UTM)
+          para saber por qué campaña nos encontró. Puede bloquear o borrar las cookies desde
+          la configuración de su navegador; algunas funciones del sitio podrían no funcionar
+          igual.
+        </p>
+
+        <h2>10. Sus derechos</h2>
+        <p>Como titular de los datos usted tiene derecho a:</p>
+        <ol>
+          <li>Conocer, actualizar y rectificar sus datos.</li>
+          <li>Pedir prueba de la autorización que nos dio.</li>
+          <li>Saber, si lo pide, qué uso le hemos dado a sus datos.</li>
+          <li>Revocar la autorización y pedir que borremos sus datos, cuando no exista un deber legal o contractual de conservarlos (por ejemplo, la historia clínica).</li>
+          <li>Presentar quejas ante la Superintendencia de Industria y Comercio, después de haber hecho su consulta o reclamo ante nosotros.</li>
+          <li>Acceder gratis a sus datos personales.</li>
+        </ol>
+
+        <h2>11. Cómo ejercer sus derechos</h2>
+        <p>
+          Escríbanos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a> o por WhatsApp al
+          {' '}{SITE.phone}, con su nombre, documento de identidad, datos de contacto, lo que
+          solicita y, si aplica, los documentos que quiera hacer valer. Si actúa en nombre de
+          otra persona, adjunte el documento que lo acredite.
+        </p>
+        <ul>
+          <li><strong>Consultas</strong> (saber qué datos tenemos y cómo los usamos): respondemos en máximo 10 días hábiles. Si no es posible, le avisamos el motivo y respondemos en máximo 5 días hábiles más.</li>
+          <li><strong>Reclamos</strong> (corregir, actualizar, borrar o revocar): respondemos en máximo 15 días hábiles. Si no es posible, le avisamos el motivo y respondemos en máximo 8 días hábiles más. Si el reclamo está incompleto, le pedimos completarlo en los 5 días hábiles siguientes; si pasan 2 meses sin respuesta, se entiende que desistió.</li>
+        </ul>
+
+        <h2>12. Seguridad y conservación</h2>
+        <p>
+          Protegemos sus datos con medidas técnicas, humanas y administrativas razonables:
+          conexión cifrada (HTTPS), acceso con usuario y contraseña solo para el personal
+          autorizado y proveedores con estándares de seguridad reconocidos. Conservamos sus
+          datos mientras sean necesarios para las finalidades de esta política o mientras lo
+          exija la ley. La historia clínica se conserva por el tiempo que fija la norma.
+        </p>
+
+        <h2>13. Cambios a esta política</h2>
+        <p>
+          Podemos actualizar esta política. Los cambios importantes los publicaremos en esta
+          misma página, indicando la nueva fecha de vigencia. Si cambian las finalidades,
+          le pediremos una nueva autorización.
+        </p>
+
+        <h2>14. Vigencia</h2>
+        <p>
+          Esta política rige desde el {VIGENCIA}. Los datos se tratarán durante el tiempo
+          necesario para cumplir sus finalidades.
+        </p>
+      </article>
+    </div>
+  </section>
+</Base>

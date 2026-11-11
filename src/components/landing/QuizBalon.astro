@@ -21,6 +21,7 @@
  * reemplazar el formulario de solo-captura por <QuizBalon />.
  */
 import { REGISTROS } from '../../config-registros';
+import { URL_POLITICA_DATOS } from '../../config';
 ---
 
 <div class="qb" id="quiz-balon">
@@ -108,7 +109,7 @@ import { REGISTROS } from '../../config-registros';
 
       <label class="qb-habeas">
         <input type="checkbox" name="habeas" required />
-        <span>Autorizo el tratamiento de mis datos según la <a href="#" target="_blank" rel="noopener">Política de Privacidad</a>.</span>
+        <span>Autorizo el tratamiento de mis datos según la <a href={URL_POLITICA_DATOS} target="_blank" rel="noopener">Política de tratamiento de datos</a>.</span>
       </label>
 
       <button type="submit" class="qb-btn qb-btn-gold" data-qb-ver>Ver mi orientación&nbsp;&rarr;</button>
@@ -298,12 +299,8 @@ import { REGISTROS } from '../../config-registros';
         ...utms,
       });
 
-      if (REGISTROS.appsScriptUrl.startsWith('http')) {
-        fetch(REGISTROS.appsScriptUrl, { method: 'POST', mode: 'no-cors', keepalive: true, body: cuerpo })
-          .catch(() => { /* fire and forget */ });
-      } else {
-        console.warn('[QuizBalon] appsScriptUrl sin configurar: el lead NO se guardó en Sheets.');
-      }
+      fetch(REGISTROS.appsScriptUrl, { method: 'POST', mode: 'no-cors', keepalive: true, body: cuerpo })
+        .catch(() => { /* fire and forget */ });
 
       dl('quiz_balon_completado', { ruta, imc_rango: rango });
 

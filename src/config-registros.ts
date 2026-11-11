@@ -9,11 +9,13 @@
 
 export const REGISTROS = {
   /**
-   * ⚠️ URL /exec del Apps Script v3 VINCULADO a la hoja oficial (Drive de Lords). Desplegado y verificado el 9-jul-2026.
-   * Con el placeholder, los formularios funcionan igual para el paciente
-   * (Calendly/WhatsApp), pero NO guardan en Sheets y avisan por console.warn.
+   * Endpoint que guarda los leads en la base de datos (MariaDB) desde el
+   * 29-oct-2026. Es `lead.php` del repo del panel, publicado en /api/ de la VM.
+   * Ruta RELATIVA a propósito: las páginas solo se sirven desde
+   * draelikaluque.com (www redirige con 301). Exige `hoja` con uno de los
+   * nombres de abajo; con sufijo " (EN)" guarda el lead como inglés.
    */
-  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbzHV0WPklm49rvX_d5cHYz9u2OSBMfOwl7pB60F4ehSr8dSPdnZgrQO6zqbXX9TxZTF/exec',
+  appsScriptUrl: '/api/lead.php',
 
   /** Pestañas destino en la hoja de Google Sheets (nombres EXACTOS). */
   hojaValoracion: 'Registros Valoración 15 Min',

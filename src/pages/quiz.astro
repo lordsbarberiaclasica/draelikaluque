@@ -23,7 +23,7 @@ import { REGISTROS } from '../config-registros';
 import Base from '../layouts/Base.astro';
 import SobreLaDra from '../components/landing/SobreLaDra.astro';
 import AgendaContacto from '../components/landing/AgendaContacto.astro';
-import { SITE, waLink } from '../config';
+import { SITE, waLink, URL_POLITICA_DATOS } from '../config';
 
 const heroChecks = [
   'Orientación inicial (sin adivinar)',
@@ -61,16 +61,9 @@ const faqJsonLd = JSON.stringify({
   })),
 });
 
-/* Migración a la pestaña "Registros Landing Quizz": mientras el Apps Script v2
-   no esté configurado (placeholder en config-registros), el quiz sigue
-   escribiendo en el endpoint viejo de Walter, sin riesgo. Al pegar la URL
-   /exec real, la migración ocurre sola. */
-const quizEndpointActivo = REGISTROS.appsScriptUrl.startsWith('http')
-  ? REGISTROS.appsScriptUrl
-  : SITE.quizSheetEndpoint;
-const quizHojaDestino = REGISTROS.appsScriptUrl.startsWith('http')
-  ? REGISTROS.hojaQuizL2
-  : '';
+/* Leads del quiz → /api/lead.php (MariaDB), formulario "Registros Landing Quizz". */
+const quizEndpointActivo = REGISTROS.appsScriptUrl;
+const quizHojaDestino = REGISTROS.hojaQuizL2;
 ---
 
 <Base
@@ -287,8 +280,7 @@ const quizHojaDestino = REGISTROS.appsScriptUrl.startsWith('http')
               <span>
                 Autorizo el tratamiento de mis datos personales, incluidos datos de
                 salud, para recibir orientación y contacto del equipo de la Dra.
-                Elika Luque, según la <a href="#" class="underline">Política de privacidad y Habeas Data</a>.
-                <!-- ⚠️ TODO: enlazar política real antes de lanzar pauta -->
+                Elika Luque, según la <a href={URL_POLITICA_DATOS} target="_blank" rel="noopener" class="underline">Política de tratamiento de datos personales</a>.
               </span>
             </label>
           </div>

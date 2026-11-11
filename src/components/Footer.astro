@@ -1,5 +1,5 @@
 ---
-import { SITE, waLink } from '../config';
+import { SITE, waLink, URL_POLITICA_DATOS } from '../config';
 const year = new Date().getFullYear();
 ---
 
@@ -38,9 +38,7 @@ const year = new Date().getFullYear();
     <div class="text-sm">
       <p class="eyebrow text-dorado mb-4">Legal</p>
       <ul class="space-y-2.5">
-        <!-- ⚠️ TODO: enlazar documentos legales reales antes de lanzar -->
-        <li><a href="#" class="hover:text-dorado transition-colors" aria-disabled="true">Política de privacidad y Habeas Data (próximamente)</a></li>
-        <li><a href="#" class="hover:text-dorado transition-colors" aria-disabled="true">Términos y condiciones (próximamente)</a></li>
+        <li><a href={URL_POLITICA_DATOS} class="hover:text-dorado transition-colors">Política de tratamiento de datos personales</a></li>
       </ul>
       <div class="mt-6 flex items-center gap-4">
         <a href={SITE.instagram} aria-label="Instagram" class="hover:text-dorado transition-colors">
