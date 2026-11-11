@@ -42,4 +42,4 @@ done < <(find "$DIR" -name index.html -print0)
 
 echo "Archivos modificados: $cambiados"
 echo "Enlaces que siguen en \"#\" con texto de privacidad (debe ser 0):"
-grep -rhoiE '<a href="#"[^>]*>[^<]*(privacy|data protection|coming soon)[^<]*</a>' --include=index.html "$DIR" | wc -l
+{ grep -rhoiE '<a href="#"[^>]*>[^<]*(privacy|data protection|coming soon)[^<]*</a>' --include=index.html "$DIR" || true; } | wc -l

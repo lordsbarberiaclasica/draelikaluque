@@ -28,12 +28,19 @@ MariaDB. El campo `hoja` indica el formulario (`Registros Valoración 15 Min`,
 
 ## Cómo publicar
 
+Desde **Google Cloud Shell** (no necesita claves: `gcloud` las crea la primera vez):
+
 ```bash
-DEPLOY_DESTINO=usuario@servidor bash scripts/deploy-web.sh
+git clone https://github.com/lordsbarberiaclasica/draelikaluque.git
+cd draelikaluque
+DEPLOY_VM=<vm> DEPLOY_ZONA=<zona> DEPLOY_PROYECTO=<proyecto> bash scripts/deploy-web.sh
 ```
 
-El script compila, verifica que los formularios vayan a `/api/lead.php`, sube
-`dist/` con `rsync` y enlaza la política en las páginas en inglés.
+(VM, zona y proyecto: en el `HANDOFF.md` del repo del panel.) También funciona con
+SSH directo: `DEPLOY_DESTINO=usuario@servidor bash scripts/deploy-web.sh`.
+
+El script compila, verifica que los formularios vayan a `/api/lead.php`, sube el
+build, enlaza la política en las páginas en inglés y deja permisos de Apache.
 
 - **Sin `--delete`.** La versión en inglés (`/en/`) existe solo como build en el
   servidor, con CSS/JS viejos de `_astro/`. Borrarlos la rompe.
