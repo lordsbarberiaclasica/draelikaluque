@@ -10,6 +10,10 @@
  *     3. UTMs guardados de la sesión (localStorage, 30 días)
  *     4. Default: "seguridad" (pre-renderizado en HTML → lo que ve Google)
  *   Cada carga hace dataLayer.push({event:'hero_variant', ...}) para GA4/GTM.
+ *   Acepta ?h= aunque venga después del # (#miedos?h=miedo) y plurales (miedos).
+ *
+ * ANCLAS PARA ANUNCIOS (Meta): #miedos · #opciones · #dia-cirugia · #protocolo
+ *   · #ruta (mismo bloque que #protocolo) · #seguimiento
  *
  * ⚠️ Testimonios del mockup (Sonia, M. Camila, Silvana): confirmar que son
  *    pacientes reales con consentimiento firmado antes de encender pauta.
@@ -69,6 +73,41 @@ const miedos = [
     titulo: 'No sé qué elegir',
     texto: 'Primero evaluamos y luego definimos la opción más segura para tu caso.',
     respuesta: 'Asesoramiento según tu caso',
+  },
+];
+
+/* Sección #opciones — criterios generales, mismos que usan /procedimientos-bariaticos/
+   y el quiz. Sin promesas de resultado. ⚠️ Validar redacción con la Dra. */
+const opciones = [
+  {
+    nombre: 'Balón gástrico',
+    tipo: 'Sin cirugía',
+    que: 'Se coloca por endoscopia, sin incisiones, y es temporal. Funciona dentro de un plan con acompañamiento médico y nutricional.',
+    cuando: [
+      'Quieres evitar la cirugía',
+      'El IMC está en un rango moderado',
+      'No hay reflujo frecuente ni procedimientos previos',
+    ],
+  },
+  {
+    nombre: 'Manga gástrica',
+    tipo: 'Laparoscopia',
+    que: 'Se retira cerca del 80% del estómago, que queda como un tubo de menor capacidad. Es el procedimiento bariátrico más realizado.',
+    cuando: [
+      'El IMC indica cirugía bariátrica',
+      'No hay reflujo importante',
+      'Buscas una opción efectiva a largo plazo',
+    ],
+  },
+  {
+    nombre: 'Bypass gástrico',
+    tipo: 'Laparoscopia',
+    que: 'Se crea un estómago pequeño conectado al intestino delgado, lo que reduce la cantidad de alimento y la absorción.',
+    cuando: [
+      'Hay reflujo frecuente o severo',
+      'Hay diabetes de larga evolución',
+      'El IMC es alto o hay otras condiciones asociadas',
+    ],
   },
 ];
 
@@ -193,9 +232,16 @@ const faqJsonLd = JSON.stringify({
         },
       };
       function ls(k) { try { return localStorage.getItem('el_' + k) || ''; } catch (e) { return ''; } }
+      /* Parámetros de ?query y también los que quedaron después del # en el
+         enlace del anuncio (ej. /seguridad/#miedos?h=miedo). */
       var p = new URLSearchParams(location.search);
-      var v = (p.get('hero') || p.get('h') || '').toLowerCase();
-      if (!(v in V)) {
+      var hq = location.hash.indexOf('?');
+      var ph = new URLSearchParams(hq > -1 ? location.hash.slice(hq + 1) : '');
+      var pedido = (p.get('hero') || p.get('h') || ph.get('hero') || ph.get('h') || '').toLowerCase();
+      /* Acepta plural y variantes: miedos → miedo, rebotes → rebote, etc. */
+      var v = '';
+      for (var k in V) { if (pedido && pedido.indexOf(k) === 0) { v = k; break; } }
+      if (!v) {
         var pool = [
           p.get('utm_content'), p.get('utm_term'), p.get('utm_campaign'),
           ls('utm_content'), ls('utm_term'), ls('utm_campaign'),
@@ -215,6 +261,31 @@ const faqJsonLd = JSON.stringify({
       }
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ event: 'hero_variant', hero_variant: v, pagina: '/seguridad/' });
+      /* Anclas de anuncios (#miedos, #opciones…): ubicar la sección al cargar y
+         otra vez cuando terminan las imágenes, que empujan el contenido.
+         También cubre #miedos?h=miedo, que el navegador no resuelve solo. */
+      var ancla = location.hash.slice(1, hq > -1 ? hq : undefined);
+      if (ancla) {
+        var tocado = false;
+        ['wheel', 'touchstart', 'keydown'].forEach(function (ev) {
+          window.addEventListener(ev, function () { tocado = true; }, { once: true, passive: true });
+        });
+        var irAncla = function () {
+          var el = document.getElementById(ancla);
+          if (el && !tocado && Math.abs(el.getBoundingClientRect().top) > 4) el.scrollIntoView();
+        };
+        document.addEventListener('DOMContentLoaded', function () {
+          irAncla();
+          /* Las imágenes lazy de arriba cargan después y empujan el contenido:
+             reubicar mientras la página cambie de alto (máx. 5 s). */
+          if ('ResizeObserver' in window) {
+            var ro = new ResizeObserver(irAncla);
+            ro.observe(document.body);
+            setTimeout(function () { ro.disconnect(); }, 5000);
+          }
+        });
+        window.addEventListener('load', irAncla);
+      }
     })();
   </script>
 
@@ -243,7 +314,7 @@ const faqJsonLd = JSON.stringify({
   </section>
 
   <!-- 3 · MIEDOS COMUNES -->
-  <section class="bg-white">
+  <section id="miedos" class="bg-white scroll-mt-2">
     <div class="wrap py-14 md:py-20">
       <h2 class="titulo-linea text-2xl md:text-3xl text-center">
         Miedos comunes<br /><span class="text-dorado-600">(y cómo los abordamos con claridad)</span>
@@ -270,6 +341,44 @@ const faqJsonLd = JSON.stringify({
     </div>
   </section>
 
+  <!-- 3b · OPCIONES: manga, bypass o balón (orientación, sin promesas) -->
+  <section id="opciones" class="bg-marfil border-y border-azul/10 scroll-mt-2">
+    <div class="wrap py-14 md:py-20">
+      <h2 class="titulo-linea text-2xl md:text-3xl text-center">
+        Manga, bypass o balón:<br /><span class="text-dorado-600">¿cuál aplica?</span>
+      </h2>
+      <p class="mt-5 text-center text-azul/70 max-w-2xl mx-auto leading-relaxed">
+        No hay una opción mejor para todos. Estos son los criterios generales con los que se empieza a orientar cada caso.
+      </p>
+      <div class="reveal reveal-stagger mt-11 grid gap-7 md:grid-cols-3 max-w-5xl mx-auto">
+        {opciones.map((o) => (
+          <div class="reveal mini-card flex flex-col">
+            <h3 class="font-display font-semibold text-azul text-center text-lg">{o.nombre}</h3>
+            <p class="mt-1 text-center text-xs uppercase tracking-[0.16em] font-display font-semibold text-dorado-600">{o.tipo}</p>
+            <p class="mt-3 text-sm text-azul/65 leading-relaxed text-center">{o.que}</p>
+            <div class="mt-4 border-t border-dorado/40 pt-3 flex-1">
+              <p class="text-[0.65rem] uppercase tracking-[0.18em] font-display font-semibold text-dorado-600 text-center">Suele considerarse cuando:</p>
+              <ul class="mt-2 space-y-1.5" role="list">
+                {o.cuando.map((c) => (
+                  <li class="flex items-start gap-2 text-sm text-azul/75">
+                    <span class="check-svg check-svg-sm" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                    <span>{c}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="mt-9 text-center text-sm text-azul/60 max-w-2xl mx-auto">
+        Es una orientación, no un diagnóstico. La opción para tu caso se define en la valoración con tu IMC, tus antecedentes y tus estudios. ⚕
+      </p>
+      <div class="text-center">
+        <a href={SITE.calendly} class="btn btn-navy mt-7">Agendar prevaloración (15 min)</a>
+      </div>
+    </div>
+  </section>
+
   <!-- 4 · TESTIMONIOS ⚠️ confirmar consentimiento antes de pauta -->
   <TestimoniosLanding
     titulo='Lo que más mencionan <span class="text-dorado-600">los pacientes</span>'
@@ -277,7 +386,7 @@ const faqJsonLd = JSON.stringify({
   />
 
   <!-- 5 · EL DÍA DE LA CIRUGÍA -->
-  <section class="bg-white">
+  <section id="dia-cirugia" class="bg-white scroll-mt-2">
     <div class="wrap py-14 md:py-20">
       <h2 class="titulo-linea text-2xl md:text-3xl text-center">El <span class="text-dorado-600">día</span> de la <span class="text-dorado-600">cirugía</span></h2>
       <div class="max-w-2xl mx-auto mt-9">
@@ -294,9 +403,9 @@ const faqJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- 6 · LA SEGURIDAD ES PROTOCOLO -->
-  <section class="bg-marfil border-y border-azul/10">
-    <div class="wrap py-14 md:py-20">
+  <!-- 6 · LA SEGURIDAD ES PROTOCOLO (#protocolo) + ruta paso a paso (#ruta) -->
+  <section id="protocolo" class="bg-marfil border-y border-azul/10 scroll-mt-2">
+    <div id="ruta" class="wrap py-14 md:py-20 scroll-mt-2">
       <h2 class="titulo-linea text-2xl md:text-3xl text-center">La <span class="text-dorado-600">seguridad</span> no es suerte: <span class="text-dorado-600">es protocolo</span></h2>
       <div class="reveal reveal-stagger mt-12 grid gap-9 sm:grid-cols-3 max-w-4xl mx-auto text-center">
         {protocolo.map((p) => (
@@ -314,7 +423,7 @@ const faqJsonLd = JSON.stringify({
   </section>
 
   <!-- 7 · SEGUIMIENTO 1 AÑO -->
-  <section class="bg-white">
+  <section id="seguimiento" class="bg-white scroll-mt-2">
     <div class="wrap py-14 md:py-20 text-center">
       <h2 class="titulo-linea text-2xl md:text-3xl">
         <span class="text-dorado-600">Seguimiento personal incluido</span><br />hasta 1 año (sin costo)
