@@ -138,6 +138,7 @@ import { URL_POLITICA_DATOS } from '../config';
 <script>
   import { REGISTROS } from '../config-registros';
   import { tokenCaptcha } from '../scripts/captcha-cliente';
+  import { leerUtms } from '../scripts/utms';
 
   const dialog = document.getElementById('fv-dialog') as HTMLDialogElement | null;
 
@@ -172,17 +173,6 @@ import { URL_POLITICA_DATOS } from '../config';
       (window as any).dataLayer.push({ event: evento, pagina: location.pathname, ...extra });
     };
 
-    /* UTMs: primero los frescos de la URL actual, luego los que el script de
-       Base ya inyectó en el enlace de Calendly clicado (persistidos 30 días). */
-    const leerUtms = () => {
-      const claves = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'];
-      const out: Record<string, string> = {};
-      const actual = new URLSearchParams(location.search);
-      let delEnlace = new URLSearchParams('');
-      try { delEnlace = new URL(hrefCalendlyOrigen, location.origin).searchParams; } catch (_e) { /* noop */ }
-      for (const k of claves) out[k] = actual.get(k) || delEnlace.get(k) || '';
-      return out;
-    };
 
     /* ── Interceptor global: cualquier <a> hacia calendly.com abre el modal ── */
     document.addEventListener('click', (ev) => {

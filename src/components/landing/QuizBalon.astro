@@ -135,6 +135,7 @@ import { URL_POLITICA_DATOS } from '../../config';
 <script>
   import { REGISTROS } from '../../config-registros';
   import { tokenCaptcha } from '../../scripts/captcha-cliente';
+  import { leerUtms, CLAVES_UTM } from '../../scripts/utms';
 
   const raiz = document.getElementById('quiz-balon');
 
@@ -220,13 +221,6 @@ import { URL_POLITICA_DATOS } from '../../config';
     };
     const rangoImc = () => (estado.imc < 25 ? '<25' : estado.imc <= 32 ? '25-32' : '>32');
 
-    const leerUtms = () => {
-      const claves = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'];
-      const q = new URLSearchParams(location.search);
-      const out: Record<string, string> = {};
-      for (const k of claves) out[k] = q.get(k) || '';
-      return out;
-    };
 
     const RUTAS: Record<string, { titulo: string; cuerpo: string; cta1: string; cta2?: { texto: string; tipo: 'wa' | 'link'; href?: string } }> = {
       A: {
@@ -316,7 +310,7 @@ import { URL_POLITICA_DATOS } from '../../config';
       cta1.textContent = r.cta1;
       try {
         const u = new URL(REGISTROS.calendlyFallback);
-        for (const [k, v] of Object.entries(utms)) if (v) u.searchParams.set(k, v);
+        for (const k of CLAVES_UTM) if (utms[k]) u.searchParams.set(k, utms[k]);
         u.searchParams.set('name', estado.nombre);
         u.searchParams.set('a1', estado.whatsapp);
         u.searchParams.set('a3', 'Balón gástrico (test L4)');

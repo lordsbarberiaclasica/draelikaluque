@@ -88,7 +88,10 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
 
     <!--
       [CRÍTICO] Captura y propagación de UTMs.
-      1. Al entrar, guarda utm_* + gclid/fbclid en localStorage (30 días).
+      1. Guarda utm_* + gclid/fbclid de la PRIMERA visita con UTM, como un
+         conjunto completo, en localStorage por 30 días desde esa visita (más
+         la página de entrada). Las visitas siguientes no lo sobrescriben.
+         Los formularios lo leen con src/scripts/utms.ts.
       2. Decora todos los enlaces a Calendly con esos parámetros.
       3. Anota el mensaje prellenado de WhatsApp con [ref:fuente|campaña].
       Sin esto no se sabe qué anuncio trae a cada paciente.
@@ -100,18 +103,29 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
         var TTL = 30 * 24 * 60 * 60 * 1000; // 30 días
 
         try {
+          var borrar = function () {
+            KEYS.concat(['ts', 'landing']).forEach(function (k) { localStorage.removeItem(PREFIX + k); });
+          };
           var ts = parseInt(localStorage.getItem(PREFIX + 'ts') || '0', 10);
-          if (ts && Date.now() - ts > TTL) {
-            KEYS.forEach(function (k) { localStorage.removeItem(PREFIX + k); });
-            localStorage.removeItem(PREFIX + 'ts');
+          if (ts && Date.now() - ts > TTL) borrar();
+          /* v2 = primera visita. Lo guardado con la lógica anterior (última
+             visita, por claves sueltas) se conserva como punto de partida. */
+          if (localStorage.getItem(PREFIX + 'v') !== '2') {
+            localStorage.setItem(PREFIX + 'v', '2');
+            if (!localStorage.getItem(PREFIX + 'ts')) borrar();
           }
           var q = new URLSearchParams(location.search);
-          var found = false;
-          KEYS.forEach(function (k) {
-            var v = q.get(k);
-            if (v) { localStorage.setItem(PREFIX + k, v); found = true; }
-          });
-          if (found) localStorage.setItem(PREFIX + 'ts', String(Date.now()));
+          var traeUtm = KEYS.some(function (k) { return q.get(k); });
+          var hayGuardado = KEYS.some(function (k) { return localStorage.getItem(PREFIX + k); });
+          if (traeUtm && !hayGuardado) {
+            KEYS.forEach(function (k) {
+              var v = q.get(k);
+              if (v) localStorage.setItem(PREFIX + k, v);
+              else localStorage.removeItem(PREFIX + k);
+            });
+            localStorage.setItem(PREFIX + 'ts', String(Date.now()));
+            localStorage.setItem(PREFIX + 'landing', location.pathname);
+          }
         } catch (e) { /* almacenamiento no disponible */ }
 
         function get(k) {
