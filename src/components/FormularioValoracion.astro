@@ -58,8 +58,8 @@ import { URL_POLITICA_DATOS } from '../config';
             </div>
           </div>
           <div class="fv-campo">
-            <label for="fv-email">Correo electrónico</label>
-            <input id="fv-email" name="email" type="email" autocomplete="email" required maxlength="120" placeholder="tucorreo@gmail.com" />
+            <label for="fv-email">Correo electrónico <span class="fv-opcional">(opcional)</span></label>
+            <input id="fv-email" name="email" type="email" autocomplete="email" maxlength="120" placeholder="tucorreo@gmail.com" />
           </div>
         </div>
 
@@ -122,7 +122,11 @@ import { URL_POLITICA_DATOS } from '../config';
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
       </div>
       <h2 class="fv-titulo">¡Gracias, <span data-fv-nombre>listo</span>!</h2>
-      <p class="fv-sub">Tus datos quedaron registrados. Ahora elige cómo prefieres continuar:</p>
+      <p class="fv-sub"><span data-fv-estado>Tus datos quedaron registrados.</span> Ahora elige cómo prefieres continuar:</p>
+      <p class="fv-aviso fv-oculto" data-fv-aviso role="alert">
+        No pudimos guardar tus datos por un problema de conexión. Para no perder tu solicitud,
+        toca <strong>Coordinar por WhatsApp</strong>: tus datos van en el mensaje.
+      </p>
 
       <a href="#" class="fv-btn fv-btn-gold" data-fv-calendly data-skip-form target="_blank" rel="noopener">Elegir fecha y hora en el calendario</a>
       <a href="#" class="fv-btn fv-btn-wa" data-fv-whatsapp target="_blank" rel="noopener">
@@ -138,7 +142,7 @@ import { URL_POLITICA_DATOS } from '../config';
 <script>
   import { REGISTROS } from '../config-registros';
   import { tokenCaptcha } from '../scripts/captcha-cliente';
-  import { leerUtms } from '../scripts/utms';
+  import { leerUtms, enviarLead } from '../scripts/utms';
 
   const dialog = document.getElementById('fv-dialog') as HTMLDialogElement | null;
 
@@ -227,16 +231,27 @@ import { URL_POLITICA_DATOS } from '../config';
         ...utms,
       });
 
-      fetch(REGISTROS.appsScriptUrl, { method: 'POST', mode: 'no-cors', keepalive: true, body: cuerpo })
-        .catch(() => { /* fire and forget: el paciente sigue a Calendly/WhatsApp */ });
+      /* Envío con confirmación: el paso 2 espera hasta 2,5 s la respuesta;
+         si tarda más, sigue y actualiza el mensaje cuando llegue. */
+      const guardado = enviarLead(REGISTROS.appsScriptUrl, cuerpo, REGISTROS.hojaValoracion);
       dl('valoracion_form_enviado', { motivo, pais });
+      const estado = paso2.querySelector('[data-fv-estado]') as HTMLElement;
+      const aviso = paso2.querySelector('[data-fv-aviso]') as HTMLElement;
+      const pintar = (ok: boolean | null) => {
+        estado.classList.toggle('fv-oculto', ok === false);
+        estado.textContent = ok ? 'Tus datos quedaron registrados.' : 'Estamos guardando tus datos.';
+        aviso.classList.toggle('fv-oculto', ok !== false);
+      };
+      const primero = await Promise.race([guardado, new Promise<null>((r) => setTimeout(() => r(null), 2500))]);
+      pintar(primero);
+      if (primero === null) guardado.then(pintar);
 
       /* Calendly precargado: el href ya traía UTMs; sumamos name/email y a1–a3 */
       let urlCalendly = hrefCalendlyOrigen;
       try {
         const u = new URL(hrefCalendlyOrigen, location.origin);
         u.searchParams.set('name', nombres);
-        u.searchParams.set('email', email);
+        if (email) u.searchParams.set('email', email);
         u.searchParams.set('a1', telefono);
         u.searchParams.set('a2', pais);
         u.searchParams.set('a3', motivo);
@@ -338,6 +353,17 @@ import { URL_POLITICA_DATOS } from '../config';
   .fv-wa select:focus, .fv-wa input:focus { outline: 2px solid #f6d29a; outline-offset: 1px; border-color: #e2b877; }
   @media (min-width: 640px) { .fv-grid2 { grid-template-columns: 1fr 1fr; } }
 
+  .fv-aviso {
+    margin: 0 0 1rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.75rem;
+    background: #fdf0ee;
+    border: 1px solid #f0c9c2;
+    color: #8a2f22;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .fv-opcional { font-weight: 400; opacity: 0.6; }
   .fv-habeas {
     display: flex; gap: 0.6rem; align-items: flex-start;
     font-size: 0.8rem; color: #46586a; margin: 0.4rem 0 1.1rem; cursor: pointer;

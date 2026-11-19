@@ -91,7 +91,10 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
       1. Guarda utm_* + gclid/fbclid de la PRIMERA visita con UTM, como un
          conjunto completo, en localStorage por 30 días desde esa visita (más
          la página de entrada). Las visitas siguientes no lo sobrescriben.
-         Los formularios lo leen con src/scripts/utms.ts.
+         Además guarda la ÚLTIMA visita pagada (gclid/fbclid o utm_medium de
+         pago) en "el_ult_*". Los formularios lo leen con src/scripts/utms.ts.
+      4. window.elEnviarLead(): envío confiable a /api/lead.php (lee la
+         respuesta, reintenta y avisa al dataLayer si falla, sin datos personales).
       2. Decora todos los enlaces a Calendly con esos parámetros.
       3. Anota el mensaje prellenado de WhatsApp con [ref:fuente|campaña].
       Sin esto no se sabe qué anuncio trae a cada paciente.
@@ -126,7 +129,68 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
             localStorage.setItem(PREFIX + 'ts', String(Date.now()));
             localStorage.setItem(PREFIX + 'landing', location.pathname);
           }
+          /* Última visita PAGADA: se reemplaza completa en cada clic de anuncio. */
+          var medio = (q.get('utm_medium') || '').toLowerCase();
+          var esPago = q.get('gclid') || q.get('fbclid') || /cpc|ppc|paid|display|ads/.test(medio);
+          if (esPago) {
+            KEYS.forEach(function (k) {
+              var v = q.get(k);
+              if (v) localStorage.setItem(PREFIX + 'ult_' + k, v);
+              else localStorage.removeItem(PREFIX + 'ult_' + k);
+            });
+            localStorage.setItem(PREFIX + 'ult_ts', String(Date.now()));
+            localStorage.setItem(PREFIX + 'ult_landing', location.pathname);
+          }
         } catch (e) { /* almacenamiento no disponible */ }
+
+        /* ── Envío confiable de leads ─────────────────────────────────────
+           Devuelve una promesa con true (guardado) o false (no se pudo).
+           3 intentos con espera creciente; 400/422 no se reintentan. Si todo
+           falla, último recurso con sendBeacon. Eventos al dataLayer:
+           lead_guardado / lead_envio_fallido (sin nombre, teléfono ni salud). */
+        window.elEnviarLead = function (url, cuerpo, formulario) {
+          var datos = cuerpo instanceof URLSearchParams ? cuerpo : new URLSearchParams(cuerpo);
+          if (!datos.has('envio_id')) {
+            datos.set('envio_id', Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+          }
+          var ev = function (nombre, extra) {
+            window.dataLayer = window.dataLayer || [];
+            var o = { event: nombre, formulario: formulario || datos.get('hoja') || '', pagina: location.pathname };
+            for (var k in extra) o[k] = extra[k];
+            window.dataLayer.push(o);
+          };
+          var esperas = [0, 1500, 4000];
+          var intento = function (i) {
+            return new Promise(function (r) { setTimeout(r, esperas[i]); }).then(function () {
+              var ctl = 'AbortController' in window ? new AbortController() : null;
+              var t = ctl ? setTimeout(function () { ctl.abort(); }, 8000) : null;
+              return fetch(url, {
+                method: 'POST', body: datos, keepalive: true, credentials: 'same-origin',
+                signal: ctl ? ctl.signal : undefined,
+              }).then(function (res) {
+                if (t) clearTimeout(t);
+                if (res.status === 204) return { ok: true };
+                return res.json().catch(function () { return {}; }).then(function (j) {
+                  return { ok: res.ok && j && j.ok === true, status: res.status };
+                });
+              }, function (err) {
+                if (t) clearTimeout(t);
+                return { ok: false, status: 0, motivo: err && err.name === 'AbortError' ? 'tiempo_agotado' : 'red' };
+              });
+            }).then(function (r) {
+              if (r.ok) { ev('lead_guardado', { intentos: i + 1 }); return true; }
+              var definitivo = r.status === 400 || r.status === 422;
+              if (!definitivo && i + 1 < esperas.length) return intento(i + 1);
+              var beacon = false;
+              if (!definitivo && navigator.sendBeacon) {
+                try { beacon = navigator.sendBeacon(url, datos); } catch (e) {}
+              }
+              ev('lead_envio_fallido', { motivo: r.motivo || ('http_' + r.status), intentos: i + 1, beacon: beacon ? 'si' : 'no' });
+              return false;
+            });
+          };
+          return intento(0);
+        };
 
         function get(k) {
           try { return localStorage.getItem(PREFIX + k) || ''; } catch (e) { return ''; }

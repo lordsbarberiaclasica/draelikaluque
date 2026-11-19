@@ -125,6 +125,7 @@ import { URL_POLITICA_DATOS } from '../../config';
     <h3 class="qb-titulo" data-qb-res-titulo></h3>
     <p class="qb-cuerpo" data-qb-res-cuerpo></p>
     <p class="qb-nota-extra qb-oculto" data-qb-res-nota>En tu valoración confirmamos lo del reflujo.</p>
+    <p class="qb-aviso qb-oculto" data-qb-aviso role="alert">No pudimos guardar tus datos por un problema de conexión. Escríbenos por WhatsApp para no perder tu solicitud.</p>
     <a href="#" class="qb-btn qb-btn-gold" data-qb-cta1 data-skip-form target="_blank" rel="noopener"></a>
     <a href="#" class="qb-btn qb-btn-sec qb-oculto" data-qb-cta2 rel="noopener"></a>
     <p class="qb-disclaimer">Esta es una orientación educativa inicial, no un diagnóstico. Tu candidatura se confirma en la valoración médica.</p>
@@ -135,7 +136,7 @@ import { URL_POLITICA_DATOS } from '../../config';
 <script>
   import { REGISTROS } from '../../config-registros';
   import { tokenCaptcha } from '../../scripts/captcha-cliente';
-  import { leerUtms, CLAVES_UTM } from '../../scripts/utms';
+  import { leerUtms, CLAVES_UTM, enviarLead } from '../../scripts/utms';
 
   const raiz = document.getElementById('quiz-balon');
 
@@ -293,8 +294,10 @@ import { URL_POLITICA_DATOS } from '../../config';
         ...utms,
       });
 
-      fetch(REGISTROS.appsScriptUrl, { method: 'POST', mode: 'no-cors', keepalive: true, body: cuerpo })
-        .catch(() => { /* fire and forget */ });
+      /* Envío con confirmación; si falla tras reintentar, aviso en el resultado. */
+      enviarLead(REGISTROS.appsScriptUrl, cuerpo, REGISTROS.hojaBalon).then((ok) => {
+        (raiz.querySelector('[data-qb-aviso]') as HTMLElement | null)?.classList.toggle('qb-oculto', ok);
+      });
 
       dl('quiz_balon_completado', { ruta, imc_rango: rango });
 
@@ -457,6 +460,7 @@ import { URL_POLITICA_DATOS } from '../../config';
   .qb-disclaimer { margin: 1.1rem 0 0; font-size: 0.74rem; line-height: 1.5; color: #94a3ad; }
 
   .qb-oculto { display: none !important; }
+  .qb-aviso { margin: 0.75rem auto 0; max-width: 28rem; padding: 0.7rem 0.9rem; border-radius: 0.75rem; background: #fdf0ee; border: 1px solid #f0c9c2; color: #8a2f22; font-size: 0.85rem; line-height: 1.5; }
   .qb-hp { position: absolute; left: -9999px; top: -9999px; height: 1px; width: 1px; overflow: hidden; }
 
   @media (prefers-reduced-motion: reduce) {

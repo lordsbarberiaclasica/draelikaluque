@@ -24,5 +24,20 @@ export function leerUtms(): Record<string, string> {
   for (const k of CLAVES_UTM) out[k] = hayGuardado ? leerGuardado(k) : url.get(k) || '';
   /* Página por la que entró en esa primera visita (ej. /seguridad/). */
   out.pagina_entrada = leerGuardado('landing') || location.pathname;
+  /* Última visita PAGADA (ej. llegó primero por Google y después por Meta). */
+  for (const k of CLAVES_UTM) out['ult_' + k] = leerGuardado('ult_' + k);
+  out.ult_pagina_entrada = leerGuardado('ult_landing');
   return out;
+}
+
+/**
+ * Envía el lead con window.elEnviarLead (Base.astro): lee la respuesta,
+ * reintenta y avisa al dataLayer si falla. Resuelve true si quedó guardado.
+ */
+export function enviarLead(url: string, cuerpo: URLSearchParams, formulario: string): Promise<boolean> {
+  const fn = (window as any).elEnviarLead;
+  if (typeof fn === 'function') return fn(url, cuerpo, formulario);
+  return fetch(url, { method: 'POST', body: cuerpo, keepalive: true })
+    .then((r) => r.ok)
+    .catch(() => false);
 }
